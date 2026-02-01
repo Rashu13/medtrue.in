@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "d:\\medtrue.in\\MedTrueApi.csproj": {}
+    "D:\\medtrue.in\\MedTrueApi.csproj": {}
   },
   "projects": {
-    "d:\\medtrue.in\\MedTrueApi.csproj": {
+    "D:\\medtrue.in\\MedTrueApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\medtrue.in\\MedTrueApi.csproj",
+        "projectUniqueName": "D:\\medtrue.in\\MedTrueApi.csproj",
         "projectName": "MedTrueApi",
-        "projectPath": "d:\\medtrue.in\\MedTrueApi.csproj",
+        "projectPath": "D:\\medtrue.in\\MedTrueApi.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "d:\\medtrue.in\\obj\\",
+        "outputPath": "D:\\medtrue.in\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\DevExpress 25.1\\Components\\Offline Packages",
@@ -52,17 +52,21 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.1.66, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[10.0.2, )"
+              "version": "[8.0.1, )"
             },
             "Npgsql": {
               "target": "Package",
-              "version": "[10.0.1, )"
+              "version": "[8.0.3, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[10.1.1, )"
+              "version": "[6.6.2, )"
             }
           },
           "imports": [

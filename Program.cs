@@ -7,7 +7,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Register Custom Services
+builder.Services.AddSingleton<MedTrueApi.Repositories.IDbConnectionFactory, MedTrueApi.Repositories.NpgsqlConnectionFactory>();
+builder.Services.AddSingleton<MedTrueApi.Repositories.DatabaseInitializer>();
+builder.Services.AddScoped<MedTrueApi.Repositories.MasterRepository>();
+builder.Services.AddScoped<MedTrueApi.Repositories.ProductRepository>();
+
 var app = builder.Build();
+
+// Initialize Database
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.DatabaseInitializer>();
+    await initializer.InitializeAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
