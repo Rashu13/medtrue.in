@@ -65,4 +65,27 @@ public class ProductRepository
             WHERE product_id = @ProductId";
         await conn.ExecuteAsync(sql, product);
     }
+
+    // Images
+    public async Task<int> CreateProductImageAsync(ProductImage image)
+    {
+        using var conn = Connection;
+        var sql = @"
+            INSERT INTO product_images (product_id, image_path, is_primary, display_order)
+            VALUES (@ProductId, @ImagePath, @IsPrimary, @DisplayOrder)
+            RETURNING img_id";
+        return await conn.ExecuteScalarAsync<int>(sql, image);
+    }
+
+    public async Task<IEnumerable<ProductImage>> GetProductImagesAsync(long productId)
+    {
+        using var conn = Connection;
+        return await conn.QueryAsync<ProductImage>("SELECT * FROM product_images WHERE product_id = @ProductId ORDER BY display_order", new { ProductId = productId });
+    }
+
+    public async Task DeleteProductImageAsync(int imgId)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM product_images WHERE img_id = @ImgId", new { ImgId = imgId });
+    }
 }

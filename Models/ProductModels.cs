@@ -67,3 +67,13 @@ public class ProductBatch
     public decimal? QuantityAvailable { get; set; }
     public DateOnly EntryDate { get; set; }
 }
+
+public class ProductImage
+{
+    public int ImgId { get; set; }
+    public long ProductId { get; set; }
+    public string ImagePath { get; set; } = string.Empty;
+    public bool IsPrimary { get; set; }
+    public int DisplayOrder { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
