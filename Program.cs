@@ -24,6 +24,11 @@ using (var scope = app.Services.CreateScope())
 
 // Configure the HTTP request pipeline.
 // Configure the HTTP request pipeline.
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+
 app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI();
