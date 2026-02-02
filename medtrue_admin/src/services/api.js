@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Hardcode to /api for local dev to force Proxy
-const baseURL = '/api';
+// Use VITE_API_URL from environment or fallback to /api for local proxy
+const baseURL = import.meta.env.VITE_API_URL || '/api';
 
 // Create Axios Instance
 const api = axios.create({
