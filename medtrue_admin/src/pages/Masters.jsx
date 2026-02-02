@@ -97,7 +97,7 @@ const Masters = () => {
     const [editingItem, setEditingItem] = useState(null);
 
     const config = masterConfig[activeTab];
-    const { data, loading, create, update, remove } = useMasterFacade(config.endpoint);
+    const { data, loading, create, update, remove, pagination } = useMasterFacade(config.endpoint);
 
     const formik = useFormik({
         initialValues: editingItem || {},
@@ -166,6 +166,7 @@ const Masters = () => {
                 onAdd={() => { setEditingItem(null); setIsModalOpen(true); }}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                pagination={pagination}
             />
 
             {/* Modal - Could be extracted to component */}

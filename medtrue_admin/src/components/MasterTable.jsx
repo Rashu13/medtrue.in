@@ -1,4 +1,4 @@
-import { Edit, Trash2, Plus } from 'lucide-react';
+import { Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 const MasterTable = ({
@@ -8,7 +8,8 @@ const MasterTable = ({
     onAdd,
     onEdit,
     onDelete,
-    loading
+    loading,
+    pagination
 }) => {
     return (
         <div className="border border-gray-200 rounded-lg bg-white">
@@ -80,6 +81,49 @@ const MasterTable = ({
                     </tbody>
                 </table>
             </div>
+
+            {/* Pagination Controls */}
+            {pagination && (
+                <div className="flex items-center justify-between p-4 border-t border-gray-200">
+                    <div className="text-sm text-gray-500">
+                        Showing {((pagination.page - 1) * pagination.pageSize) + 1} to {Math.min(pagination.page * pagination.pageSize, pagination.total)} of {pagination.total} results
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <select
+                            value={pagination.pageSize}
+                            onChange={(e) => {
+                                pagination.setPageSize(Number(e.target.value));
+                                pagination.setPage(1); // Reset to first page
+                            }}
+                            className="p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-teal-500"
+                        >
+                            <option value={10}>10 per page</option>
+                            <option value={20}>20 per page</option>
+                            <option value={50}>50 per page</option>
+                            <option value={100}>100 per page</option>
+                        </select>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => pagination.setPage(p => Math.max(1, p - 1))}
+                                disabled={pagination.page === 1}
+                                className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronLeft size={16} />
+                            </button>
+                            <span className="text-sm font-medium text-gray-700">
+                                Page {pagination.page}
+                            </span>
+                            <button
+                                onClick={() => pagination.setPage(p => p + 1)}
+                                disabled={pagination.page * pagination.pageSize >= pagination.total}
+                                className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

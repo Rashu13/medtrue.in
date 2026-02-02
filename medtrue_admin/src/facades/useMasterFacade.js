@@ -10,18 +10,39 @@ export const useMasterFacade = (endpoint) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // Pagination State
+    const [page, setPage] = useState(1);
+    const [pageSize] = useState(10);
+    const [total, setTotal] = useState(0);
+
+    // Reset page when endpoint changes
+    useEffect(() => {
+        setPage(1);
+    }, [endpoint]);
+
     const fetchAll = useCallback(async () => {
         setLoading(true);
         try {
-            const result = await api.get(`/${endpoint}`);
-            setData(result);
+            const result = await api.get(`/${endpoint}?page=${page}&pageSize=${pageSize}`);
+
+            const items = result.items || result.Items;
+            const totalCount = result.totalCount || result.TotalCount;
+
+            if (items) {
+                setData(items);
+                setTotal(totalCount);
+            } else {
+                // Fallback for non-paged endpoints if any
+                setData(result);
+                setTotal(result.length || 0);
+            }
             setError(null);
         } catch (err) {
             setError(err.message || 'Failed to fetch data');
         } finally {
             setLoading(false);
         }
-    }, [endpoint]);
+    }, [endpoint, page, pageSize]);
 
     const create = async (item) => {
         setLoading(true);
@@ -62,7 +83,7 @@ export const useMasterFacade = (endpoint) => {
         }
     };
 
-    // Initial Fetch
+    // Initial Fetch & Refetch on page/endpoint change
     useEffect(() => {
         fetchAll();
     }, [fetchAll]);
@@ -74,6 +95,13 @@ export const useMasterFacade = (endpoint) => {
         create,
         update,
         remove,
-        refresh: fetchAll
+        refresh: fetchAll,
+        pagination: {
+            page,
+            pageSize,
+            total,
+            setPage,
+            setPageSize
+        }
     };
 };
