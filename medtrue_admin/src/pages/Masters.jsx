@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useMasterFacade } from '../facades/useMasterFacade';
 import MasterTable from '../components/MasterTable';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { X } from 'lucide-react';
+import { X, Upload } from 'lucide-react';
+import api from '../services/api'; // Direct API access for upload
 
 // Configuration for different master types
 const masterConfig = {
@@ -27,6 +28,16 @@ const masterConfig = {
             { name: 'code', label: 'Code', type: 'text' },
             { name: 'contactNumber', label: 'Contact Number', type: 'text' },
             { name: 'address', label: 'Address', type: 'textarea' },
+            // Extended Fields
+            { name: 'preferenceOrderForm', label: 'Order Form', type: 'number' },
+            { name: 'preferenceInvoicePrinting', label: 'Invoice Printing', type: 'number' },
+            { name: 'dumpDays', label: 'Dump Days', type: 'number' },
+            { name: 'expiryReceiveUpto', label: 'Expiry Receive Upto', type: 'number' },
+            { name: 'minimumMargin', label: 'Minimum Margin', type: 'number' },
+            { name: 'salesTax', label: 'Sales Tax %', type: 'number' },
+            { name: 'salesCess', label: 'CESS %', type: 'number' },
+            { name: 'purchaseTax', label: 'Purchase Tax %', type: 'number' },
+            { name: 'purchaseCess', label: 'CESS %', type: 'number' }
         ]
     },
     categories: {
@@ -138,9 +149,11 @@ const Masters = () => {
     const [activeTab, setActiveTab] = useState('companies');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const fileInputRef = useRef(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const config = masterConfig[activeTab];
-    const { data, loading, create, update, remove, pagination } = useMasterFacade(config.endpoint);
+    const { data, loading, create, update, remove, pagination, refresh } = useMasterFacade(config.endpoint);
 
     const formik = useFormik({
         initialValues: editingItem || {},
@@ -181,9 +194,65 @@ const Masters = () => {
         }
     };
 
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        setIsUploading(true);
+
+        try {
+            await api.post(`/masters/upload/${activeTab}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            alert('Upload successful! Data imported.');
+            refresh();
+        } catch (error) {
+            console.error(error);
+            alert('Upload failed: ' + (error.response?.data || error.message));
+        } finally {
+            setIsUploading(false);
+            event.target.value = null; // Reset input
+        }
+    };
+
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-gray-800">Master Data Management</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-gray-800">Master Data Management</h1>
+                <div className="flex gap-2">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept=".xlsx, .xls"
+                        className="hidden"
+                    />
+                    <button
+                        onClick={handleUploadClick}
+                        disabled={isUploading}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400"
+                    >
+                        <Upload size={16} />
+                        {isUploading ? 'Uploading...' : 'Upload XLS'}
+                    </button>
+                    {/* Template Download Button */}
+                    <a
+                        href={`http://localhost:5015/api/masters/template/${activeTab}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                        title="Download Demo Excel Template"
+                    >
+                        <span className="text-sm font-medium">Demo XLS</span>
+                    </a>
+                </div>
+            </div>
 
             {/* Tabs */}
             <div className="flex border-b border-gray-200 space-x-6">
@@ -230,8 +299,11 @@ const Masters = () => {
                         {/* Unified Legacy Form Layout */}
                         <form onSubmit={formik.handleSubmit} className="p-6 space-y-1 text-sm font-menu bg-sky-50">
                             {config.fields.map((field) => {
-                                // Group small usage flags
-                                if (['isNarcotic', 'isScheduleH', 'isScheduleH1', 'isContinued', 'isProhibited', 'type', 'maximumRate'].includes(field.name)) return null;
+                                // Specific handling for Salts to skip grouped fields
+                                if (activeTab === 'salts' && ['isNarcotic', 'isScheduleH', 'isScheduleH1', 'isContinued', 'isProhibited', 'type', 'maximumRate'].includes(field.name)) return null;
+
+                                // Specific handling for Companies to skip grouped fields
+                                if (activeTab === 'companies' && ['preferenceOrderForm', 'preferenceInvoicePrinting', 'dumpDays', 'expiryReceiveUpto', 'minimumMargin', 'salesTax', 'salesCess', 'purchaseTax', 'purchaseCess'].includes(field.name)) return null;
 
                                 return (
                                     <div key={field.name} className="grid grid-cols-[180px_1fr] items-center gap-4">
@@ -257,59 +329,195 @@ const Masters = () => {
                                 );
                             })}
 
-                            {/* Special Group for Flags */}
-                            <div className="grid grid-cols-[180px_1fr] items-start gap-4 mt-4 pt-4 border-t border-gray-300">
-                                <label className="text-gray-900 font-medium text-right pt-1">Classifications</label>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2">
-                                    {[
-                                        { name: 'isNarcotic', label: 'Narcotic' },
-                                        { name: 'isScheduleH', label: 'Schedule H' },
-                                        { name: 'isScheduleH1', label: 'Schedule H1' },
-                                        { name: 'isContinued', label: 'Continued' },
-                                        { name: 'isProhibited', label: 'Prohibited' }
-                                    ].map(flag => (
-                                        <div key={flag.name} className="flex items-center gap-2">
-                                            <span className="text-gray-700 min-w-[80px]">{flag.label}</span>
-                                            <span className="font-bold">:</span>
-                                            <select
-                                                name={flag.name}
-                                                value={formik.values[flag.name]}
-                                                onChange={(e) => formik.setFieldValue(flag.name, e.target.value === 'true')}
-                                                className="border border-gray-400 px-1 py-0.5 w-16 text-center"
-                                            >
-                                                <option value={false}>N</option>
-                                                <option value={true}>Y</option>
-                                            </select>
+                            {/* Special Layout ONLY for Companies */}
+                            {activeTab === 'companies' && (
+                                <div className="space-y-3 mt-2">
+                                    {/* Preferences Row */}
+                                    <div className="flex items-center">
+                                        <label className="w-[180px] text-right font-medium pr-2 text-gray-900">Preferences</label>
+                                        <span className="text-gray-700 font-bold px-2">:</span>
+                                        <div className="flex items-center">
+                                            <div className="w-[230px] flex items-center gap-2">
+                                                <span className="text-gray-700">Order Form :</span>
+                                                <input
+                                                    name="preferenceOrderForm"
+                                                    type="number"
+                                                    value={formik.values.preferenceOrderForm || ''}
+                                                    onChange={formik.handleChange}
+                                                    className="border border-gray-400 px-1 py-0.5 w-16 text-center focus:outline-none focus:border-teal-600"
+                                                />
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-gray-700">Invoice Printing :</span>
+                                                <input
+                                                    name="preferenceInvoicePrinting"
+                                                    type="number"
+                                                    value={formik.values.preferenceInvoicePrinting || ''}
+                                                    onChange={formik.handleChange}
+                                                    className="border border-gray-400 px-1 py-0.5 w-16 text-center focus:outline-none focus:border-teal-600"
+                                                />
+                                            </div>
                                         </div>
-                                    ))}
-
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-700 min-w-[80px]">Type</span>
-                                        <span className="font-bold">:</span>
-                                        <select
-                                            name="type"
-                                            value={formik.values.type}
-                                            onChange={formik.handleChange}
-                                            className="border border-gray-400 px-1 py-0.5 w-24"
-                                        >
-                                            <option value="Normal">Normal</option>
-                                            <option value="Antibiotic">Antibiotic</option>
-                                        </select>
                                     </div>
 
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-700 min-w-[80px]">Max Rate</span>
-                                        <span className="font-bold">:</span>
-                                        <input
-                                            name="maximumRate"
-                                            type="number"
-                                            value={formik.values.maximumRate || ''}
-                                            onChange={formik.handleChange}
-                                            className="border border-gray-400 px-1 py-0.5 w-20 text-right"
-                                        />
+                                    {/* Dump Days Row */}
+                                    <div className="flex items-center">
+                                        <label className="w-[180px] text-right font-medium pr-2 text-gray-900">Dump Days</label>
+                                        <span className="text-gray-700 font-bold px-2">:</span>
+                                        <div className="flex items-center">
+                                            <div className="w-[230px] flex items-center gap-2">
+                                                <input
+                                                    name="dumpDays"
+                                                    type="number"
+                                                    value={formik.values.dumpDays || ''}
+                                                    onChange={formik.handleChange}
+                                                    className="border border-gray-400 px-1 py-0.5 w-16 text-center focus:outline-none focus:border-teal-600"
+                                                />
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-gray-700">Expiry Receive Upto :</span>
+                                                <input
+                                                    name="expiryReceiveUpto"
+                                                    type="number"
+                                                    value={formik.values.expiryReceiveUpto || ''}
+                                                    onChange={formik.handleChange}
+                                                    className="border border-gray-400 px-1 py-0.5 w-16 text-center focus:outline-none focus:border-teal-600"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Minimum Margin */}
+                                    <div className="flex items-center">
+                                        <label className="w-[180px] text-right font-medium pr-2 text-gray-900">Minimum Margin</label>
+                                        <span className="text-gray-700 font-bold px-2">:</span>
+                                        <div className="w-[230px]">
+                                            <input
+                                                name="minimumMargin"
+                                                type="number"
+                                                value={formik.values.minimumMargin || ''}
+                                                onChange={formik.handleChange}
+                                                className="border border-gray-400 px-1 py-0.5 w-24 text-right focus:outline-none focus:border-teal-600"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Sales Tax */}
+                                    <div className="flex items-center">
+                                        <label className="w-[180px] text-right font-medium pr-2 text-gray-900">Sales Tax %</label>
+                                        <span className="text-gray-700 font-bold px-2">:</span>
+                                        <div className="flex items-center">
+                                            <div className="w-[230px]">
+                                                <input
+                                                    name="salesTax"
+                                                    type="number"
+                                                    value={formik.values.salesTax || ''}
+                                                    onChange={formik.handleChange}
+                                                    className="border border-gray-400 px-1 py-0.5 w-24 text-right focus:outline-none focus:border-teal-600"
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-gray-700">CESS % :</span>
+                                                <input
+                                                    name="salesCess"
+                                                    type="number"
+                                                    value={formik.values.salesCess || ''}
+                                                    onChange={formik.handleChange}
+                                                    className="border border-gray-400 px-1 py-0.5 w-24 text-right focus:outline-none focus:border-teal-600"
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Purchase Tax */}
+                                    <div className="flex items-center">
+                                        <label className="w-[180px] text-right font-medium pr-2 text-gray-900">Purchase Tax %</label>
+                                        <span className="text-gray-700 font-bold px-2">:</span>
+                                        <div className="flex items-center">
+                                            <div className="w-[230px]">
+                                                <input
+                                                    name="purchaseTax"
+                                                    type="number"
+                                                    value={formik.values.purchaseTax || ''}
+                                                    onChange={formik.handleChange}
+                                                    className="border border-gray-400 px-1 py-0.5 w-24 text-right focus:outline-none focus:border-teal-600"
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-gray-700">CESS % :</span>
+                                                <input
+                                                    name="purchaseCess"
+                                                    type="number"
+                                                    value={formik.values.purchaseCess || ''}
+                                                    onChange={formik.handleChange}
+                                                    className="border border-gray-400 px-1 py-0.5 w-24 text-right focus:outline-none focus:border-teal-600"
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {/* Special Group for Flags (Salts Only) */}
+                            {activeTab === 'salts' && (
+                                <div className="grid grid-cols-[180px_1fr] items-start gap-4 mt-4 pt-4 border-t border-gray-300">
+                                    <label className="text-gray-900 font-medium text-right pt-1">Classifications</label>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2">
+                                        {[
+                                            { name: 'isNarcotic', label: 'Narcotic' },
+                                            { name: 'isScheduleH', label: 'Schedule H' },
+                                            { name: 'isScheduleH1', label: 'Schedule H1' },
+                                            { name: 'isContinued', label: 'Continued' },
+                                            { name: 'isProhibited', label: 'Prohibited' }
+                                        ].map(flag => (
+                                            <div key={flag.name} className="flex items-center gap-2">
+                                                <span className="text-gray-700 min-w-[80px]">{flag.label}</span>
+                                                <span className="font-bold">:</span>
+                                                <select
+                                                    name={flag.name}
+                                                    value={formik.values[flag.name]}
+                                                    onChange={(e) => formik.setFieldValue(flag.name, e.target.value === 'true')}
+                                                    className="border border-gray-400 px-1 py-0.5 w-16 text-center"
+                                                >
+                                                    <option value={false}>N</option>
+                                                    <option value={true}>Y</option>
+                                                </select>
+                                            </div>
+                                        ))}
+
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-gray-700 min-w-[80px]">Type</span>
+                                            <span className="font-bold">:</span>
+                                            <select
+                                                name="type"
+                                                value={formik.values.type}
+                                                onChange={formik.handleChange}
+                                                className="border border-gray-400 px-1 py-0.5 w-24"
+                                            >
+                                                <option value="Normal">Normal</option>
+                                                <option value="Antibiotic">Antibiotic</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-gray-700 min-w-[80px]">Max Rate</span>
+                                            <span className="font-bold">:</span>
+                                            <input
+                                                name="maximumRate"
+                                                type="number"
+                                                value={formik.values.maximumRate || ''}
+                                                onChange={formik.handleChange}
+                                                className="border border-gray-400 px-1 py-0.5 w-20 text-right"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-300">
                                 <button
