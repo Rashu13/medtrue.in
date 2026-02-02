@@ -17,18 +17,38 @@ const validationSchema = Yup.object({
     saltId: Yup.string().nullable(), // Optional but recommended
 });
 
-const InputField = ({ label, name, type = 'text', placeholder, formik, ...props }) => (
-    <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1.5">{label}</label>
+// Legacy Layout Helper
+const LegacyInput = ({ label, name, type = 'text', placeholder, formik, ...props }) => (
+    <div className="grid grid-cols-[180px_1fr] items-center gap-4">
+        <label className="text-gray-900 font-medium text-right pr-2">{label}</label>
+        <span className="hidden">:</span>
         <input
             type={type}
             {...formik.getFieldProps(name)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-black focus:border-black focus:outline-none transition-all placeholder:text-gray-400"
+            className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8 text-sm"
             placeholder={placeholder}
             {...props}
         />
         {formik.touched[name] && formik.errors[name] && (
-            <p className="text-red-600 text-xs mt-1 font-medium">{formik.errors[name]}</p>
+            <p className="text-red-600 text-xs text-right col-start-2">{formik.errors[name]}</p>
+        )}
+    </div>
+);
+
+const LegacySelect = ({ label, name, options, loading, formik, ...props }) => (
+    <div className="grid grid-cols-[180px_1fr] items-center gap-4">
+        <label className="text-gray-900 font-medium text-right pr-2">{label}</label>
+        <span className="hidden">:</span>
+        <select
+            {...formik.getFieldProps(name)}
+            className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8 text-sm"
+            {...props}
+        >
+            <option value="">-- Select {label} --</option>
+            {loading ? <option>Loading...</option> : options}
+        </select>
+        {formik.touched[name] && formik.errors[name] && (
+            <p className="text-red-600 text-xs text-right col-start-2">{formik.errors[name]}</p>
         )}
     </div>
 );
@@ -78,149 +98,121 @@ const AddProduct = () => {
         setImages(images.filter((_, i) => i !== index));
     };
 
-
-
     return (
-        <div className="max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Add New Product</h1>
-                    <p className="text-gray-500 text-sm mt-1">Create a new product in your inventory</p>
-                </div>
+        <div className="max-w-5xl mx-auto mt-6 shadow-xl rounded-lg overflow-hidden border border-gray-300">
+            {/* Legacy Header */}
+            <div className="bg-[#2E5A5A] px-6 py-3 flex justify-between items-center text-white">
+                <h1 className="text-lg font-bold uppercase tracking-wider">Add New Product</h1>
                 <button
-                    onClick={formik.handleSubmit}
-                    disabled={creating}
-                    className="bg-black hover:bg-gray-800 text-white px-8 py-2.5 rounded-md font-medium transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => navigate('/products')}
+                    className="text-white hover:text-gray-200"
                 >
-                    {creating ? 'Saving...' : 'Save Product'}
+                    <X size={20} />
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left Column - General Info */}
-                <div className="lg:col-span-2 space-y-8">
-                    {/* General Information Section */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">General Information</h2>
-                        <div className="space-y-5">
-                            <InputField formik={formik} label="Product Name" name="name" placeholder="e.g. Dollo 650" />
+            {/* Legacy Body */}
+            <div className="bg-sky-50 p-6 grid grid-cols-1 lg:grid-cols-2 gap-8 font-menu text-sm">
 
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
-                                <textarea
-                                    {...formik.getFieldProps('description')}
-                                    rows="4"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-black focus:border-black focus:outline-none placeholder:text-gray-400"
-                                    placeholder="Enter product description"
+                {/* Left Column: General & Pricing */}
+                <div className="space-y-4">
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3">General Information</h3>
+
+                    <LegacyInput formik={formik} label="Product Name" name="name" />
+
+                    <div className="grid grid-cols-[180px_1fr] items-start gap-4">
+                        <label className="text-gray-900 font-medium text-right pr-2 pt-1">Description</label>
+                        <textarea
+                            {...formik.getFieldProps('description')}
+                            rows="3"
+                            className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 text-sm"
+                        />
+                    </div>
+
+                    <LegacySelect
+                        formik={formik}
+                        label="Company"
+                        name="companyId"
+                        loading={loadingCompanies}
+                        options={companies.map(c => <option key={c.companyId} value={c.companyId}>{c.name}</option>)}
+                    />
+
+                    <LegacySelect
+                        formik={formik}
+                        label="Category"
+                        name="categoryId"
+                        loading={loadingCategories}
+                        options={categories.map(c => <option key={c.categoryId} value={c.categoryId}>{c.name}</option>)}
+                    />
+
+                    <LegacySelect
+                        formik={formik}
+                        label="Salt Composition"
+                        name="saltId"
+                        loading={loadingSalts}
+                        options={salts.map(s => <option key={s.saltId} value={s.saltId}>{s.name}</option>)}
+                    />
+
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3 mt-6">Pricing</h3>
+                    <LegacyInput formik={formik} label="MRP" name="mrp" type="number" />
+                    <LegacyInput formik={formik} label="Purchase Rate" name="purchaseRate" type="number" />
+                    <LegacyInput formik={formik} label="Sale Price" name="salePrice" type="number" />
+
+                </div>
+
+                {/* Right Column: Inventory & Images */}
+                <div className="space-y-4">
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3">Inventory</h3>
+                    <LegacyInput formik={formik} label="SKU / Barcode" name="sku" />
+                    <LegacyInput formik={formik} label="Stock Quantity" name="stock" type="number" />
+
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3 mt-6">Product Images</h3>
+                    <div className="grid grid-cols-[180px_1fr] gap-4">
+                        <label className="text-gray-900 font-medium text-right pr-2 pt-2">Upload Files</label>
+                        <div>
+                            <div className="border border-dashed border-gray-400 bg-white p-4 text-center cursor-pointer hover:bg-gray-50 relative">
+                                <input
+                                    type="file"
+                                    multiple
+                                    onChange={handleImageUpload}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 />
+                                <Upload className="mx-auto text-gray-500 mb-2" size={24} />
+                                <span className="text-gray-600 text-xs">Click to upload images</span>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Company / Brand</label>
-                                    <select
-                                        {...formik.getFieldProps('companyId')}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-black focus:border-black focus:outline-none bg-white"
-                                    >
-                                        <option value="">Select Company</option>
-                                        {loadingCompanies ? <option>Loading...</option> :
-                                            companies.map(comp => (
-                                                <option key={comp.companyId} value={comp.companyId}>{comp.name}</option>
-                                            ))
-                                        }
-                                    </select>
-                                    {formik.touched.companyId && formik.errors.companyId && (
-                                        <p className="text-red-600 text-xs mt-1 font-medium">{formik.errors.companyId}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Category</label>
-                                    <select
-                                        {...formik.getFieldProps('categoryId')}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-black focus:border-black focus:outline-none bg-white"
-                                    >
-                                        <option value="">Select Category</option>
-                                        {loadingCategories ? <option>Loading...</option> :
-                                            categories.map(cat => (
-                                                <option key={cat.categoryId} value={cat.categoryId}>{cat.name}</option>
-                                            ))
-                                        }
-                                    </select>
-                                    {formik.touched.categoryId && formik.errors.categoryId && (
-                                        <p className="text-red-600 text-xs mt-1 font-medium">{formik.errors.categoryId}</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Salt / Composition</label>
-                                <select
-                                    {...formik.getFieldProps('saltId')}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-black focus:border-black focus:outline-none bg-white"
-                                >
-                                    <option value="">Select Composition</option>
-                                    {loadingSalts ? <option>Loading...</option> :
-                                        salts.map(salt => (
-                                            <option key={salt.saltId} value={salt.saltId}>{salt.name}</option>
-                                        ))
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Pricing Section */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Pricing</h2>
-                        <div className="grid grid-cols-3 gap-6">
-                            <InputField formik={formik} label="MRP" name="mrp" type="number" placeholder="0.00" />
-                            <InputField formik={formik} label="Purchase Rate" name="purchaseRate" type="number" placeholder="0.00" />
-                            <InputField formik={formik} label="Sale Price" name="salePrice" type="number" placeholder="0.00" />
+                            {images.length > 0 && (
+                                <ul className="mt-2 space-y-1">
+                                    {images.map((file, idx) => (
+                                        <li key={idx} className="flex justify-between items-center bg-white border border-gray-200 px-2 py-1">
+                                            <span className="text-xs truncate max-w-[200px]">{file.name}</span>
+                                            <button onClick={() => removeImage(idx)} className="text-red-500 hover:text-red-700">
+                                                <X size={14} />
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Right Column - Media & Inventory */}
-                <div className="space-y-8">
-                    {/* Image Upload */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Product Images</h2>
-                        <div className="border border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center text-center hover:bg-gray-50 hover:border-black transition-colors cursor-pointer relative group">
-                            <input
-                                type="file"
-                                multiple
-                                onChange={handleImageUpload}
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            />
-                            <Upload className="text-gray-400 mb-3 group-hover:text-gray-600 transition-colors" size={40} />
-                            <p className="text-sm font-medium text-gray-700">Click to upload image</p>
-                            <p className="text-xs text-gray-500 mt-1">SVG, PNG, JPG or GIF</p>
-                        </div>
-
-                        {/* Image Preview List */}
-                        {images.length > 0 && (
-                            <div className="mt-6 space-y-3">
-                                {images.map((file, idx) => (
-                                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-md">
-                                        <span className="text-xs font-medium text-gray-700 truncate max-w-[150px]">{file.name}</span>
-                                        <button onClick={() => removeImage(idx)} className="text-gray-400 hover:text-red-600 transition-colors">
-                                            <X size={16} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Inventory Section */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Inventory</h2>
-                        <div className="space-y-5">
-                            <InputField formik={formik} label="SKU / Barcode" name="sku" />
-                            <InputField formik={formik} label="Stock Quantity" name="stock" type="number" />
-                        </div>
-                    </div>
-                </div>
+            {/* Footer Actions */}
+            <div className="bg-gray-100 px-6 py-4 flex justify-end gap-3 border-t border-gray-300">
+                <button
+                    onClick={() => navigate('/products')}
+                    className="px-6 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 uppercase shadow-sm"
+                >
+                    Cancel
+                </button>
+                <button
+                    onClick={formik.handleSubmit}
+                    disabled={creating}
+                    className="px-6 py-1.5 text-sm font-medium text-white bg-[#2E5A5A] hover:bg-[#234444] uppercase shadow-sm disabled:opacity-70"
+                >
+                    {creating ? 'Saving...' : 'Save Product'}
+                </button>
             </div>
         </div>
     );

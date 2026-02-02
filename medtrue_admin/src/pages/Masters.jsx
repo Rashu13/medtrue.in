@@ -215,69 +215,119 @@ const Masters = () => {
             {/* Modal - Could be extracted to component */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg w-full max-w-md p-6 shadow-xl">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-bold">{editingItem ? 'Edit' : 'Add'} {config.title}</h3>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                    <div className="rounded-lg w-full shadow-xl overflow-hidden max-w-4xl bg-sky-50">
+
+                        {/* Header */}
+                        <div className="flex justify-between items-center px-4 py-3 bg-[#2E5A5A] text-white">
+                            <h3 className="font-bold text-base uppercase tracking-wider">
+                                {editingItem ? 'Edit' : 'Add'} {config.title.toUpperCase()}
+                            </h3>
+                            <button onClick={() => setIsModalOpen(false)} className="text-white hover:text-gray-200">
                                 <X size={20} />
                             </button>
                         </div>
 
-                        <form onSubmit={formik.handleSubmit} className="space-y-4">
-                            {config.fields.map((field) => (
-                                <div key={field.name}>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
-                                    {field.type === 'textarea' ? (
-                                        <textarea
-                                            name={field.name}
-                                            onChange={formik.handleChange}
-                                            value={formik.values[field.name] || ''}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                        />
-                                    ) : field.type === 'select' ? (
-                                        <select
-                                            name={field.name}
-                                            onChange={(e) => {
-                                                const val = e.target.value === 'true' ? true : e.target.value === 'false' ? false : e.target.value;
-                                                formik.setFieldValue(field.name, val);
-                                            }}
-                                            value={formik.values[field.name]}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                        >
-                                            {field.options.map((opt, i) => (
-                                                <option key={i} value={opt.value}>
-                                                    {opt.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    ) : (
-                                        <input
-                                            type={field.type}
-                                            name={field.name}
-                                            onChange={formik.handleChange}
-                                            value={formik.values[field.name] || ''}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                        />
-                                    )}
-                                </div>
-                            ))}
+                        {/* Unified Legacy Form Layout */}
+                        <form onSubmit={formik.handleSubmit} className="p-6 space-y-1 text-sm font-menu bg-sky-50">
+                            {config.fields.map((field) => {
+                                // Group small usage flags
+                                if (['isNarcotic', 'isScheduleH', 'isScheduleH1', 'isContinued', 'isProhibited', 'type', 'maximumRate'].includes(field.name)) return null;
 
-                            <div className="flex justify-end gap-3 mt-6">
+                                return (
+                                    <div key={field.name} className="grid grid-cols-[180px_1fr] items-center gap-4">
+                                        <label className="text-gray-900 font-medium text-right pr-2">{field.label}</label>
+                                        <span className="hidden">:</span> {/* Visual separator if needed */}
+                                        {field.type === 'textarea' ? (
+                                            <input
+                                                name={field.name}
+                                                onChange={formik.handleChange}
+                                                value={formik.values[field.name] || ''}
+                                                className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8"
+                                            />
+                                        ) : (
+                                            <input
+                                                type={field.type}
+                                                name={field.name}
+                                                onChange={formik.handleChange}
+                                                value={formik.values[field.name] || ''}
+                                                className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8"
+                                            />
+                                        )}
+                                    </div>
+                                );
+                            })}
+
+                            {/* Special Group for Flags */}
+                            <div className="grid grid-cols-[180px_1fr] items-start gap-4 mt-4 pt-4 border-t border-gray-300">
+                                <label className="text-gray-900 font-medium text-right pt-1">Classifications</label>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2">
+                                    {[
+                                        { name: 'isNarcotic', label: 'Narcotic' },
+                                        { name: 'isScheduleH', label: 'Schedule H' },
+                                        { name: 'isScheduleH1', label: 'Schedule H1' },
+                                        { name: 'isContinued', label: 'Continued' },
+                                        { name: 'isProhibited', label: 'Prohibited' }
+                                    ].map(flag => (
+                                        <div key={flag.name} className="flex items-center gap-2">
+                                            <span className="text-gray-700 min-w-[80px]">{flag.label}</span>
+                                            <span className="font-bold">:</span>
+                                            <select
+                                                name={flag.name}
+                                                value={formik.values[flag.name]}
+                                                onChange={(e) => formik.setFieldValue(flag.name, e.target.value === 'true')}
+                                                className="border border-gray-400 px-1 py-0.5 w-16 text-center"
+                                            >
+                                                <option value={false}>N</option>
+                                                <option value={true}>Y</option>
+                                            </select>
+                                        </div>
+                                    ))}
+
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-700 min-w-[80px]">Type</span>
+                                        <span className="font-bold">:</span>
+                                        <select
+                                            name="type"
+                                            value={formik.values.type}
+                                            onChange={formik.handleChange}
+                                            className="border border-gray-400 px-1 py-0.5 w-24"
+                                        >
+                                            <option value="Normal">Normal</option>
+                                            <option value="Antibiotic">Antibiotic</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-700 min-w-[80px]">Max Rate</span>
+                                        <span className="font-bold">:</span>
+                                        <input
+                                            name="maximumRate"
+                                            type="number"
+                                            value={formik.values.maximumRate || ''}
+                                            onChange={formik.handleChange}
+                                            className="border border-gray-400 px-1 py-0.5 w-20 text-right"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-300">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+                                    className="px-6 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-md"
+                                    className="px-6 py-1.5 text-sm font-medium text-white bg-[#2E5A5A] hover:bg-[#234444]"
                                 >
-                                    Save
+                                    Save Record
                                 </button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             )}
