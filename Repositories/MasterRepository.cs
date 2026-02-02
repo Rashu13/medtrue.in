@@ -1,6 +1,7 @@
 using Dapper;
 using MedTrueApi.Models;
 using System.Data;
+using ClosedXML.Excel;
 
 namespace MedTrueApi.Repositories;
 
@@ -43,6 +44,30 @@ public class MasterRepository
         await conn.ExecuteAsync(sql);
     }
 
+    public async Task EnsureCompanySchemaAsync()
+    {
+        using var conn = Connection;
+        var sql = @"
+            DO $$ 
+            BEGIN 
+                -- Add columns if they don't exist
+                BEGIN
+                    ALTER TABLE companies ADD COLUMN preference_order_form INT;
+                    ALTER TABLE companies ADD COLUMN preference_invoice_printing INT;
+                    ALTER TABLE companies ADD COLUMN dump_days INT;
+                    ALTER TABLE companies ADD COLUMN expiry_receive_upto INT;
+                    ALTER TABLE companies ADD COLUMN minimum_margin DECIMAL(18, 2);
+                    ALTER TABLE companies ADD COLUMN sales_tax DECIMAL(5, 2);
+                    ALTER TABLE companies ADD COLUMN sales_cess DECIMAL(5, 2);
+                    ALTER TABLE companies ADD COLUMN purchase_tax DECIMAL(5, 2);
+                    ALTER TABLE companies ADD COLUMN purchase_cess DECIMAL(5, 2);
+                EXCEPTION
+                    WHEN duplicate_column THEN RAISE NOTICE 'column already exists';
+                END;
+            END $$;";
+        await conn.ExecuteAsync(sql);
+    }
+
     // Generic Get All
     public async Task<IEnumerable<T>> GetAllAsync<T>(string tableName)
     {
@@ -71,8 +96,16 @@ public class MasterRepository
     {
         using var conn = Connection;
         var sql = @"
-            INSERT INTO companies (name, code, address, contact_number, is_active) 
-            VALUES (@Name, @Code, @Address, @ContactNumber, @IsActive) 
+            INSERT INTO companies (
+                name, code, address, contact_number, is_active,
+                preference_order_form, preference_invoice_printing, dump_days, expiry_receive_upto,
+                minimum_margin, sales_tax, sales_cess, purchase_tax, purchase_cess
+            ) 
+            VALUES (
+                @Name, @Code, @Address, @ContactNumber, @IsActive,
+                @PreferenceOrderForm, @PreferenceInvoicePrinting, @DumpDays, @ExpiryReceiveUpto,
+                @MinimumMargin, @SalesTax, @SalesCess, @PurchaseTax, @PurchaseCess
+            ) 
             RETURNING company_id";
         return await conn.ExecuteScalarAsync<int>(sql, company);
     }
@@ -82,7 +115,21 @@ public class MasterRepository
         using var conn = Connection;
         var sql = @"
             UPDATE companies 
-            SET name = @Name, code = @Code, address = @Address, contact_number = @ContactNumber, is_active = @IsActive 
+            SET 
+                name = @Name, 
+                code = @Code, 
+                address = @Address, 
+                contact_number = @ContactNumber, 
+                is_active = @IsActive,
+                preference_order_form = @PreferenceOrderForm,
+                preference_invoice_printing = @PreferenceInvoicePrinting,
+                dump_days = @DumpDays,
+                expiry_receive_upto = @ExpiryReceiveUpto,
+                minimum_margin = @MinimumMargin,
+                sales_tax = @SalesTax,
+                sales_cess = @SalesCess,
+                purchase_tax = @PurchaseTax,
+                purchase_cess = @PurchaseCess
             WHERE company_id = @CompanyId";
         await conn.ExecuteAsync(sql, company);
     }
@@ -224,4 +271,114 @@ public class MasterRepository
         using var conn = Connection;
         await conn.ExecuteAsync("DELETE FROM item_types WHERE type_id = @Id", new { Id = id });
     }
+
+    // Import / Upload Logic
+    public async Task<int> ImportMasterDataAsync(string type, Stream fileStream)
+    {
+        using var workbook = new XLWorkbook(fileStream);
+        var worksheet = workbook.Worksheet(1);
+        var rows = worksheet.RangeUsed().RowsUsed().Skip(1); // Skip header
+
+        int count = 0;
+        foreach (var row in rows)
+        {
+            try 
+            {
+                switch (type.ToLower())
+                {
+                    case "companies":
+                        var company = new Company
+                        {
+                            Name = row.Cell(1).GetValue<string>(),
+                            Code = row.Cell(2).GetValue<string>(),
+                            ContactNumber = row.Cell(3).GetValue<string>(),
+                            Address = row.Cell(4).GetValue<string>(),
+                            // Initialize defaults for new fields if not present in basic upload
+                            IsActive = true,
+                             // Optional: Advanced fields if columns exist (assuming fixed order for simplicity for now, or use named lookup later)
+                             // For "Sabke liye" quick implementation, we prioritize getting the basic data in, users can edit details.
+                        };
+                         // Try to read advanced fields if they exist (cols 5+)
+                        if(!row.Cell(5).IsEmpty()) company.PreferenceOrderForm = row.Cell(5).GetValue<int>();
+                        if(!row.Cell(6).IsEmpty()) company.PreferenceInvoicePrinting = row.Cell(6).GetValue<int>();
+                        if(!row.Cell(7).IsEmpty()) company.DumpDays = row.Cell(7).GetValue<int>();
+                        if(!row.Cell(8).IsEmpty()) company.ExpiryReceiveUpto = row.Cell(8).GetValue<int>();
+                        if(!row.Cell(9).IsEmpty()) company.MinimumMargin = row.Cell(9).GetValue<decimal>();
+                        if(!row.Cell(10).IsEmpty()) company.SalesTax = row.Cell(10).GetValue<decimal>();
+                        if(!row.Cell(11).IsEmpty()) company.SalesCess = row.Cell(11).GetValue<decimal>();
+                        if(!row.Cell(12).IsEmpty()) company.PurchaseTax = row.Cell(12).GetValue<decimal>();
+                        if(!row.Cell(13).IsEmpty()) company.PurchaseCess = row.Cell(13).GetValue<decimal>();
+
+                        await CreateCompanyAsync(company);
+                        break;
+
+                    case "salts":
+                        var salt = new Salt
+                        {
+                            Name = row.Cell(1).GetValue<string>(),
+                            Dosage = row.Cell(2).GetValue<string>(),
+                            Type = row.Cell(3).GetValue<string>(),
+                            Indications = row.Cell(4).GetValue<string>(),
+                            SideEffects = row.Cell(5).GetValue<string>(),
+                            SpecialPrecautions = row.Cell(6).GetValue<string>(),
+                            DrugInteractions = row.Cell(7).GetValue<string>(),
+                            Description = row.Cell(8).GetValue<string>(),
+                            IsActive = true
+                        };
+                         // Boolean flags (cols 9+) - parsing "Y"/"N" or true/false
+                        if(!row.Cell(9).IsEmpty()) salt.IsNarcotic = ParseBool(row.Cell(9).Value.ToString());
+                        if(!row.Cell(10).IsEmpty()) salt.IsScheduleH = ParseBool(row.Cell(10).Value.ToString());
+                        if(!row.Cell(11).IsEmpty()) salt.IsScheduleH1 = ParseBool(row.Cell(11).Value.ToString());
+                        if(!row.Cell(12).IsEmpty()) salt.IsContinued = ParseBool(row.Cell(12).Value.ToString());
+                        if(!row.Cell(13).IsEmpty()) salt.IsProhibited = ParseBool(row.Cell(13).Value.ToString());
+
+                        await CreateSaltAsync(salt);
+                        break;
+
+                    case "categories":
+                        var category = new Category
+                        {
+                            Name = row.Cell(1).GetValue<string>()
+                            // ParentId support pending
+                        };
+                        await CreateCategoryAsync(category);
+                        break;
+
+                    case "units":
+                        var unit = new Unit
+                        {
+                            Name = row.Cell(1).GetValue<string>(),
+                            Description = row.Cell(2).GetValue<string>()
+                        };
+                        await CreateUnitAsync(unit);
+                        break;
+
+                    case "itemtypes":
+                        var itemType = new ItemType
+                        {
+                            Name = row.Cell(1).GetValue<string>()
+                        };
+                        await CreateItemTypeAsync(itemType);
+                        break;
+                }
+                count++;
+            }
+            catch (Exception ex)
+            {
+                // Verify if its just an empty row at end
+                if (string.IsNullOrWhiteSpace(row.Cell(1).GetString())) continue;
+                // Log error or continue? For now continue.
+                Console.WriteLine($"Error importing row {row.RowNumber()}: {ex.Message}");
+            }
+        }
+        return count;
+    }
+
+    private bool ParseBool(string val)
+    {
+        if (string.IsNullOrWhiteSpace(val)) return false;
+        val = val.Trim().ToLower();
+        return val == "1" || val == "true" || val == "yes" || val == "y";
+    }
 }
+

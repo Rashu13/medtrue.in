@@ -8,6 +8,17 @@ public class Company
     public string? Address { get; set; }
     public string? ContactNumber { get; set; }
     public bool IsActive { get; set; } = true;
+
+    // Extended Details from Legacy UI
+    public int? PreferenceOrderForm { get; set; }
+    public int? PreferenceInvoicePrinting { get; set; }
+    public int? DumpDays { get; set; }
+    public int? ExpiryReceiveUpto { get; set; }
+    public decimal? MinimumMargin { get; set; }
+    public decimal? SalesTax { get; set; }
+    public decimal? SalesCess { get; set; }
+    public decimal? PurchaseTax { get; set; }
+    public decimal? PurchaseCess { get; set; }
 }
 
 public class Salt

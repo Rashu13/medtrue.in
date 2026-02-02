@@ -28,6 +28,7 @@ using (var scope = app.Services.CreateScope())
     // Auto-migrate Salts table
     var masterRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.MasterRepository>();
     await masterRepo.EnsureSaltSchemaAsync();
+    await masterRepo.EnsureCompanySchemaAsync();
 }
 
 // Configure the HTTP request pipeline.

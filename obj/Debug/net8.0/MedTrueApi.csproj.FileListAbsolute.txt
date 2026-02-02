@@ -55,3 +55,11 @@ D:\medtrue.in\bin\Debug\net8.0\medtrue_app\macos\Runner\Assets.xcassets\AppIcon.
 D:\medtrue.in\bin\Debug\net8.0\medtrue_app\web\manifest.json
 D:\medtrue.in\bin\Debug\net8.0\package-lock.json
 D:\medtrue.in\bin\Debug\net8.0\package.json
+D:\medtrue.in\bin\Debug\net8.0\ClosedXML.dll
+D:\medtrue.in\bin\Debug\net8.0\ClosedXML.Parser.dll
+D:\medtrue.in\bin\Debug\net8.0\DocumentFormat.OpenXml.dll
+D:\medtrue.in\bin\Debug\net8.0\DocumentFormat.OpenXml.Framework.dll
+D:\medtrue.in\bin\Debug\net8.0\ExcelNumberFormat.dll
+D:\medtrue.in\bin\Debug\net8.0\RBush.dll
+D:\medtrue.in\bin\Debug\net8.0\SixLabors.Fonts.dll
+D:\medtrue.in\bin\Debug\net8.0\System.IO.Packaging.dll

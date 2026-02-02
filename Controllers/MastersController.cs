@@ -22,6 +22,13 @@ public class MastersController : ControllerBase
         return Ok("Salt schema updated successfully.");
     }
 
+    [HttpPost("migrate-companies")]
+    public async Task<IActionResult> MigrateCompanies()
+    {
+        await _repository.EnsureCompanySchemaAsync();
+        return Ok("Company schema updated successfully.");
+    }
+
     [HttpGet("companies")]
     public async Task<IActionResult> GetCompanies([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
@@ -130,6 +137,95 @@ public class MastersController : ControllerBase
         if (id != itemType.TypeId) return BadRequest();
         await _repository.UpdateItemTypeAsync(itemType);
         return NoContent();
+    }
+
+    // Upload Endpoint
+    [HttpPost("upload/{type}")]
+    public async Task<IActionResult> UploadMasterData(string type, IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("File is empty or not provided.");
+
+        try
+        {
+            using var stream = file.OpenReadStream();
+            var count = await _repository.ImportMasterDataAsync(type, stream);
+            return Ok(new { Message = $"Successfully imported {count} records for {type}.", Count = count });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    // Template Download Endpoint
+    [HttpGet("template/{type}")]
+    public IActionResult DownloadTemplate(string type)
+    {
+        using var workbook = new ClosedXML.Excel.XLWorkbook();
+        var worksheet = workbook.Worksheets.Add(type);
+        
+        switch (type.ToLower())
+        {
+            case "companies":
+                worksheet.Cell(1, 1).Value = "Name";
+                worksheet.Cell(1, 2).Value = "Code";
+                worksheet.Cell(1, 3).Value = "Contact Number";
+                worksheet.Cell(1, 4).Value = "Address";
+                worksheet.Cell(1, 5).Value = "Order Form (0/1)";
+                worksheet.Cell(1, 6).Value = "Inv Printing (0/1)";
+                worksheet.Cell(1, 7).Value = "Dump Days";
+                worksheet.Cell(1, 8).Value = "Expiry Receive Upto";
+                worksheet.Cell(1, 9).Value = "Minimum Margin";
+                worksheet.Cell(1, 10).Value = "Sales Tax %";
+                worksheet.Cell(1, 11).Value = "Sales Cess %";
+                worksheet.Cell(1, 12).Value = "Purchase Tax %";
+                worksheet.Cell(1, 13).Value = "Purchase Cess %";
+                // Add sample row
+                worksheet.Cell(2, 1).Value = "Demo Pharma";
+                worksheet.Cell(2, 2).Value = "DPH01";
+                worksheet.Cell(2, 3).Value = "9876543210";
+                worksheet.Cell(2, 4).Value = "123 Main St";
+                worksheet.Cell(2, 5).Value = 1;
+                break;
+
+            case "salts":
+                worksheet.Cell(1, 1).Value = "Name";
+                worksheet.Cell(1, 2).Value = "Dosage";
+                worksheet.Cell(1, 3).Value = "Type";
+                worksheet.Cell(1, 4).Value = "Indications";
+                worksheet.Cell(1, 5).Value = "Side Effects";
+                worksheet.Cell(1, 6).Value = "Special Precautions";
+                worksheet.Cell(1, 7).Value = "Drug Interactions";
+                worksheet.Cell(1, 8).Value = "Note/Description";
+                worksheet.Cell(1, 9).Value = "Narcotic (Y/N)";
+                worksheet.Cell(1, 10).Value = "Sch H (Y/N)";
+                worksheet.Cell(1, 11).Value = "Sch H1 (Y/N)";
+                worksheet.Cell(1, 12).Value = "Continued (Y/N)";
+                worksheet.Cell(1, 13).Value = "Prohibited (Y/N)";
+                break;
+
+            case "categories":
+                worksheet.Cell(1, 1).Value = "Name";
+                break;
+
+            case "units":
+                worksheet.Cell(1, 1).Value = "Name";
+                worksheet.Cell(1, 2).Value = "Description";
+                break;
+
+            case "itemtypes":
+                worksheet.Cell(1, 1).Value = "Name";
+                break;
+
+            default:
+                return BadRequest("Invalid type.");
+        }
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        var content = stream.ToArray();
+        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{type}_template.xlsx");
     }
 
     // Delete Endpoints
