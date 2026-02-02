@@ -94,4 +94,11 @@ public class ProductsController : ControllerBase
         // Note: File deletion from disk is omitted for safety/simplicity in this step.
         return NoContent();
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(long id)
+    {
+        await _repository.DeleteProductAsync(id);
+        return NoContent();
+    }
 }

@@ -76,4 +76,35 @@ public class MasterRepository
             RETURNING type_id";
         return await conn.ExecuteScalarAsync<int>(sql, itemType);
     }
+
+    // Delete Methods
+    public async Task DeleteCompanyAsync(int id)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM companies WHERE company_id = @Id", new { Id = id });
+    }
+
+    public async Task DeleteSaltAsync(int id)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM salts WHERE salt_id = @Id", new { Id = id });
+    }
+
+    public async Task DeleteCategoryAsync(int id)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM categories WHERE category_id = @Id", new { Id = id });
+    }
+
+    public async Task DeleteUnitAsync(int id)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM units WHERE unit_id = @Id", new { Id = id });
+    }
+
+    public async Task DeleteItemTypeAsync(int id)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM item_types WHERE type_id = @Id", new { Id = id });
+    }
 }

@@ -64,4 +64,40 @@ public class MastersController : ControllerBase
         var id = await _repository.CreateItemTypeAsync(itemType);
         return CreatedAtAction(nameof(GetItemTypes), new { id }, itemType);
     }
+
+    // Delete Endpoints
+    [HttpDelete("companies/{id}")]
+    public async Task<IActionResult> DeleteCompany(int id)
+    {
+        await _repository.DeleteCompanyAsync(id);
+        return NoContent();
+    }
+
+    [HttpDelete("salts/{id}")]
+    public async Task<IActionResult> DeleteSalt(int id)
+    {
+        await _repository.DeleteSaltAsync(id);
+        return NoContent();
+    }
+
+    [HttpDelete("categories/{id}")]
+    public async Task<IActionResult> DeleteCategory(int id)
+    {
+        await _repository.DeleteCategoryAsync(id);
+        return NoContent();
+    }
+
+    [HttpDelete("units/{id}")]
+    public async Task<IActionResult> DeleteUnit(int id)
+    {
+        await _repository.DeleteUnitAsync(id);
+        return NoContent();
+    }
+
+    [HttpDelete("itemtypes/{id}")]
+    public async Task<IActionResult> DeleteItemType(int id)
+    {
+        await _repository.DeleteItemTypeAsync(id);
+        return NoContent();
+    }
 }

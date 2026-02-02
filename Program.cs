@@ -1,3 +1,7 @@
+
+// Configure Dapper to support snake_case column names
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

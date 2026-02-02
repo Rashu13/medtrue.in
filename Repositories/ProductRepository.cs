@@ -88,4 +88,10 @@ public class ProductRepository
         using var conn = Connection;
         await conn.ExecuteAsync("DELETE FROM product_images WHERE img_id = @ImgId", new { ImgId = imgId });
     }
+
+    public async Task DeleteProductAsync(long id)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM products WHERE product_id = @Id", new { Id = id });
+    }
 }
