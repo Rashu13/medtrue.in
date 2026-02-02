@@ -25,6 +25,14 @@ public class MastersController : ControllerBase
         return CreatedAtAction(nameof(GetCompanies), new { id }, company);
     }
 
+    [HttpPut("companies/{id}")]
+    public async Task<IActionResult> UpdateCompany(int id, Company company)
+    {
+        if (id != company.CompanyId) return BadRequest();
+        await _repository.UpdateCompanyAsync(company);
+        return NoContent();
+    }
+
     [HttpGet("salts")]
     public async Task<IActionResult> GetSalts() => Ok(await _repository.GetAllAsync<Salt>("salts"));
 
@@ -35,6 +43,14 @@ public class MastersController : ControllerBase
         return CreatedAtAction(nameof(GetSalts), new { id }, salt);
     }
 
+    [HttpPut("salts/{id}")]
+    public async Task<IActionResult> UpdateSalt(int id, Salt salt)
+    {
+        if (id != salt.SaltId) return BadRequest();
+        await _repository.UpdateSaltAsync(salt);
+        return NoContent();
+    }
+
     [HttpGet("categories")]
     public async Task<IActionResult> GetCategories() => Ok(await _repository.GetAllAsync<Category>("categories"));
 
@@ -43,6 +59,14 @@ public class MastersController : ControllerBase
     {
         var id = await _repository.CreateCategoryAsync(category);
         return CreatedAtAction(nameof(GetCategories), new { id }, category);
+    }
+
+    [HttpPut("categories/{id}")]
+    public async Task<IActionResult> UpdateCategory(int id, Category category)
+    {
+        if (id != category.CategoryId) return BadRequest();
+        await _repository.UpdateCategoryAsync(category);
+        return NoContent();
     }
     
     [HttpGet("units")]
@@ -55,6 +79,14 @@ public class MastersController : ControllerBase
         return CreatedAtAction(nameof(GetUnits), new { id }, unit);
     }
 
+    [HttpPut("units/{id}")]
+    public async Task<IActionResult> UpdateUnit(int id, Unit unit)
+    {
+        if (id != unit.UnitId) return BadRequest();
+        await _repository.UpdateUnitAsync(unit);
+        return NoContent();
+    }
+
     [HttpGet("itemtypes")]
     public async Task<IActionResult> GetItemTypes() => Ok(await _repository.GetAllAsync<ItemType>("item_types"));
 
@@ -63,6 +95,14 @@ public class MastersController : ControllerBase
     {
         var id = await _repository.CreateItemTypeAsync(itemType);
         return CreatedAtAction(nameof(GetItemTypes), new { id }, itemType);
+    }
+
+    [HttpPut("itemtypes/{id}")]
+    public async Task<IActionResult> UpdateItemType(int id, ItemType itemType)
+    {
+        if (id != itemType.TypeId) return BadRequest();
+        await _repository.UpdateItemTypeAsync(itemType);
+        return NoContent();
     }
 
     // Delete Endpoints

@@ -12,6 +12,7 @@ const validationSchema = Yup.object({
     purchaseRate: Yup.number().required('Purchase Rate is required'),
     companyId: Yup.string().required('Company is required'),
     categoryId: Yup.string().required('Category is required'),
+    saltId: Yup.string().nullable(), // Optional but recommended
 });
 
 const AddProduct = () => {
@@ -20,6 +21,7 @@ const AddProduct = () => {
     // Facades for Dropdowns
     const { data: companies, loading: loadingCompanies } = useMasterFacade('masters/companies');
     const { data: categories, loading: loadingCategories } = useMasterFacade('masters/categories');
+    const { data: salts, loading: loadingSalts } = useMasterFacade('masters/salts');
 
     const formik = useFormik({
         initialValues: {
@@ -27,6 +29,7 @@ const AddProduct = () => {
             description: '',
             companyId: '',
             categoryId: '',
+            saltId: '',
             mrp: '',
             purchaseRate: '',
             salePrice: '',
@@ -135,6 +138,21 @@ const AddProduct = () => {
                                         <p className="text-red-600 text-xs mt-1 font-medium">{formik.errors.categoryId}</p>
                                     )}
                                 </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Salt / Composition</label>
+                                <select
+                                    {...formik.getFieldProps('saltId')}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-black focus:border-black focus:outline-none bg-white"
+                                >
+                                    <option value="">Select Composition</option>
+                                    {loadingSalts ? <option>Loading...</option> :
+                                        salts.map(salt => (
+                                            <option key={salt.saltId} value={salt.saltId}>{salt.name}</option>
+                                        ))
+                                    }
+                                </select>
                             </div>
                         </div>
                     </div>
