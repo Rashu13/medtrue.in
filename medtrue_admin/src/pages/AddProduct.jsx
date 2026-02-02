@@ -3,6 +3,8 @@ import * as Yup from 'yup';
 import { Upload, X } from 'lucide-react';
 import { useState } from 'react';
 import { useMasterFacade } from '../facades/useMasterFacade';
+import { useProductFacade } from '../facades/useProductFacade';
+import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 
 // Flat Design: No shadows, light borders, high contrast labels
@@ -15,8 +17,26 @@ const validationSchema = Yup.object({
     saltId: Yup.string().nullable(), // Optional but recommended
 });
 
+const InputField = ({ label, name, type = 'text', placeholder, formik, ...props }) => (
+    <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-1.5">{label}</label>
+        <input
+            type={type}
+            {...formik.getFieldProps(name)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-black focus:border-black focus:outline-none transition-all placeholder:text-gray-400"
+            placeholder={placeholder}
+            {...props}
+        />
+        {formik.touched[name] && formik.errors[name] && (
+            <p className="text-red-600 text-xs mt-1 font-medium">{formik.errors[name]}</p>
+        )}
+    </div>
+);
+
 const AddProduct = () => {
+    const navigate = useNavigate();
     const [images, setImages] = useState([]);
+    const { create: createProduct, loading: creating } = useProductFacade();
 
     // Facades for Dropdowns
     const { data: companies, loading: loadingCompanies } = useMasterFacade('masters/companies');
@@ -37,10 +57,15 @@ const AddProduct = () => {
             stock: '',
         },
         validationSchema,
-        onSubmit: (values) => {
-            console.log('Form Values:', values);
-            console.log('Images:', images);
-            alert('Product Saved (Check Console)');
+        onSubmit: async (values) => {
+            try {
+                await createProduct(values, images);
+                alert('Product Saved Successfully!');
+                navigate('/products');
+            } catch (error) {
+                console.error('Failed to create product:', error);
+                alert('Failed to save product. Check console for details.');
+            }
         },
     });
 
@@ -53,21 +78,7 @@ const AddProduct = () => {
         setImages(images.filter((_, i) => i !== index));
     };
 
-    const InputField = ({ label, name, type = 'text', placeholder, ...props }) => (
-        <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{label}</label>
-            <input
-                type={type}
-                {...formik.getFieldProps(name)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-black focus:border-black focus:outline-none transition-all placeholder:text-gray-400"
-                placeholder={placeholder}
-                {...props}
-            />
-            {formik.touched[name] && formik.errors[name] && (
-                <p className="text-red-600 text-xs mt-1 font-medium">{formik.errors[name]}</p>
-            )}
-        </div>
-    );
+
 
     return (
         <div className="max-w-6xl mx-auto">
@@ -78,9 +89,10 @@ const AddProduct = () => {
                 </div>
                 <button
                     onClick={formik.handleSubmit}
-                    className="bg-black hover:bg-gray-800 text-white px-8 py-2.5 rounded-md font-medium transition-colors text-sm"
+                    disabled={creating}
+                    className="bg-black hover:bg-gray-800 text-white px-8 py-2.5 rounded-md font-medium transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Save Product
+                    {creating ? 'Saving...' : 'Save Product'}
                 </button>
             </div>
 
@@ -91,7 +103,7 @@ const AddProduct = () => {
                     <div className="bg-white border border-gray-200 rounded-lg p-6">
                         <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">General Information</h2>
                         <div className="space-y-5">
-                            <InputField label="Product Name" name="name" placeholder="e.g. Dollo 650" />
+                            <InputField formik={formik} label="Product Name" name="name" placeholder="e.g. Dollo 650" />
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
@@ -161,9 +173,9 @@ const AddProduct = () => {
                     <div className="bg-white border border-gray-200 rounded-lg p-6">
                         <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Pricing</h2>
                         <div className="grid grid-cols-3 gap-6">
-                            <InputField label="MRP" name="mrp" type="number" placeholder="0.00" />
-                            <InputField label="Purchase Rate" name="purchaseRate" type="number" placeholder="0.00" />
-                            <InputField label="Sale Price" name="salePrice" type="number" placeholder="0.00" />
+                            <InputField formik={formik} label="MRP" name="mrp" type="number" placeholder="0.00" />
+                            <InputField formik={formik} label="Purchase Rate" name="purchaseRate" type="number" placeholder="0.00" />
+                            <InputField formik={formik} label="Sale Price" name="salePrice" type="number" placeholder="0.00" />
                         </div>
                     </div>
                 </div>
@@ -204,8 +216,8 @@ const AddProduct = () => {
                     <div className="bg-white border border-gray-200 rounded-lg p-6">
                         <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Inventory</h2>
                         <div className="space-y-5">
-                            <InputField label="SKU / Barcode" name="sku" />
-                            <InputField label="Stock Quantity" name="stock" type="number" />
+                            <InputField formik={formik} label="SKU / Barcode" name="sku" />
+                            <InputField formik={formik} label="Stock Quantity" name="stock" type="number" />
                         </div>
                     </div>
                 </div>
