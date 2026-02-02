@@ -22,6 +22,22 @@ public class MasterRepository
         return await conn.QueryAsync<T>($"SELECT * FROM {tableName}");
     }
 
+    // Generic Get Paged
+    public async Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync<T>(string tableName, int page, int pageSize)
+    {
+        using var conn = Connection;
+        var offset = (page - 1) * pageSize;
+        var sql = $@"
+            SELECT * FROM {tableName} ORDER BY 1 LIMIT @PageSize OFFSET @Offset;
+            SELECT COUNT(*) FROM {tableName};";
+        
+        using var multi = await conn.QueryMultipleAsync(sql, new { PageSize = pageSize, Offset = offset });
+        var items = await multi.ReadAsync<T>();
+        var totalCount = await multi.ReadFirstAsync<int>();
+        
+        return (items, totalCount);
+    }
+
     // Companies
     public async Task<int> CreateCompanyAsync(Company company)
     {

@@ -16,7 +16,11 @@ public class MastersController : ControllerBase
     }
 
     [HttpGet("companies")]
-    public async Task<IActionResult> GetCompanies() => Ok(await _repository.GetAllAsync<Company>("companies"));
+    public async Task<IActionResult> GetCompanies([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<Company>("companies", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
 
     [HttpPost("companies")]
     public async Task<IActionResult> CreateCompany(Company company)
@@ -34,7 +38,11 @@ public class MastersController : ControllerBase
     }
 
     [HttpGet("salts")]
-    public async Task<IActionResult> GetSalts() => Ok(await _repository.GetAllAsync<Salt>("salts"));
+    public async Task<IActionResult> GetSalts([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<Salt>("salts", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
 
     [HttpPost("salts")]
     public async Task<IActionResult> CreateSalt(Salt salt)
@@ -52,7 +60,11 @@ public class MastersController : ControllerBase
     }
 
     [HttpGet("categories")]
-    public async Task<IActionResult> GetCategories() => Ok(await _repository.GetAllAsync<Category>("categories"));
+    public async Task<IActionResult> GetCategories([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<Category>("categories", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
 
     [HttpPost("categories")]
     public async Task<IActionResult> CreateCategory(Category category)
@@ -70,7 +82,11 @@ public class MastersController : ControllerBase
     }
     
     [HttpGet("units")]
-    public async Task<IActionResult> GetUnits() => Ok(await _repository.GetAllAsync<Unit>("units"));
+    public async Task<IActionResult> GetUnits([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<Unit>("units", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
 
     [HttpPost("units")]
     public async Task<IActionResult> CreateUnit(Unit unit)
@@ -88,7 +104,11 @@ public class MastersController : ControllerBase
     }
 
     [HttpGet("itemtypes")]
-    public async Task<IActionResult> GetItemTypes() => Ok(await _repository.GetAllAsync<ItemType>("item_types"));
+    public async Task<IActionResult> GetItemTypes([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<ItemType>("item_types", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
 
     [HttpPost("itemtypes")]
     public async Task<IActionResult> CreateItemType(ItemType itemType)
