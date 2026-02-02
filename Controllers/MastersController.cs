@@ -15,6 +15,13 @@ public class MastersController : ControllerBase
         _repository = repository;
     }
 
+    [HttpPost("migrate-salts")]
+    public async Task<IActionResult> MigrateSalts()
+    {
+        await _repository.EnsureSaltSchemaAsync();
+        return Ok("Salt schema updated successfully.");
+    }
+
     [HttpGet("companies")]
     public async Task<IActionResult> GetCompanies([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {

@@ -15,6 +15,34 @@ public class MasterRepository
 
     private IDbConnection Connection => _connectionFactory.CreateConnection();
 
+    // Schema Migration Helper (Temporary/Auto-fix)
+    public async Task EnsureSaltSchemaAsync()
+    {
+        using var conn = Connection;
+        var sql = @"
+            DO $$ 
+            BEGIN 
+                -- Add columns if they don't exist
+                BEGIN
+                    ALTER TABLE salts ADD COLUMN indications TEXT;
+                    ALTER TABLE salts ADD COLUMN dosage TEXT;
+                    ALTER TABLE salts ADD COLUMN side_effects TEXT;
+                    ALTER TABLE salts ADD COLUMN special_precautions TEXT;
+                    ALTER TABLE salts ADD COLUMN drug_interactions TEXT;
+                    ALTER TABLE salts ADD COLUMN is_narcotic BOOLEAN DEFAULT FALSE;
+                    ALTER TABLE salts ADD COLUMN is_schedule_h BOOLEAN DEFAULT FALSE;
+                    ALTER TABLE salts ADD COLUMN is_schedule_h1 BOOLEAN DEFAULT FALSE;
+                    ALTER TABLE salts ADD COLUMN type TEXT;
+                    ALTER TABLE salts ADD COLUMN maximum_rate DECIMAL(18, 2);
+                    ALTER TABLE salts ADD COLUMN is_continued BOOLEAN DEFAULT TRUE;
+                    ALTER TABLE salts ADD COLUMN is_prohibited BOOLEAN DEFAULT FALSE;
+                EXCEPTION
+                    WHEN duplicate_column THEN RAISE NOTICE 'column already exists';
+                END;
+            END $$;";
+        await conn.ExecuteAsync(sql);
+    }
+
     // Generic Get All
     public async Task<IEnumerable<T>> GetAllAsync<T>(string tableName)
     {
@@ -64,8 +92,16 @@ public class MasterRepository
     {
         using var conn = Connection;
         var sql = @"
-            INSERT INTO salts (name, description, is_active) 
-            VALUES (@Name, @Description, @IsActive) 
+            INSERT INTO salts (
+                name, description, is_active, 
+                indications, dosage, side_effects, special_precautions, drug_interactions,
+                is_narcotic, is_schedule_h, is_schedule_h1, type, maximum_rate, is_continued, is_prohibited
+            ) 
+            VALUES (
+                @Name, @Description, @IsActive,
+                @Indications, @Dosage, @SideEffects, @SpecialPrecautions, @DrugInteractions,
+                @IsNarcotic, @IsScheduleH, @IsScheduleH1, @Type, @MaximumRate, @IsContinued, @IsProhibited
+            ) 
             RETURNING salt_id";
         return await conn.ExecuteScalarAsync<int>(sql, salt);
     }
@@ -75,7 +111,22 @@ public class MasterRepository
         using var conn = Connection;
         var sql = @"
             UPDATE salts 
-            SET name = @Name, description = @Description, is_active = @IsActive 
+            SET 
+                name = @Name, 
+                description = @Description, 
+                is_active = @IsActive,
+                indications = @Indications,
+                dosage = @Dosage,
+                side_effects = @SideEffects,
+                special_precautions = @SpecialPrecautions,
+                drug_interactions = @DrugInteractions,
+                is_narcotic = @IsNarcotic,
+                is_schedule_h = @IsScheduleH,
+                is_schedule_h1 = @IsScheduleH1,
+                type = @Type,
+                maximum_rate = @MaximumRate,
+                is_continued = @IsContinued,
+                is_prohibited = @IsProhibited
             WHERE salt_id = @SaltId";
         await conn.ExecuteAsync(sql, salt);
     }

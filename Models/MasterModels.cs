@@ -14,8 +14,22 @@ public class Salt
 {
     public int SaltId { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
+    public string? Description { get; set; } // Can serve as 'Note'
     public bool IsActive { get; set; } = true;
+
+    // Extended Details from UI
+    public string? Indications { get; set; }
+    public string? Dosage { get; set; }
+    public string? SideEffects { get; set; }
+    public string? SpecialPrecautions { get; set; }
+    public string? DrugInteractions { get; set; }
+    public bool IsNarcotic { get; set; }
+    public bool IsScheduleH { get; set; }
+    public bool IsScheduleH1 { get; set; }
+    public string? Type { get; set; } // Normal, etc.
+    public decimal? MaximumRate { get; set; }
+    public bool IsContinued { get; set; } = true;
+    public bool IsProhibited { get; set; } = false;
 }
 
 public class Category

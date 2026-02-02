@@ -12,7 +12,7 @@ export const useMasterFacade = (endpoint) => {
 
     // Pagination State
     const [page, setPage] = useState(1);
-    const [pageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
 
     // Reset page when endpoint changes

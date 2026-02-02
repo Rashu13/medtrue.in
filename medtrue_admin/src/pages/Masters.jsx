@@ -49,14 +49,57 @@ const masterConfig = {
         idField: 'saltId',
         columns: [
             { label: 'Name', key: 'name' },
-            { label: 'Description', key: 'description' },
+            { label: 'Dosage', key: 'dosage' },
+            { label: 'Type', key: 'type' },
         ],
         schema: Yup.object({
             name: Yup.string().required('Name is required'),
         }),
         fields: [
             { name: 'name', label: 'Salt Name', type: 'text' },
-            { name: 'description', label: 'Description', type: 'textarea' },
+            { name: 'indications', label: 'Indications', type: 'textarea' },
+            { name: 'dosage', label: 'Dosage', type: 'textarea' },
+            { name: 'sideEffects', label: 'Side Effects', type: 'textarea' },
+            { name: 'specialPrecautions', label: 'Special Precautions', type: 'textarea' },
+            { name: 'drugInteractions', label: 'Drug Interactions', type: 'textarea' },
+            { name: 'description', label: 'Note', type: 'textarea' },
+            {
+                name: 'isNarcotic',
+                label: 'Narcotic',
+                type: 'select',
+                options: [{ value: false, label: 'N' }, { value: true, label: 'Y' }]
+            },
+            {
+                name: 'isScheduleH',
+                label: 'Schedule H',
+                type: 'select',
+                options: [{ value: false, label: 'N' }, { value: true, label: 'Y' }]
+            },
+            {
+                name: 'isScheduleH1',
+                label: 'Schedule H1',
+                type: 'select',
+                options: [{ value: false, label: 'N' }, { value: true, label: 'Y' }]
+            },
+            {
+                name: 'type',
+                label: 'Type',
+                type: 'select',
+                options: [{ value: 'Normal', label: 'Normal' }, { value: 'Antibiotic', label: 'Antibiotic' }] // Add more as needed
+            },
+            { name: 'maximumRate', label: 'Maximum Rate', type: 'number' },
+            {
+                name: 'isContinued',
+                label: 'Continued',
+                type: 'select',
+                options: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }]
+            },
+            {
+                name: 'isProhibited',
+                label: 'Prohibited',
+                type: 'select',
+                options: [{ value: false, label: 'No' }, { value: true, label: 'Yes' }]
+            },
         ]
     },
     units: {
@@ -191,6 +234,22 @@ const Masters = () => {
                                             value={formik.values[field.name] || ''}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
                                         />
+                                    ) : field.type === 'select' ? (
+                                        <select
+                                            name={field.name}
+                                            onChange={(e) => {
+                                                const val = e.target.value === 'true' ? true : e.target.value === 'false' ? false : e.target.value;
+                                                formik.setFieldValue(field.name, val);
+                                            }}
+                                            value={formik.values[field.name]}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
+                                        >
+                                            {field.options.map((opt, i) => (
+                                                <option key={i} value={opt.value}>
+                                                    {opt.label}
+                                                </option>
+                                            ))}
+                                        </select>
                                     ) : (
                                         <input
                                             type={field.type}
