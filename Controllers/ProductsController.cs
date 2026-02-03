@@ -101,4 +101,18 @@ public class ProductsController : ControllerBase
         await _repository.DeleteProductAsync(id);
         return NoContent();
     }
+
+    [HttpGet("generate-sku")]
+    public async Task<IActionResult> GenerateSku()
+    {
+        var sku = await _repository.GenerateUniqueSkuAsync();
+        return Ok(new { sku });
+    }
+
+    [HttpPost("migrate-schema")]
+    public async Task<IActionResult> MigrateSchema()
+    {
+        await _repository.EnsureProductSchemaAsync();
+        return Ok("Schema updated successfully.");
+    }
 }

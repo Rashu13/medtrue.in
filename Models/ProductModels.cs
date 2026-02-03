@@ -18,6 +18,7 @@ public class Product
     public int? UnitPrimaryId { get; set; }
     public int? UnitSecondaryId { get; set; }
     public decimal ConversionFactor { get; set; } = 1;
+    public string? UnitPrimaryName { get; set; } // Fetched via JOIN
 
     // Status
     public string Status { get; set; } = "CONTINUE";
@@ -35,11 +36,13 @@ public class Product
     public int MaxQty { get; set; }
     public int ReorderQty { get; set; }
     public bool AllowNegativeStock { get; set; }
+    public int CurrentStock { get; set; } // Added
 
     // Pricing
     public decimal Mrp { get; set; }
     public decimal PurchaseRate { get; set; }
     public decimal CostRate { get; set; }
+    public decimal SalePrice { get; set; } // Added
 
     // Tax
     public decimal SgstPercent { get; set; }

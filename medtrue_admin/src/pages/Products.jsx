@@ -8,9 +8,9 @@ const Products = () => {
 
     const columns = [
         { label: 'Name', key: 'name' },
-        { label: 'Packing', key: 'packing_desc' },
+        { label: 'Packing', key: 'unitPrimaryName' }, // Shows Unit Name instead of Description
         { label: 'MRP', key: 'mrp' },
-        { label: 'Min Qty', key: 'min_qty' },
+        { label: 'Min Qty', key: 'minQty' },
     ];
 
     const handleDelete = async (item) => {

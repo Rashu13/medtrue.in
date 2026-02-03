@@ -19,16 +19,17 @@ const validationSchema = Yup.object({
 });
 
 import SearchableSelect from '../components/SearchableSelect';
+import QuickAddModal from '../components/QuickAddModal';
 
 // Legacy Layout Helper
 const LegacyInput = ({ label, name, type = 'text', placeholder, formik, ...props }) => (
-    <div className="grid grid-cols-[180px_1fr] items-center gap-4">
-        <label className="text-gray-900 font-medium text-right pr-2">{label}</label>
+    <div className="grid grid-cols-[160px_1fr] items-center gap-2">
+        <label className="text-gray-900 font-medium text-right pr-2 text-sm">{label}</label>
         <span className="hidden">:</span>
         <input
             type={type}
             {...formik.getFieldProps(name)}
-            className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8 text-sm"
+            className="w-full px-2 py-0.5 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-7 text-sm"
             placeholder={placeholder}
             {...props}
         />
@@ -43,12 +44,48 @@ const AddProduct = () => {
     const { id } = useParams();
     const isEditMode = !!id;
     const [images, setImages] = useState([]);
-    const { create: createProduct, update: updateProduct, getById, loading: productLoading } = useProductFacade();
+    const { create: createProduct, update: updateProduct, getById, generateSku, loading: productLoading } = useProductFacade();
 
-    // Facades for Dropdowns
-    const { data: companies, loading: loadingCompanies } = useMasterFacade('masters/companies', 2000);
-    const { data: categories, loading: loadingCategories } = useMasterFacade('masters/categories', 2000);
-    const { data: salts, loading: loadingSalts } = useMasterFacade('masters/salts', 2000);
+    // Auto-generate SKU on mount (Add Mode only)
+    useEffect(() => {
+        if (!isEditMode) {
+            const fetchSku = async () => {
+                const sku = await generateSku();
+                if (sku) formik.setFieldValue('sku', sku);
+            };
+            fetchSku();
+        }
+    }, [isEditMode]);
+
+    const [quickAddType, setQuickAddType] = useState(null); // 'company', 'category', 'salt', 'unit'
+
+    // Facades for Dropdowns - Extract create and refresh
+    const { data: companies, loading: loadingCompanies, create: createCompany, refresh: refreshCompanies } = useMasterFacade('masters/companies', 2000);
+    const { data: categories, loading: loadingCategories, create: createCategory, refresh: refreshCategories } = useMasterFacade('masters/categories', 2000);
+    const { data: salts, loading: loadingSalts, create: createSalt, refresh: refreshSalts } = useMasterFacade('masters/salts', 2000);
+    const { data: units, loading: loadingUnits, create: createUnit, refresh: refreshUnits } = useMasterFacade('masters/units', 2000);
+
+    const handleQuickSave = async (values) => {
+        try {
+            if (quickAddType === 'company') {
+                await createCompany(values);
+                refreshCompanies();
+            } else if (quickAddType === 'category') {
+                await createCategory(values);
+                refreshCategories();
+            } else if (quickAddType === 'salt') {
+                await createSalt(values);
+                refreshSalts();
+            } else if (quickAddType === 'unit') {
+                await createUnit(values);
+                refreshUnits();
+            }
+            alert(`${quickAddType.toUpperCase()} added successfully!`);
+        } catch (error) {
+            console.error(error);
+            alert(`Failed to add ${quickAddType}`);
+        }
+    };
 
     const formik = useFormik({
         initialValues: {
@@ -57,20 +94,40 @@ const AddProduct = () => {
             companyId: '',
             categoryId: '',
             saltId: '',
+            unitPrimaryId: '',
+            unitSecondaryId: '',
+            conversionFactor: '',
             mrp: '',
             purchaseRate: '',
             salePrice: '',
             sku: '',
             stock: '',
+            minQty: '',
+            maxQty: '',
         },
         validationSchema,
         onSubmit: async (values) => {
             try {
+                // Map frontend keys to backend keys
+                const payload = {
+                    ...values,
+                    productId: id, // Required for backend validation
+                    packingDesc: values.description,
+                    barcode: values.sku,
+                    unitPrimaryId: values.unitPrimaryId,
+                    unitSecondaryId: values.unitSecondaryId,
+                    conversionFactor: values.conversionFactor || 1,
+                    salePrice: values.salePrice || 0,
+                    currentStock: values.stock || 0,
+                    minQty: values.minQty || 0,
+                    maxQty: values.maxQty || 0,
+                };
+
                 if (isEditMode) {
-                    await updateProduct(id, values, images);
+                    await updateProduct(id, payload, images);
                     alert('Product Updated Successfully!');
                 } else {
-                    await createProduct(values, images);
+                    await createProduct(payload, images);
                     alert('Product Saved Successfully!');
                 }
                 navigate('/products');
@@ -89,17 +146,22 @@ const AddProduct = () => {
                     if (product) {
                         formik.setValues({
                             name: product.name || '',
-                            description: product.description || '',
+                            description: product.packingDesc || '', // Map from Backend name
                             companyId: product.companyId || '',
                             categoryId: product.categoryId || '',
                             saltId: product.saltId || '',
+                            unitPrimaryId: product.unitPrimaryId || '',
+                            unitSecondaryId: product.unitSecondaryId || '',
+                            conversionFactor: product.conversionFactor || '',
                             mrp: product.mrp || '',
                             purchaseRate: product.purchaseRate || '',
                             salePrice: product.salePrice || '',
-                            sku: product.sku || '',
-                            stock: product.stock || '',
+                            sku: product.barcode || '', // Map from Backend name
+                            stock: product.currentStock || '',
+                            minQty: product.minQty || '',
+                            maxQty: product.maxQty || '',
                         });
-                        // setImages(product.images || []); // If returning images logic exists
+                        setImages(product.images || []);
                     }
                 } catch (error) {
                     console.error("Error loading product", error);
@@ -111,6 +173,19 @@ const AddProduct = () => {
         loadProduct();
     }, [id]);
 
+    // ... existing image handlers ...
+
+    // Insert Inputs in JSX
+    /* 
+       Ideally I would replace the whole component content or use multiple replace blocks 
+       but since replace_file_content is restricted to contiguous blocks, I have to ensure 
+       I target the right place for JSX insertion.
+       Actually, the UI part is further down.
+       I will use this block to handle LOGIC (initialValues, onSubmit, useEffect).
+       Then I will make another call for the UI.
+    */
+
+
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         setImages([...images, ...files]);
@@ -121,9 +196,9 @@ const AddProduct = () => {
     };
 
     return (
-        <div className="max-w-5xl mx-auto mt-6 shadow-xl rounded-lg overflow-hidden border border-gray-300">
+        <div className="max-w-5xl mx-auto mt-2 shadow-xl rounded-lg overflow-hidden border border-gray-300">
             {/* Legacy Header */}
-            <div className="bg-[#2E5A5A] px-6 py-3 flex justify-between items-center text-white">
+            <div className="bg-[#2E5A5A] px-4 py-2 flex justify-between items-center text-white">
                 <h1 className="text-lg font-bold uppercase tracking-wider">{isEditMode ? 'Edit Product' : 'Add New Product'}</h1>
                 <button
                     onClick={() => navigate('/products')}
@@ -134,19 +209,19 @@ const AddProduct = () => {
             </div>
 
             {/* Legacy Body */}
-            <div className="bg-sky-50 p-6 grid grid-cols-1 lg:grid-cols-2 gap-8 font-menu text-sm">
+            <div className="bg-sky-50 p-3 grid grid-cols-1 lg:grid-cols-2 gap-4 font-menu text-sm">
 
                 {/* Left Column: General & Pricing */}
-                <div className="space-y-4">
-                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3">General Information</h3>
+                <div className="space-y-1.5">
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-0.5 mb-2 text-sm">General Information</h3>
 
                     <LegacyInput formik={formik} label="Product Name" name="name" />
 
-                    <div className="grid grid-cols-[180px_1fr] items-start gap-4">
-                        <label className="text-gray-900 font-medium text-right pr-2 pt-1">Description</label>
+                    <div className="grid grid-cols-[160px_1fr] items-start gap-2">
+                        <label className="text-gray-900 font-medium text-right pr-2 pt-1 text-sm">Description</label>
                         <textarea
                             {...formik.getFieldProps('description')}
-                            rows="3"
+                            rows="2"
                             className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 text-sm"
                         />
                     </div>
@@ -157,6 +232,7 @@ const AddProduct = () => {
                         name="companyId"
                         loading={loadingCompanies}
                         options={companies.map(c => ({ value: c.companyId, label: c.name }))}
+                        onAdd={() => setQuickAddType('company')}
                     />
 
                     <SearchableSelect
@@ -165,6 +241,7 @@ const AddProduct = () => {
                         name="categoryId"
                         loading={loadingCategories}
                         options={categories.map(c => ({ value: c.categoryId, label: c.name }))}
+                        onAdd={() => setQuickAddType('category')}
                     />
 
                     <SearchableSelect
@@ -173,9 +250,33 @@ const AddProduct = () => {
                         name="saltId"
                         loading={loadingSalts}
                         options={salts.map(s => ({ value: s.saltId, label: s.name }))}
+                        onAdd={() => setQuickAddType('salt')}
                     />
 
-                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3 mt-6">Pricing</h3>
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-0.5 mb-2 mt-3 text-sm">Unit Packing</h3>
+                    <div className="grid grid-cols-1 gap-2">
+                        <SearchableSelect
+                            formik={formik}
+                            label="Primary Unit"
+                            name="unitPrimaryId"
+                            placeholder="e.g. Strip, Box"
+                            loading={loadingUnits}
+                            options={units.map(u => ({ value: u.unitId, label: u.name }))}
+                            onAdd={() => setQuickAddType('unit')}
+                        />
+                        <SearchableSelect
+                            formik={formik}
+                            label="Secondary Unit"
+                            name="unitSecondaryId"
+                            placeholder="e.g. Tablet, Bottle"
+                            loading={loadingUnits}
+                            options={units.map(u => ({ value: u.unitId, label: u.name }))}
+                            onAdd={() => setQuickAddType('unit')}
+                        />
+                        <LegacyInput formik={formik} label="Packing Size" name="conversionFactor" placeholder="e.g. 10 (Tablets per Strip)" type="number" />
+                    </div>
+
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-0.5 mb-2 mt-3 text-sm">Pricing</h3>
                     <LegacyInput formik={formik} label="MRP" name="mrp" type="number" />
                     <LegacyInput formik={formik} label="Purchase Rate" name="purchaseRate" type="number" />
                     <LegacyInput formik={formik} label="Sale Price" name="salePrice" type="number" />
@@ -183,36 +284,59 @@ const AddProduct = () => {
                 </div>
 
                 {/* Right Column: Inventory & Images */}
-                <div className="space-y-4">
-                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3">Inventory</h3>
+                <div className="space-y-1.5">
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-0.5 mb-2 text-sm">Inventory</h3>
                     <LegacyInput formik={formik} label="SKU / Barcode" name="sku" />
                     <LegacyInput formik={formik} label="Stock Quantity" name="stock" type="number" />
+                    <LegacyInput formik={formik} label="Min Qty" name="minQty" type="number" />
+                    <LegacyInput formik={formik} label="Max Qty" name="maxQty" type="number" />
 
-                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3 mt-6">Product Images</h3>
-                    <div className="grid grid-cols-[180px_1fr] gap-4">
-                        <label className="text-gray-900 font-medium text-right pr-2 pt-2">Upload Files</label>
+                    <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-0.5 mb-2 mt-3 text-sm">Product Images</h3>
+                    <div className="grid grid-cols-[160px_1fr] gap-2">
+                        <label className="text-gray-900 font-medium text-right pr-2 pt-1 text-sm">Upload Files</label>
                         <div>
-                            <div className="border border-dashed border-gray-400 bg-white p-4 text-center cursor-pointer hover:bg-gray-50 relative">
+                            <div className="border border-dashed border-gray-400 bg-white p-2 text-center cursor-pointer hover:bg-gray-50 relative">
                                 <input
                                     type="file"
                                     multiple
                                     onChange={handleImageUpload}
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 />
-                                <Upload className="mx-auto text-gray-500 mb-2" size={24} />
-                                <span className="text-gray-600 text-xs">Click to upload images</span>
+                                <Upload className="mx-auto text-gray-500 mb-1" size={20} />
+                                <span className="text-gray-600 text-xs">Click to upload</span>
                             </div>
 
                             {images.length > 0 && (
                                 <ul className="mt-2 space-y-1">
-                                    {images.map((file, idx) => (
-                                        <li key={idx} className="flex justify-between items-center bg-white border border-gray-200 px-2 py-1">
-                                            <span className="text-xs truncate max-w-[200px]">{file.name}</span>
-                                            <button onClick={() => removeImage(idx)} className="text-red-500 hover:text-red-700">
-                                                <X size={14} />
-                                            </button>
-                                        </li>
-                                    ))}
+                                    {images.map((file, idx) => {
+                                        // Determine Name and Preview URL
+                                        let name = file.name;
+                                        let thumbUrl = null;
+
+                                        if (!name && file.imagePath) {
+                                            // It's a server image
+                                            name = file.imagePath.split('/').pop().split('_').slice(1).join('_'); // Remove ID prefix if possible or just show full
+                                            if (!name) name = file.imagePath.split('/').pop();
+                                            thumbUrl = `http://localhost:5015${file.imagePath}`;
+                                        } else if (file instanceof File) {
+                                            // It's a local file
+                                            thumbUrl = URL.createObjectURL(file);
+                                        }
+
+                                        return (
+                                            <li key={idx} className="flex justify-between items-center bg-white border border-gray-200 px-2 py-1">
+                                                <div className="flex items-center gap-2 overflow-hidden">
+                                                    {thumbUrl && (
+                                                        <img src={thumbUrl} alt="prev" className="h-8 w-8 object-cover border border-gray-300" />
+                                                    )}
+                                                    <span className="text-xs truncate max-w-[170px]" title={name}>{name}</span>
+                                                </div>
+                                                <button onClick={() => removeImage(idx)} className="text-red-500 hover:text-red-700" type="button">
+                                                    <X size={14} />
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             )}
                         </div>
@@ -221,7 +345,7 @@ const AddProduct = () => {
             </div>
 
             {/* Footer Actions */}
-            <div className="bg-gray-100 px-6 py-4 flex justify-end gap-3 border-t border-gray-300">
+            <div className="bg-gray-100 px-4 py-2 flex justify-end gap-3 border-t border-gray-300">
                 <button
                     onClick={() => navigate('/products')}
                     className="px-6 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 uppercase shadow-sm"
@@ -236,6 +360,14 @@ const AddProduct = () => {
                     {productLoading ? 'Saving...' : (isEditMode ? 'Update Product' : 'Save Product')}
                 </button>
             </div>
+            {/* Quick Add Modal */}
+            <QuickAddModal
+                isOpen={!!quickAddType}
+                onClose={() => setQuickAddType(null)}
+                type={quickAddType}
+                title={quickAddType}
+                onSave={handleQuickSave}
+            />
         </div>
     );
 };

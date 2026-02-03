@@ -5,8 +5,8 @@ const SearchableSelect = ({ label, name, options, loading, formik, ...props }) =
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
-            minHeight: '32px',
-            height: '32px',
+            minHeight: '28px',
+            height: '28px',
             fontSize: '14px',
             borderColor: state.isFocused ? '#0d9488' : '#9ca3af', // teal-600 : gray-400
             boxShadow: 'none',
@@ -18,7 +18,7 @@ const SearchableSelect = ({ label, name, options, loading, formik, ...props }) =
         valueContainer: (provided) => ({
             ...provided,
             padding: '0 8px',
-            height: '30px',
+            height: '26px',
         }),
         input: (provided) => ({
             ...provided,
@@ -27,12 +27,16 @@ const SearchableSelect = ({ label, name, options, loading, formik, ...props }) =
         }),
         indicatorsContainer: (provided) => ({
             ...provided,
-            height: '30px',
+            height: '26px',
         }),
         menu: (provided) => ({
             ...provided,
             fontSize: '14px',
             zIndex: 9999,
+        }),
+        menuList: (provided) => ({
+            ...provided,
+            maxHeight: '150px', // Restrict height to prevent overflow
         }),
         option: (provided, state) => ({
             ...provided,
@@ -59,21 +63,35 @@ const SearchableSelect = ({ label, name, options, loading, formik, ...props }) =
     const selectedValue = options ? options.find(option => option.value === formik.values[name]) : null;
 
     return (
-        <div className="grid grid-cols-[180px_1fr] items-center gap-4">
-            <label className="text-gray-900 font-medium text-right pr-2">{label}</label>
+        <div className="grid grid-cols-[160px_1fr] items-center gap-2">
+            <label className="text-gray-900 font-medium text-right pr-2 text-sm">{label}</label>
             <span className="hidden">:</span>
-            <Select
-                name={name}
-                value={selectedValue}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                options={options}
-                isLoading={loading}
-                placeholder={`-- Select ${label} --`}
-                styles={customStyles}
-                isClearable
-                {...props}
-            />
+            <div className="flex gap-1">
+                <div className="flex-grow">
+                    <Select
+                        name={name}
+                        value={selectedValue}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        options={options}
+                        isLoading={loading}
+                        placeholder={`-- Select ${label} --`}
+                        styles={customStyles}
+                        isClearable
+                        {...props}
+                    />
+                </div>
+                {props.onAdd && (
+                    <button
+                        type="button"
+                        onClick={props.onAdd}
+                        className="bg-teal-700 text-white px-2 hover:bg-teal-800 flex items-center justify-center h-[28px] w-[28px]"
+                        title={`Add New ${label}`}
+                    >
+                        +
+                    </button>
+                )}
+            </div>
             {formik.touched[name] && formik.errors[name] && (
                 <p className="text-red-600 text-xs text-right col-start-2">{formik.errors[name]}</p>
             )}

@@ -68,6 +68,18 @@ public class MasterRepository
         await conn.ExecuteAsync(sql);
     }
 
+    public async Task EnsureUnitSchemaAsync()
+    {
+        using var conn = Connection;
+        var sql = @"
+            CREATE TABLE IF NOT EXISTS units (
+                unit_id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT
+            );";
+        await conn.ExecuteAsync(sql);
+    }
+
     // Generic Get All
     public async Task<IEnumerable<T>> GetAllAsync<T>(string tableName)
     {

@@ -29,6 +29,11 @@ using (var scope = app.Services.CreateScope())
     var masterRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.MasterRepository>();
     await masterRepo.EnsureSaltSchemaAsync();
     await masterRepo.EnsureCompanySchemaAsync();
+    await masterRepo.EnsureUnitSchemaAsync(); // Auto-migrate Units
+
+    // Auto-migrate Products table
+    var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
+    await productRepo.EnsureProductSchemaAsync();
 }
 
 // Configure the HTTP request pipeline.
@@ -38,7 +43,12 @@ app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-app.UseStaticFiles();
+var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+provider.Mappings[".avif"] = "image/avif";
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider
+});
 app.UseSwagger();
 app.UseSwaggerUI();
 

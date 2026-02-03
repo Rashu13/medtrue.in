@@ -63,3 +63,4 @@ D:\medtrue.in\bin\Debug\net8.0\ExcelNumberFormat.dll
 D:\medtrue.in\bin\Debug\net8.0\RBush.dll
 D:\medtrue.in\bin\Debug\net8.0\SixLabors.Fonts.dll
 D:\medtrue.in\bin\Debug\net8.0\System.IO.Packaging.dll
+D:\medtrue.in\bin\Debug\net8.0\MedTrueApi.staticwebassets.runtime.json

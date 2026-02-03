@@ -1,101 +1,108 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 
 /**
- * Facade hook for Master Data operations.
+ * Facade hook for Master Data operations using React Query for caching.
  * @param {string} endpoint - The API endpoint suffix (e.g., 'masters/companies')
+ * @param {number} initialPageSize - Default page size for fetching
  */
 export const useMasterFacade = (endpoint, initialPageSize = 10) => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const queryClient = useQueryClient();
 
     // Pagination State
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(initialPageSize);
-    const [total, setTotal] = useState(0);
 
-    // Reset page when endpoint changes
-    useEffect(() => {
-        setPage(1);
-    }, [endpoint]);
+    // Query Key based on dependencies
+    const queryKey = [endpoint, page, pageSize];
 
-    const fetchAll = useCallback(async () => {
-        setLoading(true);
-        try {
+    // 1. Fetch Data with Caching
+    const {
+        data: queryResult,
+        isLoading: loading,
+        error: queryError,
+        refetch
+    } = useQuery({
+        queryKey,
+        queryFn: async () => {
             const result = await api.get(`/${endpoint}?page=${page}&pageSize=${pageSize}`);
 
+            // Normalize response
             const items = result.items || result.Items;
             const totalCount = result.totalCount || result.TotalCount;
 
             if (items) {
-                setData(items);
-                setTotal(totalCount);
+                return { items, total: totalCount };
             } else {
-                // Fallback for non-paged endpoints if any
-                setData(result);
-                setTotal(result.length || 0);
+                // Fallback for non-paged
+                return { items: result, total: result.length || 0 };
             }
-            setError(null);
-        } catch (err) {
-            setError(err.message || 'Failed to fetch data');
-        } finally {
-            setLoading(false);
-        }
-    }, [endpoint, page, pageSize]);
+        },
+        staleTime: 5 * 60 * 1000, // 5 minutes cache
+        placeholderData: (prev) => prev,   // Keep showing old data while fetching new page
+    });
 
+    // Derived state
+    const data = queryResult?.items || [];
+    const total = queryResult?.total || 0;
+    const error = queryError?.message || null;
+
+    // 2. Mutations
+    const createMutation = useMutation({
+        mutationFn: (item) => api.post(`/${endpoint}`, item),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [endpoint] });
+        },
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: ({ id, item }) => api.put(`/${endpoint}/${id}`, item),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [endpoint] });
+        },
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: (id) => api.delete(`/${endpoint}/${id}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [endpoint] });
+        },
+    });
+
+    // Wrapper functions to match old interface
     const create = async (item) => {
-        setLoading(true);
         try {
-            await api.post(`/${endpoint}`, item);
-            await fetchAll(); // Refresh list
+            await createMutation.mutateAsync(item);
         } catch (err) {
-            setError(err.message || 'Failed to create item');
             throw err;
-        } finally {
-            setLoading(false);
         }
     };
 
     const update = async (id, item) => {
-        setLoading(true);
         try {
-            await api.put(`/${endpoint}/${id}`, item);
-            await fetchAll();
+            await updateMutation.mutateAsync({ id, item });
         } catch (err) {
-            setError(err.message || 'Failed to update item');
             throw err;
-        } finally {
-            setLoading(false);
         }
     };
 
     const remove = async (id) => {
-        setLoading(true);
         try {
-            await api.delete(`/${endpoint}/${id}`);
-            await fetchAll(); // Refresh list
+            await deleteMutation.mutateAsync(id);
         } catch (err) {
-            setError(err.message || 'Failed to delete item');
             throw err;
-        } finally {
-            setLoading(false);
         }
     };
 
-    // Initial Fetch & Refetch on page/endpoint change
-    useEffect(() => {
-        fetchAll();
-    }, [fetchAll]);
-
     return {
         data,
-        loading,
-        error,
+        loading: loading || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
+        error: error || createMutation.error?.message || updateMutation.error?.message || deleteMutation.error?.message,
         create,
         update,
         remove,
-        refresh: fetchAll,
+        refresh: refetch,
         pagination: {
             page,
             pageSize,
