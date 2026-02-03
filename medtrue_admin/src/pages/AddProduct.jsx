@@ -4,7 +4,8 @@ import { Upload, X } from 'lucide-react';
 import { useState } from 'react';
 import { useMasterFacade } from '../facades/useMasterFacade';
 import { useProductFacade } from '../facades/useProductFacade';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import clsx from 'clsx';
 
 // Flat Design: No shadows, light borders, high contrast labels
@@ -39,8 +40,10 @@ const LegacyInput = ({ label, name, type = 'text', placeholder, formik, ...props
 
 const AddProduct = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
+    const isEditMode = !!id;
     const [images, setImages] = useState([]);
-    const { create: createProduct, loading: creating } = useProductFacade();
+    const { create: createProduct, update: updateProduct, getById, loading: productLoading } = useProductFacade();
 
     // Facades for Dropdowns
     const { data: companies, loading: loadingCompanies } = useMasterFacade('masters/companies');
@@ -63,15 +66,50 @@ const AddProduct = () => {
         validationSchema,
         onSubmit: async (values) => {
             try {
-                await createProduct(values, images);
-                alert('Product Saved Successfully!');
+                if (isEditMode) {
+                    await updateProduct(id, values, images);
+                    alert('Product Updated Successfully!');
+                } else {
+                    await createProduct(values, images);
+                    alert('Product Saved Successfully!');
+                }
                 navigate('/products');
             } catch (error) {
-                console.error('Failed to create product:', error);
+                console.error('Failed to save product:', error);
                 alert('Failed to save product. Check console for details.');
             }
         },
     });
+
+    useEffect(() => {
+        const loadProduct = async () => {
+            if (isEditMode) {
+                try {
+                    const product = await getById(id);
+                    if (product) {
+                        formik.setValues({
+                            name: product.name || '',
+                            description: product.description || '',
+                            companyId: product.companyId || '',
+                            categoryId: product.categoryId || '',
+                            saltId: product.saltId || '',
+                            mrp: product.mrp || '',
+                            purchaseRate: product.purchaseRate || '',
+                            salePrice: product.salePrice || '',
+                            sku: product.sku || '',
+                            stock: product.stock || '',
+                        });
+                        // setImages(product.images || []); // If returning images logic exists
+                    }
+                } catch (error) {
+                    console.error("Error loading product", error);
+                    alert("Could not load product details");
+                    navigate('/products');
+                }
+            }
+        };
+        loadProduct();
+    }, [id]);
 
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
@@ -86,7 +124,7 @@ const AddProduct = () => {
         <div className="max-w-5xl mx-auto mt-6 shadow-xl rounded-lg overflow-hidden border border-gray-300">
             {/* Legacy Header */}
             <div className="bg-[#2E5A5A] px-6 py-3 flex justify-between items-center text-white">
-                <h1 className="text-lg font-bold uppercase tracking-wider">Add New Product</h1>
+                <h1 className="text-lg font-bold uppercase tracking-wider">{isEditMode ? 'Edit Product' : 'Add New Product'}</h1>
                 <button
                     onClick={() => navigate('/products')}
                     className="text-white hover:text-gray-200"
@@ -192,10 +230,10 @@ const AddProduct = () => {
                 </button>
                 <button
                     onClick={formik.handleSubmit}
-                    disabled={creating}
+                    disabled={productLoading}
                     className="px-6 py-1.5 text-sm font-medium text-white bg-[#2E5A5A] hover:bg-[#234444] uppercase shadow-sm disabled:opacity-70"
                 >
-                    {creating ? 'Saving...' : 'Save Product'}
+                    {productLoading ? 'Saving...' : (isEditMode ? 'Update Product' : 'Save Product')}
                 </button>
             </div>
         </div>

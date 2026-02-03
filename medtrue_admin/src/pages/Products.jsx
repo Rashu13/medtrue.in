@@ -28,14 +28,13 @@ const Products = () => {
     };
 
     const handleEdit = (item) => {
-        // Navigate to edit page (To be implemented fully later if needed, mostly AddProduct handles it?)
-        // For now, redirect to AddProduct with ID potentially or just log.
-        // Since we don't have a dedicated Edit route setup in Plan, I'll point to add with query or ID.
-        // Checking App.jsx: Route path="products/add" is the only one.
-        // Ideally we should have products/edit/:id.
-        // For this task, I'll just focus on List and Delete.
-        console.log("Edit clicked", item);
-        alert("Edit functionality to be linked to AddProduct page");
+        const id = item.productId || item.product_id;
+        if (id) {
+            navigate(`/products/edit/${id}`);
+        } else {
+            console.error("No ID found for item", item);
+            alert("Error: Product ID missing.");
+        }
     };
 
     return (
