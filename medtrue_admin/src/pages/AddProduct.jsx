@@ -17,6 +17,8 @@ const validationSchema = Yup.object({
     saltId: Yup.string().nullable(), // Optional but recommended
 });
 
+import SearchableSelect from '../components/SearchableSelect';
+
 // Legacy Layout Helper
 const LegacyInput = ({ label, name, type = 'text', placeholder, formik, ...props }) => (
     <div className="grid grid-cols-[180px_1fr] items-center gap-4">
@@ -29,24 +31,6 @@ const LegacyInput = ({ label, name, type = 'text', placeholder, formik, ...props
             placeholder={placeholder}
             {...props}
         />
-        {formik.touched[name] && formik.errors[name] && (
-            <p className="text-red-600 text-xs text-right col-start-2">{formik.errors[name]}</p>
-        )}
-    </div>
-);
-
-const LegacySelect = ({ label, name, options, loading, formik, ...props }) => (
-    <div className="grid grid-cols-[180px_1fr] items-center gap-4">
-        <label className="text-gray-900 font-medium text-right pr-2">{label}</label>
-        <span className="hidden">:</span>
-        <select
-            {...formik.getFieldProps(name)}
-            className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8 text-sm"
-            {...props}
-        >
-            <option value="">-- Select {label} --</option>
-            {loading ? <option>Loading...</option> : options}
-        </select>
         {formik.touched[name] && formik.errors[name] && (
             <p className="text-red-600 text-xs text-right col-start-2">{formik.errors[name]}</p>
         )}
@@ -129,28 +113,28 @@ const AddProduct = () => {
                         />
                     </div>
 
-                    <LegacySelect
+                    <SearchableSelect
                         formik={formik}
                         label="Company"
                         name="companyId"
                         loading={loadingCompanies}
-                        options={companies.map(c => <option key={c.companyId} value={c.companyId}>{c.name}</option>)}
+                        options={companies.map(c => ({ value: c.companyId, label: c.name }))}
                     />
 
-                    <LegacySelect
+                    <SearchableSelect
                         formik={formik}
                         label="Category"
                         name="categoryId"
                         loading={loadingCategories}
-                        options={categories.map(c => <option key={c.categoryId} value={c.categoryId}>{c.name}</option>)}
+                        options={categories.map(c => ({ value: c.categoryId, label: c.name }))}
                     />
 
-                    <LegacySelect
+                    <SearchableSelect
                         formik={formik}
                         label="Salt Composition"
                         name="saltId"
                         loading={loadingSalts}
-                        options={salts.map(s => <option key={s.saltId} value={s.saltId}>{s.name}</option>)}
+                        options={salts.map(s => ({ value: s.saltId, label: s.name }))}
                     />
 
                     <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-1 mb-3 mt-6">Pricing</h3>

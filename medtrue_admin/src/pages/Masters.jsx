@@ -243,7 +243,7 @@ const Masters = () => {
                     </button>
                     {/* Template Download Button */}
                     <a
-                        href={`http://localhost:5015/api/masters/template/${activeTab}`}
+                        href={`${import.meta.env.VITE_API_URL || '/api'}/masters/template/${activeTab}`}
                         target="_blank"
                         rel="noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
