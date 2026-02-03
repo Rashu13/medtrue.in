@@ -393,8 +393,20 @@ const Masters = () => {
                                             <input
                                                 type={field.type}
                                                 name={field.name}
-                                                onChange={formik.handleChange}
-                                                value={formik.values[field.name] || ''}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e);
+                                                    // Auto-calculate IGST for HSN/SAC
+                                                    if (activeTab === 'hsncodes' && (field.name === 'sgstRate' || field.name === 'cgstRate')) {
+                                                        const sgst = field.name === 'sgstRate'
+                                                            ? parseFloat(e.target.value) || 0
+                                                            : parseFloat(formik.values.sgstRate) || 0;
+                                                        const cgst = field.name === 'cgstRate'
+                                                            ? parseFloat(e.target.value) || 0
+                                                            : parseFloat(formik.values.cgstRate) || 0;
+                                                        formik.setFieldValue('igstRate', sgst + cgst);
+                                                    }
+                                                }}
+                                                value={formik.values[field.name] ?? (field.type === 'number' ? 0 : '')}
                                                 className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8"
                                             />
                                         )}
