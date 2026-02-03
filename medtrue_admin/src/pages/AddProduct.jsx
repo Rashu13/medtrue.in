@@ -65,6 +65,7 @@ const AddProduct = () => {
     const { data: salts, loading: loadingSalts, create: createSalt, refresh: refreshSalts } = useMasterFacade('masters/salts', 2000);
     const { data: units, loading: loadingUnits, create: createUnit, refresh: refreshUnits } = useMasterFacade('masters/units', 2000);
     const { data: hsnCodes, loading: loadingHsn, create: createHsn, refresh: refreshHsn } = useMasterFacade('masters/hsncodes', 2000);
+    const { data: packingSizes, loading: loadingPackingSizes, create: createPackingSize, refresh: refreshPackingSizes } = useMasterFacade('masters/packingsizes', 2000);
 
     const handleQuickSave = async (values) => {
         try {
@@ -83,6 +84,9 @@ const AddProduct = () => {
             } else if (quickAddType === 'hsn') {
                 await createHsn(values);
                 refreshHsn();
+            } else if (quickAddType === 'packingsize') {
+                await createPackingSize(values);
+                refreshPackingSizes();
             }
             alert(`${quickAddType.toUpperCase()} added successfully!`);
         } catch (error) {
@@ -100,8 +104,9 @@ const AddProduct = () => {
             saltId: '',
             unitPrimaryId: '',
             unitSecondaryId: '',
-            conversionFactor: '',
+            packingSizeId: '',
             mrp: '',
+            discountPercent: '',
             purchaseRate: '',
             salePrice: '',
             sku: '',
@@ -121,7 +126,8 @@ const AddProduct = () => {
                     barcode: values.sku,
                     unitPrimaryId: values.unitPrimaryId,
                     unitSecondaryId: values.unitSecondaryId,
-                    conversionFactor: values.conversionFactor || 1,
+                    packingSizeId: values.packingSizeId || null,
+                    itemDiscount1: values.discountPercent || 0,
                     salePrice: values.salePrice || 0,
                     currentStock: values.stock || 0,
                     minQty: values.minQty || 0,
@@ -158,8 +164,9 @@ const AddProduct = () => {
                             saltId: product.saltId || '',
                             unitPrimaryId: product.unitPrimaryId || '',
                             unitSecondaryId: product.unitSecondaryId || '',
-                            conversionFactor: product.conversionFactor || '',
+                            packingSizeId: product.packingSizeId || '',
                             mrp: product.mrp || '',
+                            discountPercent: product.itemDiscount1 || '',
                             purchaseRate: product.purchaseRate || '',
                             salePrice: product.salePrice || '',
                             sku: product.barcode || '', // Map from Backend name
@@ -275,7 +282,7 @@ const AddProduct = () => {
                             formik={formik}
                             label="Primary Unit"
                             name="unitPrimaryId"
-                            placeholder="e.g. Strip, Box"
+                            placeholder="e.g. Strip, Bottle, Vial"
                             loading={loadingUnits}
                             options={units.map(u => ({ value: u.unitId, label: u.name }))}
                             onAdd={() => setQuickAddType('unit')}
@@ -284,16 +291,35 @@ const AddProduct = () => {
                             formik={formik}
                             label="Secondary Unit"
                             name="unitSecondaryId"
-                            placeholder="e.g. Tablet, Bottle"
+                            placeholder="e.g. Tabs, Caps, Syp, Gran"
                             loading={loadingUnits}
                             options={units.map(u => ({ value: u.unitId, label: u.name }))}
                             onAdd={() => setQuickAddType('unit')}
                         />
-                        <LegacyInput formik={formik} label="Packing Size" name="conversionFactor" placeholder="e.g. 10 (Tablets per Strip)" type="number" />
+                        <SearchableSelect
+                            formik={formik}
+                            label="Packing Size"
+                            name="packingSizeId"
+                            placeholder="e.g. 10Tabs, 200ml, 100gm"
+                            loading={loadingPackingSizes}
+                            options={packingSizes.map(p => ({ value: p.packingSizeId, label: p.name }))}
+                            onAdd={() => setQuickAddType('packingsize')}
+                        />
                     </div>
 
                     <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-0.5 mb-2 mt-3 text-sm">Pricing</h3>
-                    <LegacyInput formik={formik} label="MRP" name="mrp" type="number" />
+                    <LegacyInput formik={formik} label="MRP" name="mrp" type="number" onChange={(e) => {
+                        formik.handleChange(e);
+                        const mrp = parseFloat(e.target.value) || 0;
+                        const discount = parseFloat(formik.values.discountPercent) || 0;
+                        formik.setFieldValue('salePrice', (mrp - (mrp * discount / 100)).toFixed(2));
+                    }} />
+                    <LegacyInput formik={formik} label="Discount %" name="discountPercent" type="number" placeholder="e.g. 10" onChange={(e) => {
+                        formik.handleChange(e);
+                        const mrp = parseFloat(formik.values.mrp) || 0;
+                        const discount = parseFloat(e.target.value) || 0;
+                        formik.setFieldValue('salePrice', (mrp - (mrp * discount / 100)).toFixed(2));
+                    }} />
                     <LegacyInput formik={formik} label="Purchase Rate" name="purchaseRate" type="number" />
                     <LegacyInput formik={formik} label="Sale Price" name="salePrice" type="number" />
 

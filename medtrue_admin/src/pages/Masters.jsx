@@ -131,6 +131,20 @@ const masterConfig = {
             { name: 'description', label: 'Description', type: 'textarea' },
         ]
     },
+    packingsizes: {
+        title: 'Packing Sizes',
+        endpoint: 'masters/packingsizes',
+        idField: 'packingSizeId',
+        columns: [
+            { label: 'Name', key: 'name' },
+        ],
+        schema: Yup.object({
+            name: Yup.string().required('Name is required'),
+        }),
+        fields: [
+            { name: 'name', label: 'Packing Size', type: 'text', placeholder: 'e.g. 100ml, 1x10 tabs, 30 Capsules' },
+        ]
+    },
     itemtypes: {
         title: 'Item Types',
         endpoint: 'masters/itemtypes',
@@ -349,12 +363,22 @@ const Masters = () => {
                                         ) : field.type === 'image' ? (
                                             <div className="flex items-center gap-2">
                                                 <input
-                                                    type="text"
-                                                    name={field.name}
-                                                    onChange={formik.handleChange}
-                                                    value={formik.values[field.name] || ''}
-                                                    placeholder="Enter image URL"
-                                                    className="flex-1 px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            const formData = new FormData();
+                                                            formData.append('file', file);
+                                                            try {
+                                                                const res = await api.post('/products/upload-image', formData);
+                                                                formik.setFieldValue(field.name, res.data.path);
+                                                            } catch (err) {
+                                                                alert('Image upload failed');
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="flex-1 px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8 text-sm"
                                                 />
                                                 {formik.values[field.name] && (
                                                     <img

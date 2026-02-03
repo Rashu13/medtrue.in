@@ -58,6 +58,15 @@ const QuickAddModal = ({ isOpen, onClose, type, onSave, title }) => {
                 { name: 'cgstRate', label: 'CGST %', type: 'number' },
                 { name: 'igstRate', label: 'IGST %', type: 'number' },
             ]
+        },
+        packingsize: {
+            initialValues: { name: '' },
+            validation: Yup.object({
+                name: Yup.string().required('Name is required'),
+            }),
+            fields: [
+                { name: 'name', label: 'Packing Size (e.g. 10Tabs, 200ml)' },
+            ]
         }
     };
 
