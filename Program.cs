@@ -10,6 +10,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
 
 // Register Custom Services
 builder.Services.AddSingleton<MedTrueApi.Repositories.IDbConnectionFactory, MedTrueApi.Repositories.NpgsqlConnectionFactory>();
@@ -33,6 +34,8 @@ using (var scope = app.Services.CreateScope())
 
     // Auto-migrate Products table
     var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
+    // Auto-migrate Products table
+    var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
     await productRepo.EnsureProductSchemaAsync();
 }
 
@@ -42,6 +45,8 @@ app.UseCors(x => x
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
+
+app.MapHealthChecks("/health");
 
 var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
 provider.Mappings[".avif"] = "image/avif";
