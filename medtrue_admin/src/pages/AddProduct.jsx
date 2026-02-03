@@ -46,9 +46,9 @@ const AddProduct = () => {
     const { create: createProduct, update: updateProduct, getById, loading: productLoading } = useProductFacade();
 
     // Facades for Dropdowns
-    const { data: companies, loading: loadingCompanies } = useMasterFacade('masters/companies');
-    const { data: categories, loading: loadingCategories } = useMasterFacade('masters/categories');
-    const { data: salts, loading: loadingSalts } = useMasterFacade('masters/salts');
+    const { data: companies, loading: loadingCompanies } = useMasterFacade('masters/companies', 2000);
+    const { data: categories, loading: loadingCategories } = useMasterFacade('masters/categories', 2000);
+    const { data: salts, loading: loadingSalts } = useMasterFacade('masters/salts', 2000);
 
     const formik = useFormik({
         initialValues: {

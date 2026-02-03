@@ -5,14 +5,14 @@ import api from '../services/api';
  * Facade hook for Master Data operations.
  * @param {string} endpoint - The API endpoint suffix (e.g., 'masters/companies')
  */
-export const useMasterFacade = (endpoint) => {
+export const useMasterFacade = (endpoint, initialPageSize = 10) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     // Pagination State
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(initialPageSize);
     const [total, setTotal] = useState(0);
 
     // Reset page when endpoint changes
