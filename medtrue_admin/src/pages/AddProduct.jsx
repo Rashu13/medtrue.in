@@ -317,7 +317,7 @@ const AddProduct = () => {
                                             // It's a server image
                                             name = file.imagePath.split('/').pop().split('_').slice(1).join('_'); // Remove ID prefix if possible or just show full
                                             if (!name) name = file.imagePath.split('/').pop();
-                                            thumbUrl = `http://localhost:5015${file.imagePath}`;
+                                            thumbUrl = file.imagePath; // Use relative path, proxy handles it
                                         } else if (file instanceof File) {
                                             // It's a local file
                                             thumbUrl = URL.createObjectURL(file);
