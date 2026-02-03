@@ -289,7 +289,9 @@ public class MasterRepository
     {
         using var workbook = new XLWorkbook(fileStream);
         var worksheet = workbook.Worksheet(1);
-        var rows = worksheet.RangeUsed().RowsUsed().Skip(1); // Skip header
+        var rangeUsed = worksheet.RangeUsed();
+        if (rangeUsed == null) return 0;
+        var rows = rangeUsed.RowsUsed().Skip(1); // Skip header
 
         int count = 0;
         foreach (var row in rows)

@@ -33,7 +33,6 @@ using (var scope = app.Services.CreateScope())
     await masterRepo.EnsureUnitSchemaAsync(); // Auto-migrate Units
 
     // Auto-migrate Products table
-    var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
     // Auto-migrate Products table
     var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
     await productRepo.EnsureProductSchemaAsync();
