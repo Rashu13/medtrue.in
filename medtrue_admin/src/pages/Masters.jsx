@@ -116,7 +116,7 @@ const masterConfig = {
         ]
     },
     units: {
-        title: 'Units',
+        title: 'Primary / Secondary Unit',
         endpoint: 'masters/units',
         idField: 'unitId',
         columns: [
@@ -127,12 +127,12 @@ const masterConfig = {
             name: Yup.string().required('Name is required'),
         }),
         fields: [
-            { name: 'name', label: 'Unit Name', type: 'text' },
+            { name: 'name', label: 'Unit Name', type: 'text', placeholder: 'e.g. Strip, Bottle, Tabs, Caps' },
             { name: 'description', label: 'Description', type: 'textarea' },
         ]
     },
     packingsizes: {
-        title: 'Packing Sizes',
+        title: 'Packing Size',
         endpoint: 'masters/packingsizes',
         idField: 'packingSizeId',
         columns: [
@@ -142,7 +142,7 @@ const masterConfig = {
             name: Yup.string().required('Name is required'),
         }),
         fields: [
-            { name: 'name', label: 'Packing Size', type: 'text', placeholder: 'e.g. 100ml, 1x10 tabs, 30 Capsules' },
+            { name: 'name', label: 'Packing Size', type: 'text', placeholder: 'e.g. 10Tabs, 200ml, 100gm' },
         ]
     },
     itemtypes: {
