@@ -59,9 +59,14 @@ public class Unit
 
 public class HsnCode
 {
-    public string Code { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public decimal? GstRate { get; set; }
+    public string HsnSac { get; set; } = string.Empty; // Primary Key
+    public string? ShortName { get; set; }
+    public decimal? SgstRate { get; set; } = 0;
+    public decimal? CgstRate { get; set; } = 0;
+    public decimal? IgstRate { get; set; } = 0;
+    public string? Type { get; set; } = "Goods"; // Goods or Services
+    public string? Uqc { get; set; } // Unit Quantity Code
+    public decimal? CessRate { get; set; } = 0;
 }
 
 public class ItemType

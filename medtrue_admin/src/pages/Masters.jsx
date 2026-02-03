@@ -143,6 +143,34 @@ const masterConfig = {
             { name: 'name', label: 'Item Type Name', type: 'text' },
         ]
     },
+    hsncodes: {
+        title: 'HSN/SAC',
+        endpoint: 'masters/hsncodes',
+        idField: 'hsnSac',
+        columns: [
+            { label: 'HSN/SAC', key: 'hsnSac' },
+            { label: 'Short Name', key: 'shortName' },
+            { label: 'IGST %', key: 'igstRate' },
+        ],
+        schema: Yup.object({
+            hsnSac: Yup.string().required('HSN/SAC Code is required'),
+        }),
+        fields: [
+            { name: 'hsnSac', label: 'HSN/SAC Code', type: 'text' },
+            { name: 'shortName', label: 'Short Name', type: 'text' },
+            { name: 'sgstRate', label: 'SGST %', type: 'number' },
+            { name: 'cgstRate', label: 'CGST %', type: 'number' },
+            { name: 'igstRate', label: 'IGST %', type: 'number' },
+            {
+                name: 'type',
+                label: 'Type',
+                type: 'select',
+                options: [{ value: 'Goods', label: 'Goods' }, { value: 'Services', label: 'Services' }]
+            },
+            { name: 'uqc', label: 'UQC (Unit)', type: 'text' },
+            { name: 'cessRate', label: 'CESS %', type: 'number' },
+        ]
+    },
 };
 
 const Masters = () => {

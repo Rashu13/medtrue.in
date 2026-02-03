@@ -80,6 +80,25 @@ public class MasterRepository
         await conn.ExecuteAsync(sql);
     }
 
+    public async Task EnsureHsnSchemaAsync()
+    {
+        using var conn = Connection;
+        // Drop old table if exists with old schema and recreate with new schema
+        var sql = @"
+            DROP TABLE IF EXISTS hsn_codes CASCADE;
+            CREATE TABLE hsn_codes (
+                hsn_sac VARCHAR(20) PRIMARY KEY,
+                short_name TEXT,
+                sgst_rate DECIMAL(5, 2) DEFAULT 0,
+                cgst_rate DECIMAL(5, 2) DEFAULT 0,
+                igst_rate DECIMAL(5, 2) DEFAULT 0,
+                type TEXT DEFAULT 'Goods',
+                uqc TEXT,
+                cess_rate DECIMAL(5, 2) DEFAULT 0
+            );";
+        await conn.ExecuteAsync(sql);
+    }
+
     // Generic Get All
     public async Task<IEnumerable<T>> GetAllAsync<T>(string tableName)
     {
@@ -282,6 +301,36 @@ public class MasterRepository
     {
         using var conn = Connection;
         await conn.ExecuteAsync("DELETE FROM item_types WHERE type_id = @Id", new { Id = id });
+    }
+
+    // HSN Codes
+    public async Task<string> CreateHsnCodeAsync(HsnCode hsn)
+    {
+        using var conn = Connection;
+        var sql = @"
+            INSERT INTO hsn_codes (hsn_sac, short_name, sgst_rate, cgst_rate, igst_rate, type, uqc, cess_rate) 
+            VALUES (@HsnSac, @ShortName, @SgstRate, @CgstRate, @IgstRate, @Type, @Uqc, @CessRate)
+            ON CONFLICT (hsn_sac) DO NOTHING
+            RETURNING hsn_sac";
+        var result = await conn.ExecuteScalarAsync<string>(sql, hsn);
+        return result ?? hsn.HsnSac;
+    }
+
+    public async Task UpdateHsnCodeAsync(HsnCode hsn)
+    {
+        using var conn = Connection;
+        var sql = @"
+            UPDATE hsn_codes 
+            SET short_name = @ShortName, sgst_rate = @SgstRate, cgst_rate = @CgstRate, 
+                igst_rate = @IgstRate, type = @Type, uqc = @Uqc, cess_rate = @CessRate
+            WHERE hsn_sac = @HsnSac";
+        await conn.ExecuteAsync(sql, hsn);
+    }
+
+    public async Task DeleteHsnCodeAsync(string code)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM hsn_codes WHERE hsn_sac = @Code", new { Code = code });
     }
 
     // Import / Upload Logic

@@ -139,6 +139,36 @@ public class MastersController : ControllerBase
         return NoContent();
     }
 
+    // HSN Codes
+    [HttpGet("hsncodes")]
+    public async Task<IActionResult> GetHsnCodes([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<HsnCode>("hsn_codes", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
+
+    [HttpPost("hsncodes")]
+    public async Task<IActionResult> CreateHsnCode(HsnCode hsn)
+    {
+        var code = await _repository.CreateHsnCodeAsync(hsn);
+        return CreatedAtAction(nameof(GetHsnCodes), new { code }, hsn);
+    }
+
+    [HttpPut("hsncodes/{code}")]
+    public async Task<IActionResult> UpdateHsnCode(string code, HsnCode hsn)
+    {
+        if (code != hsn.HsnSac) return BadRequest();
+        await _repository.UpdateHsnCodeAsync(hsn);
+        return NoContent();
+    }
+
+    [HttpDelete("hsncodes/{code}")]
+    public async Task<IActionResult> DeleteHsnCode(string code)
+    {
+        await _repository.DeleteHsnCodeAsync(code);
+        return NoContent();
+    }
+
     // Upload Endpoint
     [HttpPost("upload/{type}")]
     public async Task<IActionResult> UploadMasterData(string type, IFormFile file)

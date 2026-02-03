@@ -31,6 +31,7 @@ using (var scope = app.Services.CreateScope())
     await masterRepo.EnsureSaltSchemaAsync();
     await masterRepo.EnsureCompanySchemaAsync();
     await masterRepo.EnsureUnitSchemaAsync(); // Auto-migrate Units
+    await masterRepo.EnsureHsnSchemaAsync(); // Auto-migrate HSN Codes
 
     // Auto-migrate Products table
     // Auto-migrate Products table

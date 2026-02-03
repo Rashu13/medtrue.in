@@ -45,6 +45,19 @@ const QuickAddModal = ({ isOpen, onClose, type, onSave, title }) => {
                 { name: 'name', label: 'Unit Name' },
                 { name: 'description', label: 'Description' },
             ]
+        },
+        hsn: {
+            initialValues: { hsnSac: '', shortName: '', sgstRate: 0, cgstRate: 0, igstRate: 0, type: 'Goods', uqc: '', cessRate: 0 },
+            validation: Yup.object({
+                hsnSac: Yup.string().required('HSN/SAC Code is required'),
+            }),
+            fields: [
+                { name: 'hsnSac', label: 'HSN/SAC Code' },
+                { name: 'shortName', label: 'Short Name' },
+                { name: 'sgstRate', label: 'SGST %', type: 'number' },
+                { name: 'cgstRate', label: 'CGST %', type: 'number' },
+                { name: 'igstRate', label: 'IGST %', type: 'number' },
+            ]
         }
     };
 

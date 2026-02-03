@@ -64,6 +64,7 @@ const AddProduct = () => {
     const { data: categories, loading: loadingCategories, create: createCategory, refresh: refreshCategories } = useMasterFacade('masters/categories', 2000);
     const { data: salts, loading: loadingSalts, create: createSalt, refresh: refreshSalts } = useMasterFacade('masters/salts', 2000);
     const { data: units, loading: loadingUnits, create: createUnit, refresh: refreshUnits } = useMasterFacade('masters/units', 2000);
+    const { data: hsnCodes, loading: loadingHsn, create: createHsn, refresh: refreshHsn } = useMasterFacade('masters/hsncodes', 2000);
 
     const handleQuickSave = async (values) => {
         try {
@@ -79,6 +80,9 @@ const AddProduct = () => {
             } else if (quickAddType === 'unit') {
                 await createUnit(values);
                 refreshUnits();
+            } else if (quickAddType === 'hsn') {
+                await createHsn(values);
+                refreshHsn();
             }
             alert(`${quickAddType.toUpperCase()} added successfully!`);
         } catch (error) {
@@ -104,6 +108,7 @@ const AddProduct = () => {
             stock: '',
             minQty: '',
             maxQty: '',
+            hsnCode: '',
         },
         validationSchema,
         onSubmit: async (values) => {
@@ -121,6 +126,7 @@ const AddProduct = () => {
                     currentStock: values.stock || 0,
                     minQty: values.minQty || 0,
                     maxQty: values.maxQty || 0,
+                    hsnCode: values.hsnCode || null,
                 };
 
                 if (isEditMode) {
@@ -160,6 +166,7 @@ const AddProduct = () => {
                             stock: product.currentStock || '',
                             minQty: product.minQty || '',
                             maxQty: product.maxQty || '',
+                            hsnCode: product.hsnCode || '',
                         });
                         setImages(product.images || []);
                     }
@@ -251,6 +258,15 @@ const AddProduct = () => {
                         loading={loadingSalts}
                         options={salts.map(s => ({ value: s.saltId, label: s.name }))}
                         onAdd={() => setQuickAddType('salt')}
+                    />
+
+                    <SearchableSelect
+                        formik={formik}
+                        label="HSN/SAC Code"
+                        name="hsnCode"
+                        loading={loadingHsn}
+                        options={hsnCodes.map(h => ({ value: h.hsnSac, label: `${h.hsnSac} - ${h.shortName || ''}` }))}
+                        onAdd={() => setQuickAddType('hsn')}
                     />
 
                     <h3 className="font-bold text-teal-800 border-b border-teal-200 pb-0.5 mb-2 mt-3 text-sm">Unit Packing</h3>
