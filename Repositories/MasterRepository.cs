@@ -264,6 +264,44 @@ public class MasterRepository
         await conn.ExecuteAsync(sql, unit);
     }
 
+    // Packing Sizes
+    public async Task EnsurePackingSizeSchemaAsync()
+    {
+        using var conn = Connection;
+        var sql = @"
+            CREATE TABLE IF NOT EXISTS packing_sizes (
+                packing_size_id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL
+            );";
+        await conn.ExecuteAsync(sql);
+    }
+
+    public async Task<int> CreatePackingSizeAsync(PackingSize size)
+    {
+        using var conn = Connection;
+        var sql = @"
+            INSERT INTO packing_sizes (name) 
+            VALUES (@Name) 
+            RETURNING packing_size_id";
+        return await conn.ExecuteScalarAsync<int>(sql, size);
+    }
+
+    public async Task UpdatePackingSizeAsync(PackingSize size)
+    {
+        using var conn = Connection;
+        var sql = @"
+            UPDATE packing_sizes 
+            SET name = @Name 
+            WHERE packing_size_id = @PackingSizeId";
+        await conn.ExecuteAsync(sql, size);
+    }
+
+    public async Task DeletePackingSizeAsync(int id)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM packing_sizes WHERE packing_size_id = @Id", new { Id = id });
+    }
+
     // Item Types
     public async Task<int> CreateItemTypeAsync(ItemType itemType)
     {

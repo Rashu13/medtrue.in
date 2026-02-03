@@ -169,6 +169,36 @@ public class MastersController : ControllerBase
         return NoContent();
     }
 
+    // Packing Sizes
+    [HttpGet("packingsizes")]
+    public async Task<IActionResult> GetPackingSizes([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<PackingSize>("packing_sizes", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
+
+    [HttpPost("packingsizes")]
+    public async Task<IActionResult> CreatePackingSize(PackingSize size)
+    {
+        var id = await _repository.CreatePackingSizeAsync(size);
+        return CreatedAtAction(nameof(GetPackingSizes), new { id }, size);
+    }
+
+    [HttpPut("packingsizes/{id}")]
+    public async Task<IActionResult> UpdatePackingSize(int id, PackingSize size)
+    {
+        if (id != size.PackingSizeId) return BadRequest();
+        await _repository.UpdatePackingSizeAsync(size);
+        return NoContent();
+    }
+
+    [HttpDelete("packingsizes/{id}")]
+    public async Task<IActionResult> DeletePackingSize(int id)
+    {
+        await _repository.DeletePackingSizeAsync(id);
+        return NoContent();
+    }
+
     // Upload Endpoint
     [HttpPost("upload/{type}")]
     public async Task<IActionResult> UploadMasterData(string type, IFormFile file)

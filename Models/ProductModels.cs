@@ -14,10 +14,11 @@ public class Product
     public string? HsnCode { get; set; }
     public int? ItemTypeId { get; set; }
 
-    // Units
+    // Units & Packing
     public int? UnitPrimaryId { get; set; }
     public int? UnitSecondaryId { get; set; }
-    public decimal ConversionFactor { get; set; } = 1;
+    public int? PackingSizeId { get; set; } // FK to packing_sizes table
+    public string? ConversionFactor { get; set; } // Legacy field
     public string? UnitPrimaryName { get; set; } // Fetched via JOIN
 
     // Status

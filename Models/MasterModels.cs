@@ -70,6 +70,12 @@ public class HsnCode
     public decimal? CessRate { get; set; } = 0;
 }
 
+public class PackingSize
+{
+    public int PackingSizeId { get; set; }
+    public string Name { get; set; } = string.Empty; // e.g. "100ml", "1x10 tabs", "30 Capsules"
+}
+
 public class ItemType
 {
     public int TypeId { get; set; }

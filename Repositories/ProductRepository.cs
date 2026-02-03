@@ -22,6 +22,7 @@ public class ProductRepository
         await conn.ExecuteAsync("ALTER TABLE products ADD COLUMN IF NOT EXISTS current_stock INT DEFAULT 0;");
         await conn.ExecuteAsync("ALTER TABLE products ADD COLUMN IF NOT EXISTS min_qty INT DEFAULT 0;");
         await conn.ExecuteAsync("ALTER TABLE products ADD COLUMN IF NOT EXISTS max_qty INT DEFAULT 0;");
+        await conn.ExecuteAsync("ALTER TABLE products ADD COLUMN IF NOT EXISTS packing_size_id INT;");
     }
 
     public async Task<IEnumerable<Product>> GetAllProductsAsync()
@@ -47,13 +48,13 @@ public class ProductRepository
         var sql = @"
             INSERT INTO products (
                 name, packing_desc, barcode, company_id, salt_id, category_id, hsn_code, item_type_id,
-                unit_primary_id, unit_secondary_id, conversion_factor, status, is_hidden, is_decimal_allowed, has_photo,
+                unit_primary_id, unit_secondary_id, packing_size_id, conversion_factor, status, is_hidden, is_decimal_allowed, has_photo,
                 is_narcotic, schedule_h_id, rack_number, min_qty, max_qty, reorder_qty, allow_negative_stock,
                 mrp, purchase_rate, cost_rate, sale_price, current_stock, sgst_percent, cgst_percent, igst_percent,
                 item_discount_1, special_discount, max_discount_percent, sale_margin, created_at, updated_at
             ) VALUES (
                 @Name, @PackingDesc, @Barcode, @CompanyId, @SaltId, @CategoryId, @HsnCode, @ItemTypeId,
-                @UnitPrimaryId, @UnitSecondaryId, @ConversionFactor, @Status, @IsHidden, @IsDecimalAllowed, @HasPhoto,
+                @UnitPrimaryId, @UnitSecondaryId, @PackingSizeId, @ConversionFactor, @Status, @IsHidden, @IsDecimalAllowed, @HasPhoto,
                 @IsNarcotic, @ScheduleHId, @RackNumber, @MinQty, @MaxQty, @ReorderQty, @AllowNegativeStock,
                 @Mrp, @PurchaseRate, @CostRate, @SalePrice, @CurrentStock, @SgstPercent, @CgstPercent, @IgstPercent,
                 @ItemDiscount1, @SpecialDiscount, @MaxDiscountPercent, @SaleMargin, NOW(), NOW()
@@ -68,7 +69,8 @@ public class ProductRepository
             UPDATE products SET
                 name = @Name, packing_desc = @PackingDesc, barcode = @Barcode, company_id = @CompanyId, 
                 salt_id = @SaltId, category_id = @CategoryId, hsn_code = @HsnCode, item_type_id = @ItemTypeId,
-                unit_primary_id = @UnitPrimaryId, unit_secondary_id = @UnitSecondaryId, conversion_factor = @ConversionFactor, 
+                unit_primary_id = @UnitPrimaryId, unit_secondary_id = @UnitSecondaryId, packing_size_id = @PackingSizeId,
+                conversion_factor = @ConversionFactor, 
                 status = @Status, is_hidden = @IsHidden, is_decimal_allowed = @IsDecimalAllowed, has_photo = @HasPhoto,
                 is_narcotic = @IsNarcotic, schedule_h_id = @ScheduleHId, rack_number = @RackNumber, 
                 min_qty = @MinQty, max_qty = @MaxQty, reorder_qty = @ReorderQty, allow_negative_stock = @AllowNegativeStock,
