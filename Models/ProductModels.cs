@@ -18,7 +18,7 @@ public class Product
     public int? UnitPrimaryId { get; set; }
     public int? UnitSecondaryId { get; set; }
     public int? PackingSizeId { get; set; } // FK to packing_sizes table
-    public string? ConversionFactor { get; set; } // Legacy field
+    public decimal ConversionFactor { get; set; } = 1; // Legacy field (keep as decimal for DB compatibility)
     public string? UnitPrimaryName { get; set; } // Fetched via JOIN
 
     // Status

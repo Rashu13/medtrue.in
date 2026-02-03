@@ -127,6 +127,7 @@ const AddProduct = () => {
                     unitPrimaryId: values.unitPrimaryId,
                     unitSecondaryId: values.unitSecondaryId,
                     packingSizeId: values.packingSizeId || null,
+                    conversionFactor: 1, // Legacy field
                     itemDiscount1: values.discountPercent || 0,
                     salePrice: values.salePrice || 0,
                     currentStock: values.stock || 0,
