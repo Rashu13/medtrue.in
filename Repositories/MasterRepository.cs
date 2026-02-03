@@ -80,6 +80,19 @@ public class MasterRepository
         await conn.ExecuteAsync(sql);
     }
 
+    public async Task EnsureCategorySchemaAsync()
+    {
+        using var conn = Connection;
+        // Add image_path column if it doesn't exist
+        var sql = @"
+            DO $$ BEGIN
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'categories' AND column_name = 'image_path') THEN
+                    ALTER TABLE categories ADD COLUMN image_path TEXT;
+                END IF;
+            END $$;";
+        await conn.ExecuteAsync(sql);
+    }
+
     public async Task EnsureHsnSchemaAsync()
     {
         using var conn = Connection;
@@ -214,8 +227,8 @@ public class MasterRepository
     {
         using var conn = Connection;
         var sql = @"
-            INSERT INTO categories (name, parent_id) 
-            VALUES (@Name, @ParentId) 
+            INSERT INTO categories (name, parent_id, image_path) 
+            VALUES (@Name, @ParentId, @ImagePath) 
             RETURNING category_id";
         return await conn.ExecuteScalarAsync<int>(sql, category);
     }
@@ -225,7 +238,7 @@ public class MasterRepository
         using var conn = Connection;
         var sql = @"
             UPDATE categories 
-            SET name = @Name, parent_id = @ParentId 
+            SET name = @Name, parent_id = @ParentId, image_path = @ImagePath 
             WHERE category_id = @CategoryId";
         await conn.ExecuteAsync(sql, category);
     }

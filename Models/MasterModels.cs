@@ -48,6 +48,7 @@ public class Category
     public int CategoryId { get; set; }
     public string Name { get; set; } = string.Empty;
     public int? ParentId { get; set; }
+    public string? ImagePath { get; set; } // Category logo/image
 }
 
 public class Unit

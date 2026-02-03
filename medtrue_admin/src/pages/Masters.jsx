@@ -46,12 +46,14 @@ const masterConfig = {
         idField: 'categoryId',
         columns: [
             { label: 'Name', key: 'name' },
+            { label: 'Image', key: 'imagePath', type: 'image' },
         ],
         schema: Yup.object({
             name: Yup.string().required('Name is required'),
         }),
         fields: [
             { name: 'name', label: 'Category Name', type: 'text' },
+            { name: 'imagePath', label: 'Image/Logo', type: 'image' },
         ]
     },
     salts: {
@@ -344,6 +346,25 @@ const Masters = () => {
                                                 value={formik.values[field.name] || ''}
                                                 className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8"
                                             />
+                                        ) : field.type === 'image' ? (
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="text"
+                                                    name={field.name}
+                                                    onChange={formik.handleChange}
+                                                    value={formik.values[field.name] || ''}
+                                                    placeholder="Enter image URL"
+                                                    className="flex-1 px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8"
+                                                />
+                                                {formik.values[field.name] && (
+                                                    <img
+                                                        src={formik.values[field.name]}
+                                                        alt="Preview"
+                                                        className="h-8 w-8 object-cover border"
+                                                        onError={(e) => e.target.style.display = 'none'}
+                                                    />
+                                                )}
+                                            </div>
                                         ) : (
                                             <input
                                                 type={field.type}
