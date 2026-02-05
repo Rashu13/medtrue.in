@@ -42,20 +42,22 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-// Configure the HTTP request pipeline.
 app.UseCors(x => x
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-app.MapHealthChecks("/health");
+app.UseStaticFiles(); // Default serves from wwwroot
 
 var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
 provider.Mappings[".avif"] = "image/avif";
 app.UseStaticFiles(new StaticFileOptions
 {
-    ContentTypeProvider = provider
+    ContentTypeProvider = provider,
+    RequestPath = "" // Serves from the root of wwwroot
 });
+
+app.MapHealthChecks("/health");
 app.UseSwagger();
 app.UseSwaggerUI();
 
