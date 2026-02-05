@@ -7,12 +7,12 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'http://localhost:5015',
+                target: 'http://mcckwgkkkwk0k84kg00s0448.62.72.13.162.sslip.io',
                 changeOrigin: true,
                 secure: false,
             },
             '/uploads': {
-                target: 'http://localhost:5015',
+                target: 'http://mcckwgkkkwk0k84kg00s0448.62.72.13.162.sslip.io',
                 changeOrigin: true,
                 secure: false,
             }

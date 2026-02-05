@@ -176,7 +176,7 @@ const masterConfig = {
             { name: 'shortName', label: 'Short Name', type: 'text' },
             { name: 'sgstRate', label: 'SGST %', type: 'number' },
             { name: 'cgstRate', label: 'CGST %', type: 'number' },
-            { name: 'igstRate', label: 'IGST %', type: 'number' },
+            { name: 'igstRate', label: 'IGST %', type: 'number', readOnly: true },
             {
                 name: 'type',
                 label: 'Type',
@@ -371,10 +371,13 @@ const Masters = () => {
                                                             const formData = new FormData();
                                                             formData.append('file', file);
                                                             try {
-                                                                const res = await api.post('/products/upload-image', formData);
-                                                                formik.setFieldValue(field.name, res.data.path);
+                                                                const res = await api.post('/masters/upload-image', formData, {
+                                                                    headers: { 'Content-Type': 'multipart/form-data' }
+                                                                });
+                                                                formik.setFieldValue(field.name, res.path);
                                                             } catch (err) {
-                                                                alert('Image upload failed');
+                                                                const msg = err.response?.data?.message || err.response?.data || err.message;
+                                                                alert('Image upload failed: ' + msg);
                                                             }
                                                         }
                                                     }}

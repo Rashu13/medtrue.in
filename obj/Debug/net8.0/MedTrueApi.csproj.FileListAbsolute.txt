@@ -64,3 +64,11 @@ D:\medtrue.in\bin\Debug\net8.0\RBush.dll
 D:\medtrue.in\bin\Debug\net8.0\SixLabors.Fonts.dll
 D:\medtrue.in\bin\Debug\net8.0\System.IO.Packaging.dll
 D:\medtrue.in\bin\Debug\net8.0\MedTrueApi.staticwebassets.runtime.json
+D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\8f52db908ab994826340cb87c1a49b9c\dart_build_result.json
+D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\8f52db908ab994826340cb87c1a49b9c\outputs.json
+D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\flutter_assets\AssetManifest.bin.json
+D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\flutter_assets\FontManifest.json
+D:\medtrue.in\bin\Debug\net8.0\truemed_user\ios\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\truemed_user\ios\Runner\Assets.xcassets\LaunchImage.imageset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\truemed_user\macos\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\truemed_user\web\manifest.json

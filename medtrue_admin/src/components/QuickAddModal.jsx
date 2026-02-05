@@ -25,6 +25,7 @@ const QuickAddModal = ({ isOpen, onClose, type, onSave, title }) => {
             }),
             fields: [
                 { name: 'name', label: 'Category Name' },
+                { name: 'imagePath', label: 'Image/Logo', type: 'image' },
             ]
         },
         salt: {
@@ -56,7 +57,15 @@ const QuickAddModal = ({ isOpen, onClose, type, onSave, title }) => {
                 { name: 'shortName', label: 'Short Name' },
                 { name: 'sgstRate', label: 'SGST %', type: 'number' },
                 { name: 'cgstRate', label: 'CGST %', type: 'number' },
-                { name: 'igstRate', label: 'IGST %', type: 'number' },
+                { name: 'igstRate', label: 'IGST %', type: 'number', readOnly: true },
+                {
+                    name: 'type',
+                    label: 'Type',
+                    type: 'select',
+                    options: [{ value: 'Goods', label: 'Goods' }, { value: 'Services', label: 'Services' }]
+                },
+                { name: 'uqc', label: 'UQC (Unit)' },
+                { name: 'cessRate', label: 'CESS %', type: 'number' },
             ]
         },
         packingsize: {
@@ -83,18 +92,73 @@ const QuickAddModal = ({ isOpen, onClose, type, onSave, title }) => {
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-            <div className="bg-white p-6 rounded-lg shadow-xl w-96">
+            <div className={`bg-white p-6 rounded-lg shadow-xl ${type === 'hsn' ? 'w-[500px]' : 'w-96'}`}>
                 <h3 className="text-lg font-bold mb-4 uppercase text-teal-800">Add New {title}</h3>
                 <form onSubmit={formik.handleSubmit} className="space-y-4">
                     {currentConfig.fields.map((field) => (
                         <div key={field.name} className="flex flex-col gap-1">
                             <label className="text-sm font-medium text-gray-700">{field.label}</label>
-                            <input
-                                name={field.name}
-                                onChange={formik.handleChange}
-                                value={formik.values[field.name]}
-                                className="border border-gray-400 px-2 py-1 text-sm focus:border-teal-600 focus:outline-none"
-                            />
+                            {field.type === 'select' ? (
+                                <select
+                                    name={field.name}
+                                    onChange={formik.handleChange}
+                                    value={formik.values[field.name]}
+                                    className="border border-gray-400 px-2 py-1 text-sm focus:border-teal-600 focus:outline-none bg-white"
+                                >
+                                    {field.options.map(opt => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                            ) : field.type === 'image' ? (
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const formData = new FormData();
+                                                formData.append('file', file);
+                                                try {
+                                                    const res = await api.post('/masters/upload-image', formData, {
+                                                        headers: { 'Content-Type': 'multipart/form-data' }
+                                                    });
+                                                    formik.setFieldValue(field.name, res.path);
+                                                } catch (err) {
+                                                    const msg = err.response?.data?.message || err.response?.data || err.message;
+                                                    alert('Image upload failed: ' + msg);
+                                                }
+                                            }
+                                        }}
+                                        className="flex-1 px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8 text-sm"
+                                    />
+                                    {formik.values[field.name] && (
+                                        <img
+                                            src={formik.values[field.name]}
+                                            alt="Preview"
+                                            className="h-8 w-8 object-cover border"
+                                            onError={(e) => e.target.style.display = 'none'}
+                                        />
+                                    )}
+                                </div>
+                            ) : (
+                                <input
+                                    type={field.type || 'text'}
+                                    name={field.name}
+                                    onChange={(e) => {
+                                        formik.handleChange(e);
+                                        // Auto-calculate IGST for HSN
+                                        if (type === 'hsn' && (field.name === 'sgstRate' || field.name === 'cgstRate')) {
+                                            const sgst = field.name === 'sgstRate' ? parseFloat(e.target.value) || 0 : parseFloat(formik.values.sgstRate) || 0;
+                                            const cgst = field.name === 'cgstRate' ? parseFloat(e.target.value) || 0 : parseFloat(formik.values.cgstRate) || 0;
+                                            formik.setFieldValue('igstRate', sgst + cgst);
+                                        }
+                                    }}
+                                    value={formik.values[field.name]}
+                                    readOnly={field.readOnly}
+                                    className={`border border-gray-400 px-2 py-1 text-sm focus:border-teal-600 focus:outline-none ${field.readOnly ? 'bg-gray-100' : 'bg-white'}`}
+                                />
+                            )}
                             {formik.touched[field.name] && formik.errors[field.name] && (
                                 <span className="text-red-500 text-xs">{formik.errors[field.name]}</span>
                             )}

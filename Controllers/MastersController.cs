@@ -9,10 +9,33 @@ namespace MedTrueApi.Controllers;
 public class MastersController : ControllerBase
 {
     private readonly MasterRepository _repository;
+    private readonly IWebHostEnvironment _env;
 
-    public MastersController(MasterRepository repository)
+    public MastersController(MasterRepository repository, IWebHostEnvironment env)
     {
         _repository = repository;
+        _env = env;
+    }
+
+    [HttpPost("upload-image")]
+    public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("No file uploaded.");
+
+        var uploadsFolder = Path.Combine(_env.WebRootPath ?? "wwwroot", "uploads", "masters");
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
+
+        var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        return Ok(new { path = $"/uploads/masters/{uniqueFileName}" });
     }
 
     [HttpPost("migrate-salts")]
