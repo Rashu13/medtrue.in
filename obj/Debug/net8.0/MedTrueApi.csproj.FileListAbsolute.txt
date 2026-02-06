@@ -1070,3 +1070,7 @@ D:\medtrue.in\bin\Debug\net8.0\MedTrueApi.runtimeconfig.json
 D:\medtrue.in\bin\Debug\net8.0\MedTrueApi.pdb
 D:\medtrue.in\obj\Debug\net8.0\MedTrueApi.genruntimeconfig.cache
 D:\medtrue.in\obj\Debug\net8.0\ref\MedTrueApi.dll
+D:\medtrue.in\bin\Debug\net8.0\broadcast_app\ios\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\broadcast_app\ios\Runner\Assets.xcassets\LaunchImage.imageset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\broadcast_app\macos\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\broadcast_app\web\manifest.json
