@@ -28,19 +28,41 @@ export const useMasterFacade = (endpoint, initialPageSize = 10) => {
         queryFn: async () => {
             const result = await api.get(`/${endpoint}?page=${page}&pageSize=${pageSize}`);
 
-            // Normalize response
-            const items = result.items || result.Items;
-            const totalCount = result.totalCount || result.TotalCount;
-
-            if (items) {
-                return { items, total: totalCount };
-            } else {
-                // Fallback for non-paged
-                return { items: result, total: result.length || 0 };
+            // Debugging
+            if (endpoint === 'masters/companies' || endpoint === 'masters/categories') {
+                console.log(`Fetch ${endpoint} Result:`, result);
             }
+
+            // Normalize response
+            let items = [];
+            let totalCount = 0;
+
+            if (result) {
+                if (Array.isArray(result)) {
+                    items = result;
+                    totalCount = result.length;
+                } else if (Array.isArray(result.items)) {
+                    items = result.items;
+                    totalCount = result.totalCount || result.items.length;
+                } else if (Array.isArray(result.Items)) {
+                    items = result.Items;
+                    totalCount = result.TotalCount || result.Items.length;
+                } else if (Array.isArray(result.data)) {
+                    items = result.data;
+                    totalCount = result.total || result.data.length;
+                }
+            }
+
+            if (!items) {
+                console.warn(`Unexpected API response format for ${endpoint}:`, result);
+                return { items: [], total: 0 };
+            }
+
+            return { items, total: totalCount };
         },
         staleTime: 5 * 60 * 1000, // 5 minutes cache
         placeholderData: (prev) => prev,   // Keep showing old data while fetching new page
+        retry: false // Don't retry indefinitely if format is wrong
     });
 
     // Derived state

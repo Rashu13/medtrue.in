@@ -63,7 +63,7 @@ public class ProductRepository
         var sql = @"
             SELECT p.*, 
                    (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
-            FROM products WHERE product_id = @Id";
+            FROM products p WHERE product_id = @Id";
         return await conn.QueryFirstOrDefaultAsync<Product>(sql, new { Id = id });
     }
 
