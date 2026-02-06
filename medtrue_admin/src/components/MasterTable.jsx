@@ -1,5 +1,6 @@
 import { Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { IMAGE_BASE_URL } from '../services/api';
 
 const MasterTable = ({
     title,
@@ -58,7 +59,15 @@ const MasterTable = ({
                                 <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
                                     {columns.map((col, cIdx) => (
                                         <td key={cIdx} className="px-6 py-4 text-sm text-gray-700">
-                                            {item[col.key]}
+                                            {col.type === 'image' && item[col.key] ? (
+                                                <img
+                                                    src={item[col.key].startsWith('http') ? item[col.key] : `${IMAGE_BASE_URL}${item[col.key]}`}
+                                                    alt="img"
+                                                    className="h-10 w-10 object-cover border rounded"
+                                                />
+                                            ) : (
+                                                item[col.key]
+                                            )}
                                         </td>
                                     ))}
                                     <td className="px-6 py-4 text-right space-x-2">

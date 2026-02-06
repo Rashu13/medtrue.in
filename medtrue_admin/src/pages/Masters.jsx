@@ -4,7 +4,7 @@ import MasterTable from '../components/MasterTable';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { X, Upload } from 'lucide-react';
-import api from '../services/api'; // Direct API access for upload
+import api, { IMAGE_BASE_URL } from '../services/api'; // Direct API access for upload
 
 // Configuration for different master types
 const masterConfig = {
@@ -385,7 +385,7 @@ const Masters = () => {
                                                 />
                                                 {formik.values[field.name] && (
                                                     <img
-                                                        src={formik.values[field.name]}
+                                                        src={formik.values[field.name]?.startsWith('http') ? formik.values[field.name] : `${IMAGE_BASE_URL}${formik.values[field.name]}`}
                                                         alt="Preview"
                                                         className="h-8 w-8 object-cover border"
                                                         onError={(e) => e.target.style.display = 'none'}

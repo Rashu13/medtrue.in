@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // Production API URL - hardcoded for reliability
-const baseURL = 'https://medtrue.cloud/api';
+// Production API URL - hardcoded for reliability
+export const baseURL = 'https://medtrue.cloud/api';
+export const IMAGE_BASE_URL = 'https://medtrue.cloud';
 
 // Create Axios Instance
 const api = axios.create({

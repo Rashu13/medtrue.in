@@ -7,6 +7,7 @@ import { useProductFacade } from '../facades/useProductFacade';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import clsx from 'clsx';
+import { IMAGE_BASE_URL } from '../services/api';
 
 // Flat Design: No shadows, light borders, high contrast labels
 const validationSchema = Yup.object({
@@ -360,7 +361,7 @@ const AddProduct = () => {
                                             // It's a server image
                                             name = file.imagePath.split('/').pop().split('_').slice(1).join('_'); // Remove ID prefix if possible or just show full
                                             if (!name) name = file.imagePath.split('/').pop();
-                                            thumbUrl = file.imagePath; // Use relative path, proxy handles it
+                                            thumbUrl = file.imagePath.startsWith('http') ? file.imagePath : `${IMAGE_BASE_URL}${file.imagePath}`;
                                         } else if (file instanceof File) {
                                             // It's a local file
                                             thumbUrl = URL.createObjectURL(file);
