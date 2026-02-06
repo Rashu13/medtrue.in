@@ -86,12 +86,7 @@ public class ProductsController : ControllerBase
         return Ok(image);
     }
 
-    [HttpGet("{id}/images")]
-    public async Task<IActionResult> GetImages(long id)
-    {
-        var images = await _repository.GetProductImagesAsync(id);
-        return Ok(images);
-    }
+
 
     [HttpDelete("images/{imgId}")]
     public async Task<IActionResult> DeleteImage(int imgId)
