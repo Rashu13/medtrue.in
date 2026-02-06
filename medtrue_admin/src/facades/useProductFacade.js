@@ -10,10 +10,26 @@ export const useProductFacade = () => {
         setLoading(true);
         try {
             const result = await api.get('/products');
-            setData(result);
+            console.log("Fetch Products Result:", result);
+
+            // Safe check for array or nested array
+            if (Array.isArray(result)) {
+                setData(result);
+            } else if (result && Array.isArray(result.products)) {
+                setData(result.products);
+            } else if (result && Array.isArray(result.data)) {
+                setData(result.data);
+            } else if (result && Array.isArray(result.items)) {
+                setData(result.items);
+            } else {
+                console.warn("Unexpected API response format for products:", result);
+                setData([]);
+            }
             setError(null);
         } catch (err) {
+            console.error("Error fetching products:", err);
             setError(err.message || 'Failed to fetch products');
+            setData([]);
         } finally {
             setLoading(false);
         }
@@ -88,12 +104,21 @@ export const useProductFacade = () => {
     const getById = async (id) => {
         setLoading(true);
         try {
-            const [product, images] = await Promise.all([
-                api.get(`/products/${id}`),
-                api.get(`/products/${id}/images`)
-            ]);
+            // 1. Fetch Product (Critical)
+            const product = await api.get(`/products/${id}`);
+
+            // 2. Fetch Images (Non-Critical)
+            let images = [];
+            try {
+                images = await api.get(`/products/${id}/images`);
+            } catch (imgErr) {
+                console.warn(`Failed to load images for product ${id}:`, imgErr);
+                // Continue without images
+            }
+
             return { ...product, images };
         } catch (err) {
+            console.error("Error fetching product details:", err);
             setError(err.message || 'Failed to fetch product details');
             throw err;
         } finally {

@@ -23,6 +23,26 @@ public class ProductRepository
         await conn.ExecuteAsync("ALTER TABLE products ADD COLUMN IF NOT EXISTS min_qty INT DEFAULT 0;");
         await conn.ExecuteAsync("ALTER TABLE products ADD COLUMN IF NOT EXISTS max_qty INT DEFAULT 0;");
         await conn.ExecuteAsync("ALTER TABLE products ADD COLUMN IF NOT EXISTS packing_size_id INT;");
+        await conn.ExecuteAsync("ALTER TABLE products ADD COLUMN IF NOT EXISTS hsn_code VARCHAR(20);"); // Ensure HSN code exists
+    }
+
+    public async Task EnsureProductImageSchemaAsync()
+    {
+        using var conn = Connection;
+        // Ensure product_images table exists
+        await conn.ExecuteAsync(@"
+            CREATE TABLE IF NOT EXISTS product_images (
+                img_id SERIAL PRIMARY KEY,
+                product_id BIGINT NOT NULL,
+                image_path TEXT NOT NULL,
+                is_primary BOOLEAN DEFAULT FALSE,
+                display_order INT DEFAULT 0,
+                created_at TIMESTAMP DEFAULT NOW()
+            );");
+
+        // Ensure columns exist (for migration)
+        await conn.ExecuteAsync("ALTER TABLE product_images ADD COLUMN IF NOT EXISTS is_primary BOOLEAN DEFAULT FALSE;");
+        await conn.ExecuteAsync("ALTER TABLE product_images ADD COLUMN IF NOT EXISTS display_order INT DEFAULT 0;");
     }
 
     public async Task<IEnumerable<Product>> GetAllProductsAsync()

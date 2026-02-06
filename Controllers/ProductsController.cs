@@ -114,6 +114,7 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> MigrateSchema()
     {
         await _repository.EnsureProductSchemaAsync();
+        await _repository.EnsureProductImageSchemaAsync();
         return Ok("Schema updated successfully.");
     }
 }
