@@ -54,8 +54,8 @@ var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProv
 provider.Mappings[".avif"] = "image/avif";
 app.UseStaticFiles(new StaticFileOptions
 {
-    ContentTypeProvider = provider,
-    RequestPath = "" // Serves from the root of wwwroot
+    ContentTypeProvider = provider
+    // RequestPath defaults to empty, serving from root
 });
 
 app.MapHealthChecks("/health");

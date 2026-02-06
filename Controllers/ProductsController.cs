@@ -48,6 +48,12 @@ public class ProductsController : ControllerBase
     }
 
     // Image Endpoints
+    [HttpGet("{id}/images")]
+    public async Task<IActionResult> GetImages(long id)
+    {
+        var images = await _repository.GetProductImagesAsync(id);
+        return Ok(images);
+    }
     [HttpPost("{id}/images")]
     public async Task<IActionResult> UploadImage(long id, IFormFile file, [FromForm] int displayOrder = 0, [FromForm] bool isPrimary = false)
     {
