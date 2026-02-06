@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import '../../core/app_constants.dart';
-import '../../models/product_model.dart';
-import '../../providers/cart_provider.dart';
+import '../../domain/entities/medicine.dart';
+import '../../presentation/cart/controllers/cart_controller.dart';
 import '../../theme/app_theme.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  final Product product;
+  final Medicine product;
 
   const ProductDetailsScreen({super.key, required this.product});
 
@@ -34,9 +34,9 @@ class ProductDetailsScreen extends StatelessWidget {
       height: 250,
       width: double.infinity,
       color: Colors.grey.shade100,
-      child: product.images.isNotEmpty
+      child: product.imageUrl != null
           ? Image.network(
-              '${AppConstants.baseImageUrl}${product.images.first.imagePath}',
+              '${AppConstants.baseImageUrl}${product.imageUrl}',
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) => const Center(
                 child: Icon(Icons.broken_image, size: 100, color: Colors.grey),
@@ -58,43 +58,33 @@ class ProductDetailsScreen extends StatelessWidget {
             product.name,
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          if (product.packingDesc != null)
+          if (product.packing != null)
             Text(
-              product.packingDesc!,
+              product.packing!,
               style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
             ),
           const SizedBox(height: 16),
           Row(
             children: [
               Text(
-                '₹${product.salePrice}',
+                '₹${product.price}',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.primaryTeal,
                 ),
               ),
-              const SizedBox(width: 12),
-              if (product.mrp > product.salePrice)
-                Text(
-                  '₹${product.mrp}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey.shade500,
-                    decoration: TextDecoration.lineThrough,
-                  ),
-                ),
             ],
           ),
           const Divider(height: 32),
           const Text(
-            'Composition',
+            'Description',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Information about the salt and composition will go here from the SaltId link.',
-            style: TextStyle(fontSize: 14),
+          Text(
+            product.description ?? 'No description available.',
+            style: const TextStyle(fontSize: 14),
           ),
         ],
       ),
@@ -116,13 +106,12 @@ class ProductDetailsScreen extends StatelessWidget {
       ),
       child: ElevatedButton(
         onPressed: () {
-          context.read<CartProvider>().addItem(
-            product.productId,
-            product.name,
-            product.salePrice,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${product.name} added to cart!')),
+          Get.find<CartController>().addMedicine(product);
+          Get.snackbar(
+            'Added to Cart',
+            '${product.name} added to cart!',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 1),
           );
         },
         child: const Text('Add to Cart'),

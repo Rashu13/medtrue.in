@@ -29,7 +29,8 @@ public class ProductRepository
     {
         using var conn = Connection;
         var sql = @"
-            SELECT p.*, u.name as UnitPrimaryName 
+            SELECT p.*, u.name as UnitPrimaryName, 
+                   (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
             FROM products p
             LEFT JOIN units u ON p.unit_primary_id = u.unit_id
             ORDER BY p.name";
@@ -39,7 +40,11 @@ public class ProductRepository
     public async Task<Product?> GetProductByIdAsync(long id)
     {
         using var conn = Connection;
-        return await conn.QueryFirstOrDefaultAsync<Product>("SELECT * FROM products WHERE product_id = @Id", new { Id = id });
+        var sql = @"
+            SELECT p.*, 
+                   (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
+            FROM products WHERE product_id = @Id";
+        return await conn.QueryFirstOrDefaultAsync<Product>(sql, new { Id = id });
     }
 
     public async Task<long> CreateProductAsync(Product product)

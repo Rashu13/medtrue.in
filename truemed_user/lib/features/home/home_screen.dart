@@ -1,29 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
+
 import 'package:badges/badges.dart' as b;
 import '../../core/app_constants.dart';
-import '../../providers/product_provider.dart';
-import '../../providers/cart_provider.dart';
+import '../../presentation/home/controllers/home_controller.dart';
+import '../../presentation/cart/controllers/cart_controller.dart';
+
 import '../../theme/app_theme.dart';
-import '../../models/product_model.dart';
+import '../../domain/entities/medicine.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      context.read<ProductProvider>().fetchCategories();
-      context.read<ProductProvider>().fetchProducts();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('TrueMed'),
         actions: [
-          Consumer<CartProvider>(
-            builder: (context, cart, child) {
+          GetX<CartController>(
+            builder: (cart) {
               return b.Badge(
                 position: b.BadgePosition.topEnd(top: 0, end: 3),
                 showBadge: cart.itemCount > 0,
@@ -42,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.shopping_cart_outlined),
-                  onPressed: () => context.push('/cart'),
+                  onPressed: () => Get.toNamed('/cart'),
                 ),
               );
             },
@@ -74,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
+        onChanged: (value) => controller.searchMedicines(value),
       ),
     );
   }
@@ -92,18 +80,21 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 12),
         SizedBox(
           height: 100,
-          child: Consumer<ProductProvider>(
-            builder: (context, provider, child) {
-              if (provider.isLoading && provider.categories.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemCount: provider.categories.length,
-                itemBuilder: (context, index) {
-                  final cat = provider.categories[index];
-                  return Container(
+          child: Obx(() {
+            if (controller.isLoading.value && controller.categories.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: controller.categories.length,
+              itemBuilder: (context, index) {
+                final cat = controller.categories[index];
+                return InkWell(
+                  onTap: () {
+                    // Filter logic or detail
+                  },
+                  child: Container(
                     width: 80,
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     child: Column(
@@ -111,7 +102,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         CircleAvatar(
                           radius: 30,
                           backgroundColor: AppTheme.primaryTeal.withOpacity(0.1),
-                          child: Icon(Icons.medical_services, color: AppTheme.primaryTeal),
+                          child: cat.imagePath != null
+                              ? ClipOval(
+                                  child: Image.network(
+                                    '${AppConstants.baseImageUrl}${cat.imagePath}',
+                                    fit: BoxFit.cover,
+                                    width: 60,
+                                    height: 60,
+                                    errorBuilder: (_, __, ___) => const Icon(Icons.medical_services, color: AppTheme.primaryTeal),
+                                  ),
+                                )
+                              : const Icon(Icons.medical_services, color: AppTheme.primaryTeal),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -123,11 +124,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                  );
-                },
-              );
-            },
-          ),
+                  ),
+                );
+              },
+            );
+          }),
         ),
       ],
     );
@@ -144,38 +145,36 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-        Consumer<ProductProvider>(
-          builder: (context, provider, child) {
-            if (provider.isLoading && provider.products.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: provider.products.length > 6 ? 6 : provider.products.length,
-              itemBuilder: (context, index) {
-                final product = provider.products[index];
-                return _buildProductCard(product);
-              },
-            );
-          },
-        ),
+        Obx(() {
+          if (controller.isLoading.value && controller.medicineList.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.75,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: controller.medicineList.length > 6 ? 6 : controller.medicineList.length,
+            itemBuilder: (context, index) {
+              final medicine = controller.medicineList[index];
+              return _buildProductCard(medicine);
+            },
+          );
+        }),
       ],
     );
   }
 
-  Widget _buildProductCard(Product product) {
+  Widget _buildProductCard(Medicine medicine) {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => context.push('/product', extra: product),
+        onTap: () => Get.toNamed('/product', arguments: medicine),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -184,9 +183,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
                 ),
-                child: product.images.isNotEmpty
+                child: medicine.imageUrl != null
                     ? Image.network(
-                        '${AppConstants.baseImageUrl}${product.images.first.imagePath}',
+                        '${AppConstants.baseImageUrl}${medicine.imageUrl}',
                         fit: BoxFit.cover,
                         width: double.infinity,
                         errorBuilder: (context, error, stackTrace) => const Center(
@@ -204,14 +203,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.name,
+                    medicine.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '₹${product.salePrice}',
+                    '₹${medicine.price}',
                     style: const TextStyle(
                       color: AppTheme.primaryTeal,
                       fontWeight: FontWeight.bold,
@@ -221,13 +220,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<CartProvider>().addItem(
-                        product.productId,
-                        product.name,
-                        product.salePrice,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${product.name} added!'), duration: const Duration(seconds: 1)),
+                      Get.find<CartController>().addMedicine(medicine);
+                      Get.snackbar(
+                        'Added to Cart',
+                        '${medicine.name} added!',
+                        snackPosition: SnackPosition.BOTTOM,
+                        duration: const Duration(seconds: 1),
                       );
                     },
                     style: ElevatedButton.styleFrom(

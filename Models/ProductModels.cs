@@ -58,6 +58,9 @@ public class Product
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+
+    // Read-only/Join fields
+    public string? PrimaryImagePath { get; set; }
 }
 
 public class ProductBatch
