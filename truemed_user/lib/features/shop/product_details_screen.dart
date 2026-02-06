@@ -43,7 +43,7 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             )
           : const Center(
-              child: Icon(Icons.medication, size: 100, color: AppTheme.primaryTeal),
+              child: Icon(Icons.medication, size: 100, color: AppTheme.primaryGreen),
             ),
     );
   }
@@ -71,7 +71,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryTeal,
+                  color: AppTheme.primaryGreen,
                 ),
               ),
             ],

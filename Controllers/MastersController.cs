@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MedTrueApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/masters")]
 public class MastersController : ControllerBase
 {
     private readonly MasterRepository _repository;
@@ -18,7 +18,7 @@ public class MastersController : ControllerBase
     }
 
     [HttpPost("upload-image")]
-    public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
+    public async Task<IActionResult> UploadMasterImage([FromForm] IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("No file uploaded.");
@@ -63,7 +63,7 @@ public class MastersController : ControllerBase
     public async Task<IActionResult> CreateCompany(Company company)
     {
         var id = await _repository.CreateCompanyAsync(company);
-        return CreatedAtAction(nameof(GetCompanies), new { id }, company);
+        return CreatedAtAction(nameof(GetCompanies), new { page = 1 }, company);
     }
 
     [HttpPut("companies/{id}")]
@@ -85,7 +85,7 @@ public class MastersController : ControllerBase
     public async Task<IActionResult> CreateSalt(Salt salt)
     {
         var id = await _repository.CreateSaltAsync(salt);
-        return CreatedAtAction(nameof(GetSalts), new { id }, salt);
+        return CreatedAtAction(nameof(GetSalts), new { page = 1 }, salt);
     }
 
     [HttpPut("salts/{id}")]
@@ -107,7 +107,7 @@ public class MastersController : ControllerBase
     public async Task<IActionResult> CreateCategory(Category category)
     {
         var id = await _repository.CreateCategoryAsync(category);
-        return CreatedAtAction(nameof(GetCategories), new { id }, category);
+        return CreatedAtAction(nameof(GetCategories), new { page = 1 }, category);
     }
 
     [HttpPut("categories/{id}")]
@@ -129,7 +129,7 @@ public class MastersController : ControllerBase
     public async Task<IActionResult> CreateUnit(Unit unit)
     {
         var id = await _repository.CreateUnitAsync(unit);
-        return CreatedAtAction(nameof(GetUnits), new { id }, unit);
+        return CreatedAtAction(nameof(GetUnits), new { page = 1 }, unit);
     }
 
     [HttpPut("units/{id}")]
@@ -151,7 +151,7 @@ public class MastersController : ControllerBase
     public async Task<IActionResult> CreateItemType(ItemType itemType)
     {
         var id = await _repository.CreateItemTypeAsync(itemType);
-        return CreatedAtAction(nameof(GetItemTypes), new { id }, itemType);
+        return CreatedAtAction(nameof(GetItemTypes), new { page = 1 }, itemType);
     }
 
     [HttpPut("itemtypes/{id}")]
@@ -174,7 +174,7 @@ public class MastersController : ControllerBase
     public async Task<IActionResult> CreateHsnCode(HsnCode hsn)
     {
         var code = await _repository.CreateHsnCodeAsync(hsn);
-        return CreatedAtAction(nameof(GetHsnCodes), new { code }, hsn);
+        return CreatedAtAction(nameof(GetHsnCodes), new { page = 1 }, hsn);
     }
 
     [HttpPut("hsncodes/{code}")]
@@ -204,7 +204,7 @@ public class MastersController : ControllerBase
     public async Task<IActionResult> CreatePackingSize(PackingSize size)
     {
         var id = await _repository.CreatePackingSizeAsync(size);
-        return CreatedAtAction(nameof(GetPackingSizes), new { id }, size);
+        return CreatedAtAction(nameof(GetPackingSizes), new { page = 1 }, size);
     }
 
     [HttpPut("packingsizes/{id}")]
@@ -222,9 +222,8 @@ public class MastersController : ControllerBase
         return NoContent();
     }
 
-    // Upload Endpoint
-    [HttpPost("upload/{type}")]
-    public async Task<IActionResult> UploadMasterData(string type, IFormFile file)
+    [HttpPost("upload/{masterType}")]
+    public async Task<IActionResult> UploadMasterData(string masterType, [FromForm] IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("File is empty or not provided.");
@@ -232,8 +231,8 @@ public class MastersController : ControllerBase
         try
         {
             using var stream = file.OpenReadStream();
-            var count = await _repository.ImportMasterDataAsync(type, stream);
-            return Ok(new { Message = $"Successfully imported {count} records for {type}.", Count = count });
+            var count = await _repository.ImportMasterDataAsync(masterType, stream);
+            return Ok(new { Message = $"Successfully imported {count} records for {masterType}.", Count = count });
         }
         catch (Exception ex)
         {
@@ -241,14 +240,13 @@ public class MastersController : ControllerBase
         }
     }
 
-    // Template Download Endpoint
-    [HttpGet("template/{type}")]
-    public IActionResult DownloadTemplate(string type)
+    [HttpGet("template/{masterType}")]
+    public IActionResult DownloadTemplate(string masterType)
     {
         using var workbook = new ClosedXML.Excel.XLWorkbook();
-        var worksheet = workbook.Worksheets.Add(type);
+        var worksheet = workbook.Worksheets.Add(masterType);
         
-        switch (type.ToLower())
+        switch (masterType.ToLower())
         {
             case "companies":
                 worksheet.Cell(1, 1).Value = "Name";
@@ -308,7 +306,7 @@ public class MastersController : ControllerBase
         using var stream = new MemoryStream();
         workbook.SaveAs(stream);
         var content = stream.ToArray();
-        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{type}_template.xlsx");
+        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{masterType}_template.xlsx");
     }
 
     // Delete Endpoints

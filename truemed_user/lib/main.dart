@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'theme/app_theme.dart';
-import 'presentation/home/views/home_view.dart';
-import 'features/home/home_screen.dart';
+import 'presentation/main/main_screen.dart';
 import 'features/shop/product_details_screen.dart';
 import 'bindings/home_binding.dart';
 import 'presentation/cart/views/cart_screen.dart';
@@ -26,12 +25,8 @@ class TrueMedUserApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/',
-          page: () => const HomeScreen(),
+          page: () => const MainScreen(),
           binding: HomeBinding(),
-        ),
-        GetPage(
-          name: '/home_view',
-          page: () => const HomeView(),
         ),
         GetPage(
           name: '/cart',

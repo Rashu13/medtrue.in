@@ -72,7 +72,7 @@ class CartScreen extends GetView<CartController> {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryTeal,
+                  color: AppTheme.primaryGreen,
                 ),
               )),
             ],

@@ -12,7 +12,7 @@ class MedicineRepositoryImpl implements MedicineRepository {
   @override
   Future<List<Medicine>> getMedicines({int page = 1, int limit = 20}) async {
     // Backend uses /api/products for products
-    Response response = await apiClient.getData('/products');
+    Response response = await apiClient.getData('products');
     if (response.statusCode == 200) {
       final body = response.body;
       List<dynamic> data = [];
@@ -23,15 +23,15 @@ class MedicineRepositoryImpl implements MedicineRepository {
       }
       
       return data.map((json) {
-        // Map backend 'productId' to 'id' and 'PrimaryImagePath' to 'imageUrl'
+        // Map backend keys (handling both camelCase and PascalCase)
         return Medicine(
-          id: json['productId'] ?? 0,
-          name: json['name'] ?? '',
-          price: (json['mrp'] ?? 0).toDouble(),
-          brand: json['brandName'], 
-          packing: json['packingDesc'],
-          imageUrl: json['primaryImagePath'],
-          description: json['description'],
+          id: json['productId'] ?? json['ProductId'] ?? 0,
+          name: json['name'] ?? json['Name'] ?? '',
+          price: (json['mrp'] ?? json['Mrp'] ?? 0).toDouble(),
+          brand: json['brandName'] ?? json['BrandName'], 
+          packing: json['packingDesc'] ?? json['PackingDesc'],
+          imageUrl: json['primaryImagePath'] ?? json['PrimaryImagePath'],
+          description: json['description'] ?? json['Description'],
         );
       }).toList();
     } else {
@@ -41,15 +41,15 @@ class MedicineRepositoryImpl implements MedicineRepository {
 
   @override
   Future<Medicine> getMedicineById(int id) async {
-    Response response = await apiClient.getData('/products/$id');
+    Response response = await apiClient.getData('products/$id');
     if (response.statusCode == 200) {
       final json = response.body;
       return Medicine(
-        id: json['productId'] ?? 0,
-        name: json['name'] ?? '',
-        price: (json['mrp'] ?? 0).toDouble(),
-        packing: json['packingDesc'],
-        imageUrl: json['primaryImagePath'],
+        id: json['productId'] ?? json['ProductId'] ?? 0,
+        name: json['name'] ?? json['Name'] ?? '',
+        price: (json['mrp'] ?? json['Mrp'] ?? 0).toDouble(),
+        packing: json['packingDesc'] ?? json['PackingDesc'],
+        imageUrl: json['primaryImagePath'] ?? json['PrimaryImagePath'],
       );
     } else {
       throw Exception('Failed to load medicine details: ${response.statusText}');
@@ -59,7 +59,7 @@ class MedicineRepositoryImpl implements MedicineRepository {
   @override
   Future<List<Medicine>> searchMedicines(String query) async {
     // For now, using main products endpoint or filtering if backend search is missing
-    Response response = await apiClient.getData('/products');
+    Response response = await apiClient.getData('products');
     if (response.statusCode == 200) {
       final body = response.body;
       List<dynamic> data = [];
@@ -71,11 +71,11 @@ class MedicineRepositoryImpl implements MedicineRepository {
       
       var list = data.map((json) {
         return Medicine(
-          id: json['productId'] ?? 0,
-          name: json['name'] ?? '',
-          price: (json['mrp'] ?? 0).toDouble(),
-          packing: json['packingDesc'],
-          imageUrl: json['primaryImagePath'],
+          id: json['productId'] ?? json['ProductId'] ?? 0,
+          name: json['name'] ?? json['Name'] ?? '',
+          price: (json['mrp'] ?? json['Mrp'] ?? 0).toDouble(),
+          packing: json['packingDesc'] ?? json['PackingDesc'],
+          imageUrl: json['primaryImagePath'] ?? json['PrimaryImagePath'],
         );
       }).toList();
       
@@ -90,7 +90,7 @@ class MedicineRepositoryImpl implements MedicineRepository {
 
   @override
   Future<List<Category>> getCategories() async {
-    Response response = await apiClient.getData('/masters/categories');
+    Response response = await apiClient.getData('masters/categories');
     if (response.statusCode == 200) {
       final body = response.body;
       List<dynamic> data = [];

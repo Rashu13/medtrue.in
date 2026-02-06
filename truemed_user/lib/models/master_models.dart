@@ -13,10 +13,10 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      categoryId: json['categoryId'] ?? 0,
-      name: json['name'] ?? '',
-      description: json['description'],
-      imagePath: json['imagePath'],
+      categoryId: json['categoryId'] ?? json['CategoryId'] ?? 0,
+      name: json['name'] ?? json['Name'] ?? '',
+      description: json['description'] ?? json['Description'],
+      imagePath: json['imagePath'] ?? json['ImagePath'],
     );
   }
 }
