@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Use VITE_API_URL from environment or fallback to /api for local proxy
-const baseURL = import.meta.env.VITE_API_URL || '/api';
+// Use VITE_API_URL from environment or fallback to production URL
+const baseURL = import.meta.env.VITE_API_URL || 'https://medtrue.cloud/api';
 
 // Create Axios Instance
 const api = axios.create({
