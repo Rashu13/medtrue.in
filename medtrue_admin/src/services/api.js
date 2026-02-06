@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-// Production API URL - hardcoded for reliability
-// Production API URL - hardcoded for reliability
-export const baseURL = 'https://medtrue.cloud/api';
-export const IMAGE_BASE_URL = 'https://medtrue.cloud';
+// Use environment variable for API URL, fallback to local proxy path or production
+// Hardcode to /api to ensure local proxy is ALWAYS used
+export const baseURL = '/api';
+// Use relative path for images to leverage proxy
+export const IMAGE_BASE_URL = '';
 
 // Create Axios Instance
 const api = axios.create({

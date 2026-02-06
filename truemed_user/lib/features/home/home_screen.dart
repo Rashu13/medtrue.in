@@ -312,30 +312,42 @@ class HomeScreen extends GetView<HomeController> {
               ],
             ),
           ),
-          Padding(
+                  Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min, // Use min to avoid stretching
               children: [
                 Text(
                   medicine.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13), // Slightly smaller
                 ),
                 const SizedBox(height: 4),
                 Text(
                   medicine.packing ?? '',
+                  maxLines: 1, // Ensure single line
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
                 ),
-                const SizedBox(height: 8),
+                const Spacer(), // Push price/button to bottom
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '₹${medicine.price}',
-                      style: const TextStyle(color: AppTheme.primaryDark, fontWeight: FontWeight.bold, fontSize: 16),
+                    Flexible( // Prevent price from pushing button out
+                      child: Text(
+                        '₹${medicine.price}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppTheme.primaryDark,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
+                    const SizedBox(width: 4),
                     InkWell(
                       onTap: () {
                          Get.find<CartController>().addMedicine(medicine);

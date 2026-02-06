@@ -157,9 +157,6 @@ D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\app\intermediates\navigation_j
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\app\intermediates\packaged_manifests\debug\processDebugManifestForPackage\output-metadata.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\app\intermediates\signing_config_versions\debug\writeDebugSigningConfigVersions\signing-config-versions.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\app\outputs\apk\debug\output-metadata.json
-D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\flutter_assets\AssetManifest.bin.json
-D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\flutter_assets\FontManifest.json
-D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\native_assets\windows\native_assets.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\path_provider_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\path_provider_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\path_provider_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
@@ -169,8 +166,6 @@ D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\shared_preferences_android\int
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\sqflite_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\sqflite_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\sqflite_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
-D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\unit_test_assets\FontManifest.json
-D:\medtrue.in\bin\Debug\net8.0\truemed_user\build\unit_test_assets\NativeAssetsManifest.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\ios\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\ios\Runner\Assets.xcassets\LaunchImage.imageset\Contents.json
 D:\medtrue.in\bin\Debug\net8.0\truemed_user\macos\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
