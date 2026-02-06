@@ -3,7 +3,7 @@
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://0.0.0.0:5015");
+// builder.WebHost.UseUrls("http://0.0.0.0:5015"); // Removed for container compatibility, use environment variables instead
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
