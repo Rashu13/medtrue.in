@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MedTrueApi.Controllers;
 
 [ApiController]
-[Route("api/products")]
+[Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
     private readonly ProductRepository _repository;
@@ -49,7 +49,7 @@ public class ProductsController : ControllerBase
 
     // Image Endpoints
     [HttpPost("{id}/images")]
-    public async Task<IActionResult> UploadProductImage(long id, [FromForm] IFormFile file, [FromForm] int displayOrder = 0, [FromForm] bool isPrimary = false)
+    public async Task<IActionResult> UploadImage(long id, IFormFile file, [FromForm] int displayOrder = 0, [FromForm] bool isPrimary = false)
     {
         if (file == null || file.Length == 0)
             return BadRequest("No file uploaded.");
