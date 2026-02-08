@@ -17,6 +17,8 @@ Future<void> main() async {
     anonKey: AppConstants.supabaseAnonKey,
   );
 
+  Get.put(AuthController()); // Initialize globally
+
   runApp(const MyApp());
 }
 
@@ -32,12 +34,13 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       initialRoute: '/login',
+      // initialBinding removed
       getPages: [
         GetPage(name: '/login', page: () => LoginScreen()),
-        GetPage(name: '/admin', page: () => const AdminDashboard()),
+        GetPage(name: '/admin', page: () => const AdminDashboard()), // binding removed
         GetPage(name: '/user', page: () => const UserDashboard()),
         // Placeholder for home, auth controller determines redirection
-        GetPage(name: '/home', page: () => const Scaffold(body: Center(child: CircularProgressIndicator()))), 
+        GetPage(name: '/home', page: () => const Scaffold(body: Center(child: CircularProgressIndicator()))),
       ],
     );
   }

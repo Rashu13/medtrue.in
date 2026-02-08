@@ -6,8 +6,8 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final AuthController authController = Get.put(AuthController());
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(text: 'admin@demo.com');
+  final TextEditingController passwordController = TextEditingController(text: 'password123');
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +41,22 @@ class LoginScreen extends StatelessWidget {
                 child: const Text('Login'),
               );
             }),
+            const SizedBox(height: 10),
+            Obx(() {
+                 return TextButton(
+                  onPressed: authController.isLoading.value ? null : () {
+                    authController.signUp(
+                      emailController.text.trim(),
+                      passwordController.text.trim(),
+                    );
+                  },
+                  child: const Text('Register / Sign Up'),
+                );
+            }),
+            TextButton(
+              onPressed: () => authController.createDemoUsers(),
+              child: const Text('Setup Demo Users (Run Once)'),
+            ),
           ],
         ),
       ),
