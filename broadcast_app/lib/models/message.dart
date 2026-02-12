@@ -34,4 +34,22 @@ class Message {
       'is_broadcast': isBroadcast,
     };
   }
+
+  Message copyWith({
+    String? id,
+    String? senderId,
+    String? receiverId,
+    String? content,
+    bool? isBroadcast,
+    DateTime? createdAt,
+  }) {
+    return Message(
+      id: id ?? this.id,
+      senderId: senderId ?? this.senderId,
+      receiverId: receiverId ?? this.receiverId,
+      content: content ?? this.content,
+      isBroadcast: isBroadcast ?? this.isBroadcast,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }

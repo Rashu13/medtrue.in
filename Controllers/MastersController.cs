@@ -42,14 +42,14 @@ public class MastersController : ControllerBase
     [HttpPost("migrate-salts")]
     public async Task<IActionResult> MigrateSalts()
     {
-        await _repository.EnsureSaltSchemaAsync();
-        return Ok("Salt schema updated successfully.");
+        await _repository.EnsureSchemaAsync(); // Using general EnsureSchema now
+        return Ok("Schemas updated successfully.");
     }
 
     [HttpPost("migrate-companies")]
     public async Task<IActionResult> MigrateCompanies()
     {
-        await _repository.EnsureCompanySchemaAsync();
+        await _repository.EnsureCompanySchemaAsync(); // kept for legacy if needed, but EnsureSchemaAsync covers it
         return Ok("Company schema updated successfully.");
     }
 
@@ -114,7 +114,7 @@ public class MastersController : ControllerBase
     [HttpPut("categories/{id}")]
     public async Task<IActionResult> UpdateCategory(int id, Category category)
     {
-        if (id != category.CategoryId) return BadRequest();
+        if (id != category.Id) return BadRequest(); // Changed from CategoryId to Id
         await _repository.UpdateCategoryAsync(category);
         return NoContent();
     }
@@ -343,6 +343,66 @@ public class MastersController : ControllerBase
     public async Task<IActionResult> DeleteItemType(int id)
     {
         await _repository.DeleteItemTypeAsync(id);
+        return NoContent();
+    }
+
+    // Drug Schedules
+    [HttpGet("drug-schedules")]
+    public async Task<IActionResult> GetDrugSchedules([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<DrugSchedule>("drug_schedules", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
+
+    [HttpPost("drug-schedules")]
+    public async Task<IActionResult> CreateDrugSchedule(DrugSchedule schedule)
+    {
+        var id = await _repository.CreateDrugScheduleAsync(schedule);
+        return CreatedAtAction(nameof(GetDrugSchedules), new { page = 1 }, schedule);
+    }
+
+    [HttpPut("drug-schedules/{id}")]
+    public async Task<IActionResult> UpdateDrugSchedule(int id, DrugSchedule schedule)
+    {
+        if (id != schedule.ScheduleId) return BadRequest();
+        await _repository.UpdateDrugScheduleAsync(schedule);
+        return NoContent();
+    }
+
+    [HttpDelete("drug-schedules/{id}")]
+    public async Task<IActionResult> DeleteDrugSchedule(int id)
+    {
+        await _repository.DeleteDrugScheduleAsync(id);
+        return NoContent();
+    }
+
+    // Product Batches
+    [HttpGet("product-batches")]
+    public async Task<IActionResult> GetProductBatches([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var (items, total) = await _repository.GetPagedAsync<ProductBatch>("product_batches", page, pageSize);
+        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
+
+    [HttpPost("product-batches")]
+    public async Task<IActionResult> CreateProductBatch(ProductBatch batch)
+    {
+        var id = await _repository.CreateProductBatchAsync(batch);
+        return Ok(new { Id = id });
+    }
+
+    [HttpPut("product-batches/{id}")]
+    public async Task<IActionResult> UpdateProductBatch(long id, ProductBatch batch)
+    {
+        if (id != batch.BatchId) return BadRequest();
+        await _repository.UpdateProductBatchAsync(batch);
+        return NoContent();
+    }
+
+    [HttpDelete("product-batches/{id}")]
+    public async Task<IActionResult> DeleteProductBatch(long id)
+    {
+        await _repository.DeleteProductBatchAsync(id);
         return NoContent();
     }
 }

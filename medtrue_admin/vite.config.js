@@ -7,12 +7,12 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'https://medtrue.cloud',
+                target: 'http://127.0.0.1:5015',
                 changeOrigin: true,
                 secure: false,
             },
             '/uploads': {
-                target: 'https://medtrue.cloud',
+                target: 'http://127.0.0.1:5015',
                 changeOrigin: true,
                 secure: false,
             }

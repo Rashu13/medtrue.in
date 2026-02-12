@@ -1,8 +1,14 @@
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
+-- RESET: Drop existing tables to apply new schema (WARNING: DELETES DATA)
+drop policy if exists "Public profiles are viewable by everyone." on tbl_profiles;
+drop policy if exists "Anyone can insert/update profiles" on tbl_profiles;
+drop policy if exists "Users can update own profile." on tbl_profiles;
+drop table if exists public.tbl_messages;
+drop table if exists public.tbl_profiles;
 -- Create Profiles Table (tbl_profiles)
 create table public.tbl_profiles (
-    id uuid references auth.users not null,
+    id text not null,
     email text,
     role text default 'user' check (role in ('admin', 'user')),
     primary key (id)
@@ -12,14 +18,15 @@ alter table public.tbl_profiles enable row level security;
 -- Policy: Everyone can read profiles
 create policy "Public profiles are viewable by everyone." on tbl_profiles for
 select using (true);
--- Policy: Users can update own profile
-create policy "Users can update own profile." on tbl_profiles for
-update using (auth.uid() = id);
+-- Policy: Anyone can update their own profile (based on ID match)
+-- Note: Without auth, we rely on the client passing the correct ID. 
+-- In a real app, we'd need a better security model for guests, but for now we allow upserts.
+create policy "Anyone can insert/update profiles" on tbl_profiles for all using (true) with check (true);
 -- Create Messages Table (tbl_messages)
 create table public.tbl_messages (
     id uuid default uuid_generate_v4() primary key,
-    sender_id uuid references auth.users not null,
-    receiver_id uuid references auth.users,
+    sender_id text not null,
+    receiver_id text,
     -- Null (empty) means Broadcast
     content text,
     is_broadcast boolean default false,
@@ -27,20 +34,12 @@ create table public.tbl_messages (
 );
 -- Turn on RLS
 alter table public.tbl_messages enable row level security;
--- Policy: Users see their own messages AND broadcasts
-create policy "Users see own messages and broadcasts" on tbl_messages for
-select using (
-        auth.uid() = sender_id
-        or auth.uid() = receiver_id
-        or is_broadcast = true
-    );
--- Policy: Users can insert messages
-create policy "Users can insert messages" on tbl_messages for
-insert with check (auth.uid() = sender_id);
--- Trigger to create profile on signup
+-- Policy: Public access for now to allow guest messaging
+create policy "Public access to messages" on tbl_messages for all using (true) with check (true);
+-- Trigger to create profile on signup (Keep this if we still have true admins signing up via Auth)
 create or replace function public.handle_new_user() returns trigger as $$ begin
 insert into public.tbl_profiles (id, email, role)
-values (new.id, new.email, 'user');
+values (new.id::text, new.email, 'user');
 return new;
 end;
 $$ language plpgsql security definer;
@@ -49,3 +48,6 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after
 insert on auth.users for each row execute procedure public.handle_new_user();
+-- Enable Realtime for Messages
+alter publication supabase_realtime
+add table tbl_messages;

@@ -39,7 +39,7 @@ class CartController extends GetxController {
           productId: product.productId,
           name: product.name,
           price: product.salePrice,
-          imageUrl: product.images.isNotEmpty ? product.images[0].imagePath : null,
+          imageUrl: product.primaryImagePath,
         ),
       );
     }

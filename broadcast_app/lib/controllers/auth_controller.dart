@@ -167,7 +167,6 @@ class AuthController extends GetxController {
           'id': user.id,
           'email': user.email,
           'role': 'user', // Default role
-          'created_at': DateTime.now().toIso8601String(),
         });
         
         userRole.value = 'user';

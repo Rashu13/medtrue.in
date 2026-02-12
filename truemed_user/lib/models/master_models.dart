@@ -1,22 +1,22 @@
 class Category {
   final int categoryId;
   final String name;
-  final String? description;
+  final int? parentId;
   final String? imagePath;
 
   Category({
     required this.categoryId,
     required this.name,
-    this.description,
+    this.parentId,
     this.imagePath,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      categoryId: json['categoryId'] ?? json['CategoryId'] ?? 0,
-      name: json['name'] ?? json['Name'] ?? '',
-      description: json['description'] ?? json['Description'],
-      imagePath: json['imagePath'] ?? json['ImagePath'],
+      categoryId: json['categoryId'] ?? 0,
+      name: json['name'] ?? '',
+      parentId: json['parentId'],
+      imagePath: json['imagePath'],
     );
   }
 }

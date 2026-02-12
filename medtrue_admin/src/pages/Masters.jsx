@@ -8,6 +8,31 @@ import api, { IMAGE_BASE_URL } from '../services/api'; // Direct API access for 
 
 // Configuration for different master types
 const masterConfig = {
+    brands: {
+        title: 'Brands',
+        endpoint: 'masters/brands',
+        idField: 'id',
+        columns: [
+            { label: 'Title', key: 'title' },
+            { label: 'Slug', key: 'slug' },
+            { label: 'Status', key: 'status' },
+        ],
+        schema: Yup.object({
+            title: Yup.string().required('Title is required'),
+            slug: Yup.string().required('Slug is required'),
+        }),
+        fields: [
+            { name: 'title', label: 'Brand Title', type: 'text' },
+            { name: 'slug', label: 'Slug', type: 'text' },
+            { name: 'description', label: 'Description', type: 'textarea' },
+            {
+                name: 'status',
+                label: 'Status',
+                type: 'select',
+                options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }]
+            },
+        ]
+    },
     companies: {
         title: 'Companies',
         endpoint: 'masters/companies',
@@ -43,7 +68,7 @@ const masterConfig = {
     categories: {
         title: 'Categories',
         endpoint: 'masters/categories',
-        idField: 'categoryId',
+        idField: 'id',
         columns: [
             { label: 'Name', key: 'name' },
             { label: 'Image', key: 'imagePath', type: 'image' },
@@ -187,6 +212,54 @@ const masterConfig = {
             { name: 'cessRate', label: 'CESS %', type: 'number' },
         ]
     },
+    'drug-schedules': {
+        title: 'Drug Schedules',
+        endpoint: 'masters/drug-schedules',
+        idField: 'scheduleId',
+        columns: [
+            { label: 'Name', key: 'name' },
+            { label: 'Requires Prescription', key: 'requiresPrescription', render: (row) => row.requiresPrescription ? 'Yes' : 'No' },
+            { label: 'Warning Label', key: 'warningLabel' },
+        ],
+        schema: Yup.object({
+            name: Yup.string().required('Schedule name is required'),
+        }),
+        fields: [
+            { name: 'name', label: 'Schedule Name', type: 'text', placeholder: 'e.g. Schedule H, Schedule H1, Schedule X' },
+            {
+                name: 'requiresPrescription',
+                label: 'Requires Prescription',
+                type: 'select',
+                options: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }]
+            },
+            { name: 'warningLabel', label: 'Warning Label', type: 'textarea', placeholder: 'Warning text displayed to users' },
+        ]
+    },
+    'product-batches': {
+        title: 'Product Batches',
+        endpoint: 'masters/product-batches',
+        idField: 'batchId',
+        columns: [
+            { label: 'Batch #', key: 'batchNumber' },
+            { label: 'Product ID', key: 'productId' },
+            { label: 'Expiry', key: 'expiryDate' },
+            { label: 'MRP', key: 'mrp', render: (row) => row.mrp ? `₹${row.mrp}` : '—' },
+            { label: 'Qty Available', key: 'quantityAvailable' },
+        ],
+        schema: Yup.object({
+            batchNumber: Yup.string().required('Batch Number is required'),
+            productId: Yup.number().required('Product ID is required'),
+        }),
+        fields: [
+            { name: 'productId', label: 'Product ID', type: 'number' },
+            { name: 'batchNumber', label: 'Batch Number', type: 'text' },
+            { name: 'expiryDate', label: 'Expiry Date', type: 'date' },
+            { name: 'mrp', label: 'MRP (₹)', type: 'number' },
+            { name: 'purchaseRate', label: 'Purchase Rate (₹)', type: 'number' },
+            { name: 'quantityAvailable', label: 'Quantity Available', type: 'number' },
+            { name: 'entryDate', label: 'Entry Date', type: 'date' },
+        ]
+    },
 };
 
 const Masters = () => {
@@ -268,7 +341,7 @@ const Masters = () => {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-gray-800">Master Data Management</h1>
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Master Data Management</h1>
                 <div className="flex gap-2">
                     <input
                         type="file"
@@ -299,14 +372,14 @@ const Masters = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 space-x-6">
+            <div className="flex border-b border-gray-200 dark:border-gray-700 space-x-6">
                 {Object.keys(masterConfig).map(key => (
                     <button
                         key={key}
                         onClick={() => setActiveTab(key)}
                         className={`pb-3 text-sm font-medium border-b-2 transition-colors ${activeTab === key
-                            ? 'border-teal-600 text-teal-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            ? 'border-teal-600 text-teal-600 dark:text-teal-400 dark:border-teal-400'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                             }`}
                     >
                         {masterConfig[key].title}
@@ -328,10 +401,10 @@ const Masters = () => {
             {/* Modal - Could be extracted to component */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="rounded-lg w-full shadow-xl overflow-hidden max-w-4xl bg-sky-50">
+                    <div className="rounded-lg w-full shadow-xl overflow-hidden max-w-4xl bg-sky-50 dark:bg-gray-800 transition-colors">
 
                         {/* Header */}
-                        <div className="flex justify-between items-center px-4 py-3 bg-[#2E5A5A] text-white">
+                        <div className="flex justify-between items-center px-4 py-3 bg-[#2E5A5A] dark:bg-teal-900 text-white">
                             <h3 className="font-bold text-base uppercase tracking-wider">
                                 {editingItem ? 'Edit' : 'Add'} {config.title.toUpperCase()}
                             </h3>
@@ -341,7 +414,7 @@ const Masters = () => {
                         </div>
 
                         {/* Unified Legacy Form Layout */}
-                        <form onSubmit={formik.handleSubmit} className="p-6 space-y-1 text-sm font-menu bg-sky-50">
+                        <form onSubmit={formik.handleSubmit} className="p-6 space-y-1 text-sm font-menu bg-sky-50 dark:bg-gray-800 transition-colors">
                             {config.fields.map((field) => {
                                 // Specific handling for Salts to skip grouped fields
                                 if (activeTab === 'salts' && ['isNarcotic', 'isScheduleH', 'isScheduleH1', 'isContinued', 'isProhibited', 'type', 'maximumRate'].includes(field.name)) return null;
@@ -351,14 +424,14 @@ const Masters = () => {
 
                                 return (
                                     <div key={field.name} className="grid grid-cols-[180px_1fr] items-center gap-4">
-                                        <label className="text-gray-900 font-medium text-right pr-2">{field.label}</label>
+                                        <label className="text-gray-900 dark:text-gray-200 font-medium text-right pr-2">{field.label}</label>
                                         <span className="hidden">:</span> {/* Visual separator if needed */}
                                         {field.type === 'textarea' ? (
                                             <input
                                                 name={field.name}
                                                 onChange={formik.handleChange}
                                                 value={formik.values[field.name] || ''}
-                                                className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8"
+                                                className="w-full px-2 py-1 border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:border-teal-600 h-8"
                                             />
                                         ) : field.type === 'image' ? (
                                             <div className="flex items-center gap-2">
@@ -381,7 +454,7 @@ const Masters = () => {
                                                             }
                                                         }
                                                     }}
-                                                    className="flex-1 px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8 text-sm"
+                                                    className="flex-1 px-2 py-1 border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:border-teal-600 h-8 text-sm"
                                                 />
                                                 {formik.values[field.name] && (
                                                     <img
@@ -410,7 +483,7 @@ const Masters = () => {
                                                     }
                                                 }}
                                                 value={formik.values[field.name] ?? (field.type === 'number' ? 0 : '')}
-                                                className="w-full px-2 py-1 border border-gray-400 bg-white focus:outline-none focus:border-teal-600 h-8"
+                                                className="w-full px-2 py-1 border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:border-teal-600 h-8"
                                             />
                                         )}
                                     </div>
@@ -611,7 +684,7 @@ const Masters = () => {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-6 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                                    className="px-6 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
                                 >
                                     Cancel
                                 </button>

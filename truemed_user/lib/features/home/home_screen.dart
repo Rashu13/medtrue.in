@@ -243,6 +243,30 @@ class HomeScreen extends GetView<HomeController> {
       if (controller.isLoading.value && controller.medicineList.isEmpty) {
         return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
       }
+      if (controller.errorMessage.isNotEmpty && controller.medicineList.isEmpty) {
+        return SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                children: [
+                   const Icon(Icons.error_outline, color: Colors.red, size: 40),
+                   const SizedBox(height: 8),
+                   Text(
+                     controller.errorMessage.value, 
+                     style: const TextStyle(color: Colors.red),
+                     textAlign: TextAlign.center,
+                   ),
+                   TextButton(
+                     onPressed: () => controller.getMedicines(),
+                     child: const Text('Retry'),
+                   )
+                ],
+              ),
+            ),
+          ),
+        );
+      }
       return SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         sliver: SliverGrid(
@@ -278,9 +302,10 @@ class HomeScreen extends GetView<HomeController> {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
+            flex: 3,
             child: Stack(
               children: [
                 Container(
@@ -312,56 +337,63 @@ class HomeScreen extends GetView<HomeController> {
               ],
             ),
           ),
-                  Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min, // Use min to avoid stretching
-              children: [
-                Text(
-                  medicine.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13), // Slightly smaller
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  medicine.packing ?? '',
-                  maxLines: 1, // Ensure single line
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
-                ),
-                const Spacer(), // Push price/button to bottom
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible( // Prevent price from pushing button out
-                      child: Text(
-                        '₹${medicine.price}',
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        medicine.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppTheme.primaryDark,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        medicine.packing ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          '₹${medicine.price}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: AppTheme.primaryDark,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 4),
-                    InkWell(
-                      onTap: () {
-                         Get.find<CartController>().addMedicine(medicine);
-                         Get.snackbar('Added', '${medicine.name} added to cart', snackPosition: SnackPosition.BOTTOM);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(color: AppTheme.primaryGreen, borderRadius: BorderRadius.circular(8)),
-                        child: const Icon(Icons.add, color: Colors.white, size: 20),
+                      const SizedBox(width: 4),
+                      InkWell(
+                        onTap: () {
+                           Get.find<CartController>().addMedicine(medicine);
+                           Get.snackbar('Added', '${medicine.name} added to cart', snackPosition: SnackPosition.BOTTOM);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(color: AppTheme.primaryGreen, borderRadius: BorderRadius.circular(8)),
+                          child: const Icon(Icons.add, color: Colors.white, size: 20),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

@@ -18,6 +18,11 @@ builder.Services.AddSingleton<MedTrueApi.Repositories.IDbConnectionFactory, MedT
 builder.Services.AddSingleton<MedTrueApi.Repositories.DatabaseInitializer>();
 builder.Services.AddScoped<MedTrueApi.Repositories.MasterRepository>();
 builder.Services.AddScoped<MedTrueApi.Repositories.ProductRepository>();
+builder.Services.AddScoped<MedTrueApi.Repositories.ContentRepository>();
+builder.Services.AddScoped<MedTrueApi.Repositories.UserRepository>();
+builder.Services.AddScoped<MedTrueApi.Repositories.OrderRepository>();
+builder.Services.AddScoped<MedTrueApi.Repositories.LogisticsRepository>();
+builder.Services.AddScoped<MedTrueApi.Repositories.AuxiliaryRepository>();
 
 var app = builder.Build();
 
@@ -37,9 +42,26 @@ using (var scope = app.Services.CreateScope())
     await masterRepo.EnsureHsnSchemaAsync(); // Auto-migrate HSN Codes
 
     // Auto-migrate Products table
-    // Auto-migrate Products table
     var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
     await productRepo.EnsureProductSchemaAsync();
+
+    // Auto-migrate Content tables
+    var contentRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ContentRepository>();
+    await contentRepo.EnsureSchemaAsync();
+
+    // Auto-migrate User/Order/Logistics tables
+    var userRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.UserRepository>();
+    await userRepo.EnsureSchemaAsync();
+
+    var orderRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.OrderRepository>();
+    await orderRepo.EnsureSchemaAsync();
+
+    var logisticsRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.LogisticsRepository>();
+    await logisticsRepo.EnsureSchemaAsync();
+
+    // Auto-migrate Auxiliary tables
+    var auxRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.AuxiliaryRepository>();
+    await auxRepo.EnsureSchemaAsync();
 }
 
 // Configure the HTTP request pipeline.
