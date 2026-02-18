@@ -54,29 +54,32 @@ public class MasterRepository
     {
         using var conn = Connection;
         await conn.ExecuteAsync(@"
-            CREATE TABLE IF NOT EXISTS categories (
-                id SERIAL PRIMARY KEY,
-                uuid VARCHAR(36),
-                parent_id BIGINT,
-                title VARCHAR(255) NOT NULL,
-                slug VARCHAR(255) NOT NULL,
-                name VARCHAR(255),
-                description TEXT,
-                status VARCHAR(20) DEFAULT 'active',
-                requires_approval BOOLEAN DEFAULT FALSE,
-                sort_order INT DEFAULT 0,
-                commission DECIMAL(5,2) DEFAULT 0,
-                background_type VARCHAR(20),
-                background_color VARCHAR(10),
-                font_color VARCHAR(255),
-                metadata TEXT,
-                image_path TEXT,
-                created_at TIMESTAMP DEFAULT NOW(),
-                updated_at TIMESTAMP DEFAULT NOW()
+            CREATE TABLE IF NOT EXISTS ""categories"" (
+                ""category_id"" SERIAL NOT NULL,
+                ""name"" VARCHAR(255) NOT NULL,
+                ""parent_id"" INTEGER NULL DEFAULT NULL,
+                ""image_path"" TEXT NULL DEFAULT NULL,
+                ""uuid"" VARCHAR(36) NULL DEFAULT NULL,
+                ""slug"" VARCHAR(255) NULL DEFAULT NULL,
+                ""title"" VARCHAR(255) NULL DEFAULT NULL,
+                ""description"" TEXT NULL DEFAULT NULL,
+                ""status"" VARCHAR(20) NULL DEFAULT 'active',
+                ""requires_approval"" BOOLEAN NULL DEFAULT false,
+                ""sort_order"" INTEGER NULL DEFAULT 0,
+                ""commission"" NUMERIC(5,2) NULL DEFAULT 0,
+                ""background_type"" VARCHAR(20) NULL DEFAULT NULL,
+                ""background_color"" VARCHAR(10) NULL DEFAULT NULL,
+                ""font_color"" VARCHAR(255) NULL DEFAULT NULL,
+                ""metadata"" TEXT NULL DEFAULT NULL,
+                ""created_at"" TIMESTAMP NULL DEFAULT now(),
+                ""updated_at"" TIMESTAMP NULL DEFAULT now(),
+                PRIMARY KEY (""category_id""),
+                UNIQUE (""name"")
             );");
             
-        // Migrate column if missing (example)
-        // await conn.ExecuteAsync("ALTER TABLE categories ADD COLUMN IF NOT EXISTS image_path TEXT;");
+        // We assume the schema is correct now or handled by the CREATE TABLE IF NOT EXISTS.
+        // If we needed to migrate existing tables to this exact structure, we would need explicit ALTER statements here.
+        // For now, adhering to the requested schema creation.
     }
 
     public async Task EnsureUnitSchemaAsync()
@@ -191,16 +194,23 @@ public class MasterRepository
     public async Task<long> CreateCategoryAsync(Category category)
     {
         using var conn = Connection;
-        // if (string.IsNullOrEmpty(category.Name)) category.Name = category.Title; 
+        
+        // Ensure Name is populated (Schema requires it)
+        if (string.IsNullOrWhiteSpace(category.Name))
+        {
+            category.Name = category.Title ?? "Untitled";
+        }
         
         var sql = @"
             INSERT INTO categories (
-                uuid, parent_id, title, slug, description, status, requires_approval,
-                sort_order, commission, background_type, background_color, font_color, metadata, image_path, created_at, updated_at
+                name, parent_id, image_path, uuid, slug, title, description,
+                status, requires_approval, sort_order, commission, background_type,
+                background_color, font_color, metadata, created_at, updated_at
             ) VALUES (
-                @Uuid, @ParentId, @Title, @Slug, @Description, @Status, @RequiresApproval,
-                @SortOrder, @Commission, @BackgroundType, @BackgroundColor, @FontColor, @Metadata, @ImagePath, NOW(), NOW()
-            ) RETURNING id";
+                @Name, @ParentId, @ImagePath, @Uuid, @Slug, @Title, @Description,
+                @Status, @RequiresApproval, @SortOrder, @Commission, @BackgroundType,
+                @BackgroundColor, @FontColor, @Metadata, NOW(), NOW()
+            ) RETURNING category_id";
         return await conn.ExecuteScalarAsync<long>(sql, category);
     }
 
@@ -209,18 +219,26 @@ public class MasterRepository
         using var conn = Connection;
         var sql = @"
             UPDATE categories 
-            SET parent_id = @ParentId, title = @Title, slug = @Slug, description = @Description,
+            SET name = @Name, parent_id = @ParentId, image_path = @ImagePath, 
+                slug = @Slug, title = @Title, description = @Description,
                 status = @Status, requires_approval = @RequiresApproval, sort_order = @SortOrder,
                 commission = @Commission, background_type = @BackgroundType,
-                background_color = @BackgroundColor, font_color = @FontColor, metadata = @Metadata, image_path = @ImagePath, updated_at = NOW()
-            WHERE id = @Id";
+                background_color = @BackgroundColor, font_color = @FontColor, 
+                metadata = @Metadata, updated_at = NOW()
+            WHERE category_id = @CategoryId";
         await conn.ExecuteAsync(sql, category);
     }
 
     public async Task DeleteCategoryAsync(int id)
     {
         using var conn = Connection;
-        await conn.ExecuteAsync("DELETE FROM categories WHERE id = @Id", new { Id = id });
+        await conn.ExecuteAsync("DELETE FROM categories WHERE category_id = @Id", new { Id = id });
+    }
+
+    public async Task<Category?> GetCategoryByIdAsync(int id)
+    {
+         using var conn = Connection;
+         return await conn.QueryFirstOrDefaultAsync<Category>("SELECT * FROM categories WHERE category_id = @Id", new { Id = id });
     }
 
     public async Task<IEnumerable<Category>> GetAllCategoriesAsync()

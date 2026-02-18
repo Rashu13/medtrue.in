@@ -67,8 +67,8 @@ const masterConfig = {
     },
     categories: {
         title: 'Categories',
-        endpoint: 'masters/categories',
-        idField: 'id',
+        endpoint: 'category',
+        idField: 'categoryId',
         columns: [
             { label: 'Name', key: 'name' },
             { label: 'Image', key: 'imagePath', type: 'image' },

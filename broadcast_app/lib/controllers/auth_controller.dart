@@ -34,7 +34,7 @@ class AuthController extends GetxController {
     if (user == null) return;
     try {
       final data = await supabase
-          .from('tbl_profiles')
+          .from('${AppConstants.tablePrefix}tbl_profiles')
           .select('role')
           .eq('id', user.id)
           .maybeSingle(); // Use maybeSingle to avoid crash if profile missing
@@ -154,7 +154,7 @@ class AuthController extends GetxController {
 
     try {
       final data = await supabase
-          .from('tbl_profiles')
+          .from('${AppConstants.tablePrefix}tbl_profiles')
           .select('role')
           .eq('id', user.id)
           .maybeSingle();
@@ -163,7 +163,7 @@ class AuthController extends GetxController {
         // Profile might be missing if trigger failed or didn't exist. 
         // Create a default 'user' profile.
         print('Profile missing for ${user.email}. Creating default profile...');
-        await supabase.from('tbl_profiles').insert({
+        await supabase.from('${AppConstants.tablePrefix}tbl_profiles').insert({
           'id': user.id,
           'email': user.email,
           'role': 'user', // Default role

@@ -1,6 +1,7 @@
 using MedTrueApi.Models;
 using MedTrueApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace MedTrueApi.Controllers;
 
@@ -97,27 +98,7 @@ public class MastersController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("categories")]
-    public async Task<IActionResult> GetCategories([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
-    {
-        var (items, total) = await _repository.GetPagedAsync<Category>("categories", page, pageSize);
-        return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
-    }
 
-    [HttpPost("categories")]
-    public async Task<IActionResult> CreateCategory(Category category)
-    {
-        var id = await _repository.CreateCategoryAsync(category);
-        return CreatedAtAction(nameof(GetCategories), new { page = 1 }, category);
-    }
-
-    [HttpPut("categories/{id}")]
-    public async Task<IActionResult> UpdateCategory(int id, Category category)
-    {
-        if (id != category.Id) return BadRequest(); // Changed from CategoryId to Id
-        await _repository.UpdateCategoryAsync(category);
-        return NoContent();
-    }
     
     [HttpGet("units")]
     public async Task<IActionResult> GetUnits([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
@@ -325,12 +306,7 @@ public class MastersController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("categories/{id}")]
-    public async Task<IActionResult> DeleteCategory(int id)
-    {
-        await _repository.DeleteCategoryAsync(id);
-        return NoContent();
-    }
+
 
     [HttpDelete("units/{id}")]
     public async Task<IActionResult> DeleteUnit(int id)

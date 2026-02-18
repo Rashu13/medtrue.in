@@ -29,7 +29,7 @@ export const useMasterFacade = (endpoint, initialPageSize = 10) => {
             const result = await api.get(`/${endpoint}?page=${page}&pageSize=${pageSize}`);
 
             // Debugging
-            if (endpoint === 'masters/companies' || endpoint === 'masters/categories') {
+            if (endpoint === 'masters/companies' || endpoint === 'masters/categories' || endpoint === 'category') {
                 console.log(`Fetch ${endpoint} Result:`, result);
             }
 

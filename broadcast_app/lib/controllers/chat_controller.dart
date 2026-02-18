@@ -22,7 +22,7 @@ class ChatController extends GetxController {
     try {
       // Fetch the first user with role 'admin'
       final response = await supabase
-          .from('tbl_profiles')
+          .from('${AppConstants.tablePrefix}tbl_profiles')
           .select('id')
           .eq('role', 'admin')
           .limit(1)
@@ -42,7 +42,7 @@ class ChatController extends GetxController {
     isLoading.value = true;
     try {
       final response = await supabase
-          .from('tbl_messages')
+          .from('${AppConstants.tablePrefix}tbl_messages')
           .select()
           .order('created_at', ascending: true);
 
@@ -57,11 +57,11 @@ class ChatController extends GetxController {
 
   void _subscribeToRealtime() {
     supabase
-        .channel('public:tbl_messages')
+        .channel('public:${AppConstants.tablePrefix}tbl_messages')
         .onPostgresChanges(
           event: PostgresChangeEvent.insert,
           schema: 'public',
-          table: 'tbl_messages',
+          table: '${AppConstants.tablePrefix}tbl_messages',
           callback: (payload) {
             final newMessage = Message.fromMap(payload.newRecord);
             messages.add(newMessage);
@@ -90,7 +90,7 @@ class ChatController extends GetxController {
     );
 
     try {
-      await supabase.from('tbl_messages').insert(message.toMap());
+      await supabase.from('${AppConstants.tablePrefix}tbl_messages').insert(message.toMap());
     } catch (e) {
       Get.snackbar('Error', 'Failed to send message: $e');
     }

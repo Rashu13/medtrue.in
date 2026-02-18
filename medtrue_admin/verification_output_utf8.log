@@ -1,0 +1,23 @@
+﻿Testing Category Creation...
+node : Γ¥î Failed to 
+create category: 
+At line:1 char:1
++ node verify_categor
+y_creation.js > verif
+ication_output.log 
+2>&1
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Γ¥î Fai   
+ led to create ca    
+tegory: :String)     
+[], RemoteExcep    
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 

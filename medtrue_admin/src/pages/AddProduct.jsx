@@ -62,7 +62,7 @@ const AddProduct = () => {
 
     // Facades for Dropdowns - Extract create and refresh
     const { data: companies, loading: loadingCompanies, create: createCompany, refresh: refreshCompanies } = useMasterFacade('masters/companies', 2000);
-    const { data: categories, loading: loadingCategories, create: createCategory, refresh: refreshCategories } = useMasterFacade('masters/categories', 2000);
+    const { data: categories, loading: loadingCategories, create: createCategory, refresh: refreshCategories } = useMasterFacade('category', 2000);
     const { data: salts, loading: loadingSalts, create: createSalt, refresh: refreshSalts } = useMasterFacade('masters/salts', 2000);
     const { data: units, loading: loadingUnits, create: createUnit, refresh: refreshUnits } = useMasterFacade('masters/units', 2000);
     const { data: hsnCodes, loading: loadingHsn, create: createHsn, refresh: refreshHsn } = useMasterFacade('masters/hsncodes', 2000);

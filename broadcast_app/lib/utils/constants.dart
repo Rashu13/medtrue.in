@@ -1,8 +1,11 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AppConstants {
-  static const String supabaseUrl = 'http://supabasekong-ycwww0s8444kccogw0csks0w.62.72.13.162.sslip.io';
-  static const String supabaseAnonKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc3MDI5MTk2MCwiZXhwIjo0OTI1OTY1NTYwLCJyb2xlIjoiYW5vbiJ9.Hl779vu4VeePRhge-QmxHIQdV5fjY6pE-65x9EnB5i4';
+  static const String supabaseUrl = 'http://supabasekong-z8wcgcs4wwsgw84o4wcggs40.62.72.13.162.sslip.io';
+  static const String supabaseAnonKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc3MTE2NTU2MCwiZXhwIjo0OTI2ODM5MTYwLCJyb2xlIjoiYW5vbiJ9.onYmCJ6xWr7GwS7spCYT0lueI0ggk13UCDfmrkbLIWI';
+  
+  // Table Prefix configuration
+  static const String tablePrefix = 'ab'; // Change this to add a prefix, e.g. 'dev_'
 }
 
 final supabase = Supabase.instance.client;

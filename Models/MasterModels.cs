@@ -45,30 +45,24 @@ public class Salt
 
 public class Category
 {
-    public long Id { get; set; } // Mapped from 'id'
-    public string Uuid { get; set; } = string.Empty;
-    public string Title { get; set; } = string.Empty; // 'title' in db
-    public string Slug { get; set; } = string.Empty;
+    public long CategoryId { get; set; }
+    public string Name { get; set; } = string.Empty;
     public long? ParentId { get; set; }
+    public string? ImagePath { get; set; }
+    public string Uuid { get; set; } = string.Empty;
+    public string? Slug { get; set; }
+    public string? Title { get; set; }
     public string? Description { get; set; }
     public string Status { get; set; } = "active";
     public bool RequiresApproval { get; set; }
     public int SortOrder { get; set; }
     public decimal Commission { get; set; }
-    
-    // UI
     public string? BackgroundType { get; set; }
     public string? BackgroundColor { get; set; }
     public string? FontColor { get; set; }
     public string? Metadata { get; set; }
-    
-    // Compatibility
-    public string Name 
-    { 
-        get => Title; 
-        set => Title = value; 
-    }
-    public string? ImagePath { get; set; } // Handled via media
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }
 
 public class Brand

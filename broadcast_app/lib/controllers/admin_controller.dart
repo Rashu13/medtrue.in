@@ -15,7 +15,7 @@ class AdminController extends GetxController {
     isLoading.value = true;
     try {
       final response = await supabase
-          .from('tbl_profiles')
+          .from('${AppConstants.tablePrefix}tbl_profiles')
           .select('id, email')
           .eq('role', 'user'); // Fetch only normal users
 

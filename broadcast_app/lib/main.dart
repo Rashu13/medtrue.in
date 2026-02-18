@@ -14,6 +14,13 @@ Future<void> main() async {
     anonKey: AppConstants.supabaseAnonKey,
   );
 
+  // Auto-install schema if needed
+  try {
+    await Supabase.instance.client.rpc('install_schema', params: {'prefix': AppConstants.tablePrefix});
+  } catch (e) {
+    debugPrint("Schema install warning (ignore if initial): $e");
+  }
+
   runApp(const MyApp());
 }
 

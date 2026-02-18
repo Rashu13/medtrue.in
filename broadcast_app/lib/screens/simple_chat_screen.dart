@@ -146,7 +146,7 @@ class ChatController extends GetxController {
     try {
       // Use composite chatUserId as the unique ID
       final existingUser = await supabase
-          .from('tbl_profiles')
+          .from('${AppConstants.tablePrefix}tbl_profiles')
           .select('role')
           .eq('id', chatUserId) 
           .maybeSingle();
@@ -156,7 +156,7 @@ class ChatController extends GetxController {
         role = 'admin';
       }
 
-      await supabase.from('tbl_profiles').upsert({
+      await supabase.from('${AppConstants.tablePrefix}tbl_profiles').upsert({
         'id': chatUserId,      // Unique: Phone_AppID
         'email': phoneNumber,  // Storing Phone Number in email for reference
         'role': role,
@@ -174,7 +174,7 @@ class ChatController extends GetxController {
   Future<void> _fetchAdminId() async {
     try {
       final response = await supabase
-          .from('tbl_profiles')
+          .from('${AppConstants.tablePrefix}tbl_profiles')
           .select('id')
           .eq('role', 'admin')
           .limit(1)
@@ -196,7 +196,7 @@ class ChatController extends GetxController {
       final filter = 'and(sender_id.eq.$chatUserId,receiver_id.eq.${targetAdminId.value}),and(sender_id.eq.${targetAdminId.value},receiver_id.eq.$chatUserId)';
       
       final response = await supabase
-          .from('tbl_messages')
+          .from('${AppConstants.tablePrefix}tbl_messages')
           .select()
           .or(filter)
           .order('created_at', ascending: true);
@@ -223,11 +223,11 @@ class ChatController extends GetxController {
 
   void _subscribeToRealtime() {
     _subscription = supabase
-        .channel('public:tbl_messages')
+        .channel('public:${AppConstants.tablePrefix}tbl_messages')
         .onPostgresChanges(
           event: PostgresChangeEvent.insert,
           schema: 'public',
-          table: 'tbl_messages',
+          table: '${AppConstants.tablePrefix}tbl_messages',
           callback: (payload) {
             final rawMsg = ChatMessage.fromMap(payload.newRecord);
             
@@ -271,7 +271,7 @@ class ChatController extends GetxController {
     );
 
     try {
-      await supabase.from('tbl_messages').insert(message.toMap());
+      await supabase.from('${AppConstants.tablePrefix}tbl_messages').insert(message.toMap());
       messageController.clear();
     } catch (e) {
       Get.snackbar("Error", "Failed to send: $e", snackPosition: SnackPosition.BOTTOM);

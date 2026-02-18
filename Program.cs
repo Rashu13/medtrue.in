@@ -27,41 +27,51 @@ builder.Services.AddScoped<MedTrueApi.Repositories.AuxiliaryRepository>();
 var app = builder.Build();
 
 // Initialize Database
-using (var scope = app.Services.CreateScope())
+try 
 {
-    var initializer = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.DatabaseInitializer>();
-    await initializer.InitializeAsync();
+    using (var scope = app.Services.CreateScope())
+    {
+        var initializer = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.DatabaseInitializer>();
+        await initializer.InitializeAsync();
 
-    // Auto-migrate Salts table
-    var masterRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.MasterRepository>();
-    await masterRepo.EnsureSaltSchemaAsync();
-    await masterRepo.EnsureCompanySchemaAsync();
-    await masterRepo.EnsureUnitSchemaAsync(); // Auto-migrate Units
-    await masterRepo.EnsureCategorySchemaAsync(); // Auto-migrate Categories (add image_path)
-    await masterRepo.EnsurePackingSizeSchemaAsync(); // Auto-migrate Packing Sizes
-    await masterRepo.EnsureHsnSchemaAsync(); // Auto-migrate HSN Codes
+        // Auto-migrate Salts table
+        var masterRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.MasterRepository>();
+        await masterRepo.EnsureSaltSchemaAsync();
+        await masterRepo.EnsureCompanySchemaAsync();
+        await masterRepo.EnsureUnitSchemaAsync(); // Auto-migrate Units
+        await masterRepo.EnsureCategorySchemaAsync(); // Auto-migrate Categories (add image_path)
+        await masterRepo.EnsurePackingSizeSchemaAsync(); // Auto-migrate Packing Sizes
+        await masterRepo.EnsureHsnSchemaAsync(); // Auto-migrate HSN Codes
 
-    // Auto-migrate Products table
-    var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
-    await productRepo.EnsureProductSchemaAsync();
+        // Auto-migrate Products table
+        var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
+        await productRepo.EnsureProductSchemaAsync();
 
-    // Auto-migrate Content tables
-    var contentRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ContentRepository>();
-    await contentRepo.EnsureSchemaAsync();
+        // Auto-migrate Content tables
+        var contentRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ContentRepository>();
+        await contentRepo.EnsureSchemaAsync();
 
-    // Auto-migrate User/Order/Logistics tables
-    var userRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.UserRepository>();
-    await userRepo.EnsureSchemaAsync();
+        // Auto-migrate User/Order/Logistics tables
+        var userRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.UserRepository>();
+        await userRepo.EnsureSchemaAsync();
 
-    var orderRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.OrderRepository>();
-    await orderRepo.EnsureSchemaAsync();
+        var orderRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.OrderRepository>();
+        await orderRepo.EnsureSchemaAsync();
 
-    var logisticsRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.LogisticsRepository>();
-    await logisticsRepo.EnsureSchemaAsync();
+        var logisticsRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.LogisticsRepository>();
+        await logisticsRepo.EnsureSchemaAsync();
 
-    // Auto-migrate Auxiliary tables
-    var auxRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.AuxiliaryRepository>();
-    await auxRepo.EnsureSchemaAsync();
+        // Auto-migrate Auxiliary tables
+        var auxRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.AuxiliaryRepository>();
+        await auxRepo.EnsureSchemaAsync();
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"[CRITICAL] Database Initialization Failed: {ex.Message}");
+    Console.WriteLine(ex.StackTrace);
+    // Rethrow or exit to ensure process doesn't run in broken state, or just let it continue if possible (but usually db init failure is fatal)
+    throw; 
 }
 
 // Configure the HTTP request pipeline.

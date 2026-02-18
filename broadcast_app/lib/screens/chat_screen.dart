@@ -63,7 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _fetchAdminId() async {
     try {
       final response = await supabase
-          .from('tbl_profiles')
+          .from('${AppConstants.tablePrefix}tbl_profiles')
           .select('id')
           .eq('role', 'admin')
           .limit(1)
@@ -82,7 +82,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> fetchMessages() async {
     try {
       final response = await supabase
-          .from('tbl_messages')
+          .from('${AppConstants.tablePrefix}tbl_messages')
           .select()
           .order('created_at', ascending: true);
 
@@ -102,11 +102,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _subscribeToRealtime() {
     _subscription = supabase
-        .channel('public:tbl_messages')
+        .channel('public:${AppConstants.tablePrefix}tbl_messages')
         .onPostgresChanges(
           event: PostgresChangeEvent.insert,
           schema: 'public',
-          table: 'tbl_messages',
+          table: '${AppConstants.tablePrefix}tbl_messages',
           callback: (payload) {
             final newMessage = Message.fromMap(payload.newRecord);
             if (mounted) {
@@ -134,7 +134,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
 
     try {
-      await supabase.from('tbl_messages').insert(message.toMap());
+      await supabase.from('${AppConstants.tablePrefix}tbl_messages').insert(message.toMap());
       messageController.clear();
     } catch (e) {
       print('Failed to send message: $e');
