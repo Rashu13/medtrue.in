@@ -10,10 +10,12 @@ namespace MedTrueApi.Controllers;
 public class CategoryController : ControllerBase
 {
     private readonly MasterRepository _repository;
+    private readonly IWebHostEnvironment _env;
 
-    public CategoryController(MasterRepository repository)
+    public CategoryController(MasterRepository repository, IWebHostEnvironment env)
     {
         _repository = repository;
+        _env = env;
     }
 
     [HttpGet]
@@ -105,6 +107,15 @@ public class CategoryController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCategory(int id)
     {
+        var category = await _repository.GetCategoryByIdAsync(id);
+        if (category != null && !string.IsNullOrEmpty(category.ImagePath))
+        {
+            var filePath = Path.Combine(_env.WebRootPath ?? "wwwroot", category.ImagePath.TrimStart('/'));
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
         await _repository.DeleteCategoryAsync(id);
         return NoContent();
     }

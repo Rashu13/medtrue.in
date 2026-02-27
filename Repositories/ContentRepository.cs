@@ -182,6 +182,19 @@ public class ContentRepository
         await conn.ExecuteAsync(sql, banner);
     }
 
+    public async Task<Banner?> GetBannerByIdAsync(long id)
+    {
+        using var conn = Connection;
+        var sql = @"
+            SELECT 
+                banner_id as Id, title, slug, custom_url as CustomUrl, image_path as ImagePath,
+                type, scope_type as ScopeType, scope_id as ScopeId, product_id as ProductId,
+                category_id as CategoryId, brand_id as BrandId, position, is_active as IsActive,
+                display_order as DisplayOrder, metadata, created_at as CreatedAt, updated_at as UpdatedAt
+            FROM banners WHERE banner_id = @Id";
+        return await conn.QueryFirstOrDefaultAsync<Banner>(sql, new { Id = id });
+    }
+
     public async Task DeleteBannerAsync(long id)
     {
         using var conn = Connection;

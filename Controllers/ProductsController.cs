@@ -91,14 +91,37 @@ public class ProductsController : ControllerBase
     [HttpDelete("images/{imgId}")]
     public async Task<IActionResult> DeleteImage(int imgId)
     {
+        var image = await _repository.GetProductImageByIdAsync(imgId);
+        if (image != null && !string.IsNullOrEmpty(image.ImagePath))
+        {
+            var filePath = Path.Combine(_env.WebRootPath ?? "wwwroot", image.ImagePath.TrimStart('/'));
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
+
         await _repository.DeleteProductImageAsync(imgId);
-        // Note: File deletion from disk is omitted for safety/simplicity in this step.
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {
+        // Fetch all images for this product to delete them from disk
+        var images = await _repository.GetProductImagesAsync(id);
+        foreach (var image in images)
+        {
+            if (!string.IsNullOrEmpty(image.ImagePath))
+            {
+                var filePath = Path.Combine(_env.WebRootPath ?? "wwwroot", image.ImagePath.TrimStart('/'));
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+            }
+        }
+
         await _repository.DeleteProductAsync(id);
         return NoContent();
     }

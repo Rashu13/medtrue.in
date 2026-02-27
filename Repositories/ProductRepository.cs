@@ -124,6 +124,12 @@ public class ProductRepository
         return await conn.QueryAsync<ProductImage>("SELECT * FROM product_images WHERE product_id = @ProductId ORDER BY display_order", new { ProductId = productId });
     }
 
+    public async Task<ProductImage?> GetProductImageByIdAsync(int imgId)
+    {
+        using var conn = Connection;
+        return await conn.QueryFirstOrDefaultAsync<ProductImage>("SELECT * FROM product_images WHERE img_id = @ImgId", new { ImgId = imgId });
+    }
+
     public async Task DeleteProductImageAsync(int imgId)
     {
         using var conn = Connection;

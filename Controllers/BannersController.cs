@@ -51,6 +51,16 @@ public class BannersController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBanner(long id)
     {
+        var banner = await _repository.GetBannerByIdAsync(id);
+        if (banner != null && !string.IsNullOrEmpty(banner.ImagePath))
+        {
+            var filePath = Path.Combine(_env.WebRootPath ?? "wwwroot", banner.ImagePath.TrimStart('/'));
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
+
         await _repository.DeleteBannerAsync(id);
         return NoContent();
     }
