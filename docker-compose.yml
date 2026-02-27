@@ -9,19 +9,18 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080
-      # Using the DB connection string from your Development settings but it should be updated in Coolify UI for security
       - ConnectionStrings__DefaultConnection=Host=62.72.13.162;Port=5432;Database=postgres;Username=postgres;Password=UErqNKVZ53XMDsiUMibk482Mz7TvXXPqxwtZWiF0Vgd3UK2j2jYIrKy9xGegwkZy
     volumes:
       - medtrue-uploads:/app/wwwroot/uploads
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - medtrue-network
 
-  # Frontend (Vite + Nginx) - Serves on medtrue.in
+  # Frontend (Vite + Nginx) - Serves on medtrue.cloud
   frontend:
     build:
       context: ./medtrue_admin
@@ -31,8 +30,6 @@ services:
         condition: service_healthy
     networks:
       - medtrue-network
-    # In Coolify, you will point https://medtrue.in to this service.
-    # The nginx inside will proxy /api and /uploads to the backend service above.
 
 volumes:
   medtrue-uploads:
