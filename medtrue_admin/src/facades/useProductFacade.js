@@ -149,6 +149,15 @@ export const useProductFacade = () => {
         }
     };
 
+    const deleteImage = async (imgId) => {
+        try {
+            await api.delete(`/products/images/${imgId}`);
+        } catch (err) {
+            console.error("Failed to delete image", err);
+            throw err;
+        }
+    };
+
     // Initial Fetch
     useEffect(() => {
         fetchAll();
@@ -163,6 +172,7 @@ export const useProductFacade = () => {
         getById,
         remove,
         refresh: fetchAll,
-        generateSku
+        generateSku,
+        deleteImage
     };
 };

@@ -45,7 +45,7 @@ const AddProduct = () => {
     const { id } = useParams();
     const isEditMode = !!id;
     const [images, setImages] = useState([]);
-    const { create: createProduct, update: updateProduct, getById, generateSku, loading: productLoading } = useProductFacade();
+    const { create: createProduct, update: updateProduct, getById, generateSku, loading: productLoading, deleteImage } = useProductFacade();
 
     // Auto-generate SKU on mount (Add Mode only)
     useEffect(() => {
@@ -207,7 +207,24 @@ const AddProduct = () => {
         setImages([...images, ...files]);
     };
 
-    const removeImage = (index) => {
+    const removeImage = async (index) => {
+        const imageToRemove = images[index];
+        const serverImgId = imageToRemove.imgId || imageToRemove.ImgId;
+
+        // If it's a server image (has imgId), delete from server
+        if (serverImgId) {
+            try {
+                if (window.confirm("Are you sure you want to delete this image from the server?")) {
+                    await deleteImage(serverImgId);
+                } else {
+                    return; // Don't remove from UI if user cancels
+                }
+            } catch (error) {
+                alert("Failed to delete image from server");
+                return;
+            }
+        }
+
         setImages(images.filter((_, i) => i !== index));
     };
 
