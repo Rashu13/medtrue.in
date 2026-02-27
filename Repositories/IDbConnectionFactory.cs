@@ -16,8 +16,19 @@ public class NpgsqlConnectionFactory : IDbConnectionFactory
     public NpgsqlConnectionFactory(IConfiguration configuration)
     {
         _configuration = configuration;
-        var rawConnString = _configuration.GetConnectionString("DefaultConnection") ?? "";
-        _connectionString = ConvertUriToConnectionString(rawConnString);
+        
+        // 1. Try standard GetConnectionString (looks for ConnectionStrings:DefaultConnection)
+        var rawConnString = _configuration.GetConnectionString("DefaultConnection");
+        
+        // 2. Fallback to direct environment variables if empty (Common in Docker/Coolify)
+        if (string.IsNullOrEmpty(rawConnString))
+        {
+            rawConnString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") 
+                         ?? Environment.GetEnvironmentVariable("DATABASE_URL")
+                         ?? Environment.GetEnvironmentVariable("DefaultConnection");
+        }
+
+        _connectionString = ConvertUriToConnectionString(rawConnString ?? "");
     }
 
     public IDbConnection CreateConnection()
