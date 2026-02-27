@@ -11,6 +11,7 @@ create table public.tbl_profiles (
     id text not null,
     email text,
     role text default 'user' check (role in ('admin', 'user')),
+    tenant_id text,
     primary key (id)
 );
 -- Turn on RLS
@@ -30,6 +31,7 @@ create table public.tbl_messages (
     -- Null (empty) means Broadcast
     content text,
     is_broadcast boolean default false,
+    tenant_id text,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 -- Turn on RLS

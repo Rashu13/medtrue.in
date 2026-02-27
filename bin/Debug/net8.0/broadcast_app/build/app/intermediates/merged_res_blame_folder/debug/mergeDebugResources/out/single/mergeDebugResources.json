@@ -1,5 +1,33 @@
 [
     {
+        "merged": "com.example.broadcast_app-debug-40:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.example.broadcast_app-main-35:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.broadcast_app-debug-40:/drawable-xhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.broadcast_app-main-35:/drawable-xhdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.example.broadcast_app-debug-40:/drawable-hdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.broadcast_app-main-35:/drawable-hdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.example.broadcast_app-debug-40:/drawable-mdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.broadcast_app-main-35:/drawable-mdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.example.broadcast_app-debug-40:/drawable-xxxhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.broadcast_app-main-35:/drawable-xxxhdpi/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.example.broadcast_app-debug-40:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.example.broadcast_app-main-35:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.broadcast_app-debug-40:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.broadcast_app-main-35:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
         "merged": "com.example.broadcast_app-debug-40:/mipmap-mdpi_ic_launcher.png.flat",
         "source": "com.example.broadcast_app-main-35:/mipmap-mdpi/ic_launcher.png"
     },
@@ -12,15 +40,11 @@
         "source": "com.example.broadcast_app-main-35:/mipmap-hdpi/ic_launcher.png"
     },
     {
-        "merged": "com.example.broadcast_app-debug-40:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "com.example.broadcast_app-main-35:/mipmap-xxhdpi/ic_launcher.png"
-    },
-    {
         "merged": "com.example.broadcast_app-debug-40:/drawable-v21_launch_background.xml.flat",
         "source": "com.example.broadcast_app-main-35:/drawable-v21/launch_background.xml"
     },
     {
-        "merged": "com.example.broadcast_app-debug-40:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "com.example.broadcast_app-main-35:/mipmap-xhdpi/ic_launcher.png"
+        "merged": "com.example.broadcast_app-debug-40:/drawable-xxhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.broadcast_app-main-35:/drawable-xxhdpi/ic_launcher_foreground.png"
     }
 ]

@@ -167,6 +167,7 @@ class AuthController extends GetxController {
           'id': user.id,
           'email': user.email,
           'role': 'user', // Default role
+          'tenant_id': 'shreeapp', // Added default tenant_id
         });
         
         userRole.value = 'user';

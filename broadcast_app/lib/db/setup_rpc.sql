@@ -4,7 +4,9 @@
 create or replace function install_schema(prefix text) returns void language plpgsql security definer as $$
 declare profile_tbl text := prefix || 'tbl_profiles';
 message_tbl text := prefix || 'tbl_messages';
-begin -- 1. PROFILES
+begin -- Ensure UUID extension is available
+create extension if not exists "uuid-ossp";
+-- 1. PROFILES
 -- Check if table exists in public schema
 if not exists (
     select 1
@@ -18,6 +20,7 @@ execute format(
                 id text not null,
                 email text,
                 role text default ''user'' check (role in (''admin'', ''user'')),
+                tenant_id text,
                 primary key (id)
             );
         ',
@@ -50,11 +53,12 @@ if not exists (
 execute format(
     '
             create table public.%I (
-                id uuid default uuid_generate_v4() primary key,
+                id uuid default gen_random_uuid() primary key,
                 sender_id text not null,
                 receiver_id text,
                 content text,
                 is_broadcast boolean default false,
+                tenant_id text,
                 created_at timestamp with time zone default timezone(''utc''::text, now()) not null
             );
         ',

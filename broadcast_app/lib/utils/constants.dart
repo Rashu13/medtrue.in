@@ -5,7 +5,7 @@ class AppConstants {
   static const String supabaseAnonKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc3MTE2NTU2MCwiZXhwIjo0OTI2ODM5MTYwLCJyb2xlIjoiYW5vbiJ9.onYmCJ6xWr7GwS7spCYT0lueI0ggk13UCDfmrkbLIWI';
   
   // Table Prefix configuration
-  static const String tablePrefix = 'ab'; // Change this to add a prefix, e.g. 'dev_'
+  static const String tablePrefix = 'shreematka'; // Using shreematka prefix now
 }
 
 final supabase = Supabase.instance.client;
