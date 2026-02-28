@@ -15,7 +15,7 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 # Install curl for health check
-RUN apt install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Fix Globalization Segfault (139)
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
