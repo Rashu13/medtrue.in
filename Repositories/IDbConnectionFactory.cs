@@ -17,15 +17,35 @@ public class NpgsqlConnectionFactory : IDbConnectionFactory
     {
         _configuration = configuration;
         
-        // 1. Try standard GetConnectionString (looks for ConnectionStrings:DefaultConnection)
-        var rawConnString = _configuration.GetConnectionString("DefaultConnection");
-        
-        // 2. Fallback to direct environment variables if empty (Common in Docker/Coolify)
+        // Try multiple sources to be absolutely sure
+        string? rawConnString = _configuration.GetConnectionString("DefaultConnection");
+        string source = "Configuration";
+
         if (string.IsNullOrEmpty(rawConnString))
         {
-            rawConnString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") 
-                         ?? Environment.GetEnvironmentVariable("DATABASE_URL")
-                         ?? Environment.GetEnvironmentVariable("DefaultConnection");
+            rawConnString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+            source = "Env:ConnectionStrings__DefaultConnection";
+        }
+
+        if (string.IsNullOrEmpty(rawConnString))
+        {
+            rawConnString = Environment.GetEnvironmentVariable("DATABASE_URL");
+            source = "Env:DATABASE_URL";
+        }
+
+        if (string.IsNullOrEmpty(rawConnString))
+        {
+            rawConnString = Environment.GetEnvironmentVariable("DefaultConnection");
+            source = "Env:DefaultConnection";
+        }
+
+        if (string.IsNullOrEmpty(rawConnString))
+        {
+             Console.WriteLine("[CRITICAL] Database Initialization Failed: NO CONNECTION STRING FOUND IN ANY SOURCE!");
+        }
+        else 
+        {
+             Console.WriteLine($"[DEBUG] Connection String found from source: {source}");
         }
 
         _connectionString = ConvertUriToConnectionString(rawConnString ?? "");
