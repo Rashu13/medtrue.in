@@ -14,9 +14,10 @@ services:
       - medtrue-uploads:/app/wwwroot/uploads
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 15s   # Thoda zyada time diya
+      timeout: 10s
+      retries: 8     # Total 2 minute tak wait karega
+      start_period: 20s
     networks:
       - medtrue-network
 
@@ -25,15 +26,14 @@ services:
     build:
       context: ./medtrue_admin
       dockerfile: Dockerfile
-    # Port 80 is handled by Coolify Proxy, so we don't map it to Host to avoid "Port already allocated" error.
     depends_on:
       backend:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - medtrue-network
 
