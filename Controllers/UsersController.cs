@@ -106,4 +106,18 @@ public class UsersController : ControllerBase
         await _repository.DeleteAddressAsync(id);
         return NoContent();
     }
+
+    [HttpGet("{userId}/reward-points")]
+    public async Task<IActionResult> GetRewardPoints(long userId)
+    {
+        var points = await _repository.GetRewardPointsAsync(userId);
+        return Ok(new { RewardPoints = points });
+    }
+
+    [HttpPost("{userId}/reward-points/update")]
+    public async Task<IActionResult> UpdateRewardPoints(long userId, [FromQuery] decimal points)
+    {
+        await _repository.UpdateRewardPointsAsync(userId, points);
+        return Ok(new { Message = "Reward points updated" });
+    }
 }

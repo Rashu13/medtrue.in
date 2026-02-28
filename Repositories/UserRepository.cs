@@ -166,4 +166,16 @@ public class UserRepository
         using var conn = Connection;
         await conn.ExecuteAsync("DELETE FROM addresses WHERE id = @Id", new { Id = id });
     }
+
+    public async Task<decimal> GetRewardPointsAsync(long userId)
+    {
+        using var conn = Connection;
+        return await conn.ExecuteScalarAsync<decimal>("SELECT reward_points FROM users WHERE id = @Id", new { Id = userId });
+    }
+
+    public async Task UpdateRewardPointsAsync(long userId, decimal points)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("UPDATE users SET reward_points = @Points, updated_at = NOW() WHERE id = @Id", new { Points = points, Id = userId });
+    }
 }

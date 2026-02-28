@@ -49,22 +49,75 @@ public class ProductRepository
     {
         using var conn = Connection;
         var sql = @"
-            SELECT p.*, u.name as UnitPrimaryName, 
+            SELECT p.*, u.name as UnitPrimaryName, c.name as CompanyName,
+                   s.name as SaltName, s.description as SaltDescription,
                    (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
             FROM products p
             LEFT JOIN units u ON p.unit_primary_id = u.unit_id
+            LEFT JOIN companies c ON p.company_id = c.company_id
+            LEFT JOIN salts s ON p.salt_id = s.salt_id
             ORDER BY p.name";
         return await conn.QueryAsync<Product>(sql);
+    }
+
+    public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId)
+    {
+        using var conn = Connection;
+        var sql = @"
+            SELECT p.*, u.name as UnitPrimaryName, c.name as CompanyName,
+                   s.name as SaltName, s.description as SaltDescription,
+                   (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
+            FROM products p
+            LEFT JOIN units u ON p.unit_primary_id = u.unit_id
+            LEFT JOIN companies c ON p.company_id = c.company_id
+            LEFT JOIN salts s ON p.salt_id = s.salt_id
+            WHERE p.category_id = @CategoryId
+            ORDER BY p.name";
+        return await conn.QueryAsync<Product>(sql, new { CategoryId = categoryId });
+    }
+
+    public async Task<IEnumerable<Product>> SearchProductsAsync(string query)
+    {
+        using var conn = Connection;
+        var sql = @"
+            SELECT p.*, u.name as UnitPrimaryName, c.name as CompanyName,
+                   s.name as SaltName, s.description as SaltDescription,
+                   (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
+            FROM products p
+            LEFT JOIN units u ON p.unit_primary_id = u.unit_id
+            LEFT JOIN companies c ON p.company_id = c.company_id
+            LEFT JOIN salts s ON p.salt_id = s.salt_id
+            WHERE p.name ILIKE @Query OR p.barcode ILIKE @Query
+            LIMIT 50";
+        return await conn.QueryAsync<Product>(sql, new { Query = $"%{query}%" });
     }
 
     public async Task<Product?> GetProductByIdAsync(long id)
     {
         using var conn = Connection;
         var sql = @"
-            SELECT p.*, 
+            SELECT p.*, u.name as UnitPrimaryName, c.name as CompanyName,
+                   s.name as SaltName, s.description as SaltDescription,
                    (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
-            FROM products p WHERE product_id = @Id";
+            FROM products p
+            LEFT JOIN units u ON p.unit_primary_id = u.unit_id
+            LEFT JOIN companies c ON p.company_id = c.company_id
+            LEFT JOIN salts s ON p.salt_id = s.salt_id
+            WHERE product_id = @Id";
         return await conn.QueryFirstOrDefaultAsync<Product>(sql, new { Id = id });
+    }
+
+    public async Task<IEnumerable<Product>> GetProductsBySaltAsync(int saltId, long excludeProductId)
+    {
+        using var conn = Connection;
+        var sql = @"
+            SELECT p.*, c.name as CompanyName,
+                   (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
+            FROM products p
+            LEFT JOIN companies c ON p.company_id = c.company_id
+            WHERE p.salt_id = @SaltId AND p.product_id != @ExcludeId
+            LIMIT 10";
+        return await conn.QueryAsync<Product>(sql, new { SaltId = saltId, ExcludeId = excludeProductId });
     }
 
     public async Task<long> CreateProductAsync(Product product)
@@ -134,6 +187,12 @@ public class ProductRepository
     {
         using var conn = Connection;
         await conn.ExecuteAsync("DELETE FROM product_images WHERE img_id = @ImgId", new { ImgId = imgId });
+    }
+
+    public async Task UpdateHasPhotoAsync(long productId, bool hasPhoto)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("UPDATE products SET has_photo = @HasPhoto WHERE product_id = @ProductId", new { HasPhoto = hasPhoto, ProductId = productId });
     }
 
     public async Task DeleteProductAsync(long id)

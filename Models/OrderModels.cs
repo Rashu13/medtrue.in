@@ -103,3 +103,14 @@ public class OrderItem
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
+
+public class Prescription
+{
+    public long Id { get; set; }
+    public long UserId { get; set; }
+    public long? OrderId { get; set; }
+    public string ImagePath { get; set; } = string.Empty;
+    public string Status { get; set; } = "pending"; // pending, approved, rejected
+    public string? Note { get; set; }
+    public DateTime CreatedAt { get; set; }
+}

@@ -24,6 +24,21 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
+    [HttpGet("category/{categoryId}")]
+    public async Task<IActionResult> GetByCategory(int categoryId)
+    {
+        var products = await _repository.GetProductsByCategoryAsync(categoryId);
+        return Ok(products);
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] string q)
+    {
+        if (string.IsNullOrEmpty(q)) return Ok(new List<Product>());
+        var products = await _repository.SearchProductsAsync(q);
+        return Ok(products);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
@@ -83,7 +98,21 @@ public class ProductsController : ControllerBase
         var imgId = await _repository.CreateProductImageAsync(image);
         image.ImgId = imgId;
 
+        // Auto-set hasPhoto = true on the product
+        await _repository.UpdateHasPhotoAsync(id, true);
+
         return Ok(image);
+    }
+
+    [HttpGet("{id}/similar")]
+    public async Task<IActionResult> GetSimilarProducts(long id)
+    {
+        var product = await _repository.GetProductByIdAsync(id);
+        if (product == null) return NotFound();
+        if (product.SaltId == null) return Ok(new List<Product>());
+        
+        var similar = await _repository.GetProductsBySaltAsync(product.SaltId.Value, id);
+        return Ok(similar);
     }
 
 

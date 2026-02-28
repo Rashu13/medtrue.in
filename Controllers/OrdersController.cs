@@ -46,6 +46,34 @@ public class OrdersController : ControllerBase
         return Ok(new { Message = "Item added to cart" });
     }
 
+    [HttpGet("cart/{userId}/items")]
+    public async Task<IActionResult> GetCartItems(long userId)
+    {
+        var items = await _repository.GetCartItemsAsync(userId);
+        return Ok(items);
+    }
+
+    [HttpPut("cart/items/{id}")]
+    public async Task<IActionResult> UpdateCartItem(long id, [FromQuery] int quantity)
+    {
+        await _repository.UpdateCartItemQuantityAsync(id, quantity);
+        return Ok(new { Message = "Cart item updated" });
+    }
+
+    [HttpDelete("cart/items/{id}")]
+    public async Task<IActionResult> RemoveCartItem(long id)
+    {
+        await _repository.RemoveCartItemAsync(id);
+        return Ok(new { Message = "Cart item removed" });
+    }
+
+    [HttpDelete("cart/{userId}/clear")]
+    public async Task<IActionResult> ClearCart(long userId)
+    {
+        await _repository.ClearCartAsync(userId);
+        return Ok(new { Message = "Cart cleared" });
+    }
+
     // --- Order Endpoints ---
 
     [HttpGet]
@@ -53,6 +81,13 @@ public class OrdersController : ControllerBase
     {
         var (items, total) = await _repository.GetAllOrdersAsync(page, pageSize);
         return Ok(new { Items = items, TotalCount = total, Page = page, PageSize = pageSize });
+    }
+
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetUserOrders(long userId)
+    {
+        var orders = await _repository.GetOrdersByUserIdAsync(userId);
+        return Ok(orders);
     }
 
     [HttpGet("{id}")]

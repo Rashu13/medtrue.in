@@ -115,6 +115,17 @@ public class OrderRepository
                 created_at TIMESTAMP DEFAULT NOW(),
                 updated_at TIMESTAMP DEFAULT NOW()
             );");
+
+        await conn.ExecuteAsync(@"
+            CREATE TABLE IF NOT EXISTS prescriptions (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                order_id BIGINT,
+                image_path TEXT NOT NULL,
+                status VARCHAR(20) DEFAULT 'pending',
+                note TEXT,
+                created_at TIMESTAMP DEFAULT NOW()
+            );");
     }
 
     // Cart Methods
@@ -139,10 +150,55 @@ public class OrderRepository
     public async Task AddCartItemAsync(CartItem item)
     {
         using var conn = Connection;
+        // Check if item already exists in cart, if so update quantity
+        var existing = await conn.QueryFirstOrDefaultAsync<CartItem>(
+            "SELECT * FROM cart_items WHERE cart_id = @CartId AND product_id = @ProductId AND product_variant_id = @ProductVariantId",
+            new { item.CartId, item.ProductId, item.ProductVariantId });
+
+        if (existing != null)
+        {
+            await conn.ExecuteAsync(
+                "UPDATE cart_items SET quantity = quantity + @Quantity, updated_at = NOW() WHERE id = @Id",
+                new { item.Quantity, Id = existing.Id });
+        }
+        else
+        {
+            var sql = @"
+                INSERT INTO cart_items (cart_id, product_id, product_variant_id, store_id, quantity, save_for_later, created_at, updated_at)
+                VALUES (@CartId, @ProductId, @ProductVariantId, @StoreId, @Quantity, @SaveForLater, NOW(), NOW())";
+            await conn.ExecuteAsync(sql, item);
+        }
+    }
+
+    public async Task<IEnumerable<dynamic>> GetCartItemsAsync(long userId)
+    {
+        using var conn = Connection;
         var sql = @"
-            INSERT INTO cart_items (cart_id, product_id, product_variant_id, store_id, quantity, save_for_later, created_at, updated_at)
-            VALUES (@CartId, @ProductId, @ProductVariantId, @StoreId, @Quantity, @SaveForLater, NOW(), NOW())";
-        await conn.ExecuteAsync(sql, item);
+            SELECT ci.*, p.name as ProductName, p.sale_price as Price,
+                   (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as ImagePath
+            FROM cart_items ci
+            JOIN carts c ON ci.cart_id = c.id
+            JOIN products p ON ci.product_id = p.product_id
+            WHERE c.user_id = @UserId";
+        return await conn.QueryAsync(sql, new { UserId = userId });
+    }
+
+    public async Task UpdateCartItemQuantityAsync(long cartItemId, int quantity)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("UPDATE cart_items SET quantity = @Quantity, updated_at = NOW() WHERE id = @Id", new { Quantity = quantity, Id = cartItemId });
+    }
+
+    public async Task RemoveCartItemAsync(long cartItemId)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM cart_items WHERE id = @Id", new { Id = cartItemId });
+    }
+
+    public async Task ClearCartAsync(long userId)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("DELETE FROM cart_items WHERE cart_id IN (SELECT id FROM carts WHERE user_id = @UserId)", new { UserId = userId });
     }
     
     // Order Methods
@@ -205,6 +261,13 @@ public class OrderRepository
         return (items, total);
     }
 
+    public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(long userId)
+    {
+        using var conn = Connection;
+        var sql = "SELECT * FROM orders WHERE user_id = @UserId ORDER BY created_at DESC";
+        return await conn.QueryAsync<Order>(sql, new { UserId = userId });
+    }
+
     public async Task<Order?> GetOrderByIdAsync(long id)
     {
         using var conn = Connection;
@@ -229,5 +292,27 @@ public class OrderRepository
         using var conn = Connection;
         await conn.ExecuteAsync("DELETE FROM order_items WHERE order_id = @Id", new { Id = id });
         await conn.ExecuteAsync("DELETE FROM orders WHERE id = @Id", new { Id = id });
+    }
+
+    // Prescription Methods
+    public async Task<long> CreatePrescriptionAsync(Prescription prescription)
+    {
+        using var conn = Connection;
+        var sql = @"
+            INSERT INTO prescriptions (user_id, order_id, image_path, status, note, created_at)
+            VALUES (@UserId, @OrderId, @ImagePath, @Status, @Note, NOW()) RETURNING id";
+        return await conn.ExecuteScalarAsync<long>(sql, prescription);
+    }
+
+    public async Task<IEnumerable<Prescription>> GetUserPrescriptionsAsync(long userId)
+    {
+        using var conn = Connection;
+        return await conn.QueryAsync<Prescription>("SELECT * FROM prescriptions WHERE user_id = @UserId ORDER BY created_at DESC", new { UserId = userId });
+    }
+
+    public async Task LinkPrescriptionToOrderAsync(long prescriptionId, long orderId)
+    {
+        using var conn = Connection;
+        await conn.ExecuteAsync("UPDATE prescriptions SET order_id = @OrderId WHERE id = @Id", new { OrderId = orderId, Id = prescriptionId });
     }
 }

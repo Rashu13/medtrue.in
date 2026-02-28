@@ -61,6 +61,9 @@ public class Product
 
     // Read-only/Join fields
     public string? PrimaryImagePath { get; set; }
+    public string? CompanyName { get; set; }
+    public string? SaltName { get; set; }
+    public string? SaltDescription { get; set; }
 }
 
 public class ProductBatch
