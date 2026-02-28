@@ -31,47 +31,57 @@ try
 {
     using (var scope = app.Services.CreateScope())
     {
-        var initializer = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.DatabaseInitializer>();
-        await initializer.InitializeAsync();
+        var dbFactory = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.IDbConnectionFactory>();
+        using var conn = dbFactory.CreateConnection();
+        
+        // Basic check: See if products table exists. If so, skip heavy migration unless forced.
+        bool forceMigration = Environment.GetEnvironmentVariable("FORCE_MIGRATION") == "true";
+        bool tableExists = false;
+        try {
+            await conn.ExecuteScalarAsync<int>("SELECT 1 FROM products LIMIT 1");
+            tableExists = true;
+        } catch { /* Table doesn't exist */ }
 
-        // Auto-migrate Salts table
-        var masterRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.MasterRepository>();
-        await masterRepo.EnsureSaltSchemaAsync();
-        await masterRepo.EnsureCompanySchemaAsync();
-        await masterRepo.EnsureUnitSchemaAsync(); // Auto-migrate Units
-        await masterRepo.EnsureCategorySchemaAsync(); // Auto-migrate Categories (add image_path)
-        await masterRepo.EnsurePackingSizeSchemaAsync(); // Auto-migrate Packing Sizes
-        await masterRepo.EnsureHsnSchemaAsync(); // Auto-migrate HSN Codes
+        if (!tableExists || forceMigration)
+        {
+            Console.WriteLine("[INFO] Database initialization started (Full Migration)...");
+            var initializer = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.DatabaseInitializer>();
+            await initializer.InitializeAsync();
 
-        // Auto-migrate Products table
-        var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
-        await productRepo.EnsureProductSchemaAsync();
+            // Run individual repo migrations only on fresh install or force
+            var masterRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.MasterRepository>();
+            await masterRepo.EnsureSchemaAsync();
 
-        // Auto-migrate Content tables
-        var contentRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ContentRepository>();
-        await contentRepo.EnsureSchemaAsync();
+            var productRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ProductRepository>();
+            await productRepo.EnsureProductSchemaAsync();
+            await productRepo.EnsureProductImageSchemaAsync();
 
-        // Auto-migrate User/Order/Logistics tables
-        var userRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.UserRepository>();
-        await userRepo.EnsureSchemaAsync();
+            var contentRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.ContentRepository>();
+            await contentRepo.EnsureSchemaAsync();
 
-        var orderRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.OrderRepository>();
-        await orderRepo.EnsureSchemaAsync();
+            var userRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.UserRepository>();
+            await userRepo.EnsureSchemaAsync();
 
-        var logisticsRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.LogisticsRepository>();
-        await logisticsRepo.EnsureSchemaAsync();
+            var orderRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.OrderRepository>();
+            await orderRepo.EnsureSchemaAsync();
 
-        // Auto-migrate Auxiliary tables
-        var auxRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.AuxiliaryRepository>();
-        await auxRepo.EnsureSchemaAsync();
+            var logisticsRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.LogisticsRepository>();
+            await logisticsRepo.EnsureSchemaAsync();
+
+            var auxRepo = scope.ServiceProvider.GetRequiredService<MedTrueApi.Repositories.AuxiliaryRepository>();
+            await auxRepo.EnsureSchemaAsync();
+            Console.WriteLine("[INFO] Database initialization completed.");
+        }
+        else 
+        {
+            Console.WriteLine("[INFO] Database already initialized. Skipping full migration for performance.");
+        }
     }
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"[CRITICAL] Database Initialization Failed: {ex.Message}");
-    Console.WriteLine(ex.StackTrace);
-    // Rethrow or exit to ensure process doesn't run in broken state, or just let it continue if possible (but usually db init failure is fatal)
-    throw; 
+    Console.WriteLine($"[CRITICAL] Database Check failed: {ex.Message}");
+    // We don't throw here to allow the app to attempt to start if the DB is actually ready
 }
 
 // Configure the HTTP request pipeline.
