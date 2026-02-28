@@ -1,3 +1,4 @@
+using Dapper;
 
 // Configure Dapper to support snake_case column names
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
