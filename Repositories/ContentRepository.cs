@@ -317,18 +317,25 @@ public class ContentRepository
             SELECT p.product_id as ProductId, p.name as Name, p.mrp as Mrp, 
                    p.sale_price as SalePrice, p.current_stock as CurrentStock, 
                    p.status as Status, p.barcode as Barcode,
-                   pi.image_path as PrimaryImagePath
+                   p.packing_desc as PackingDesc,
+                   u.name as UnitPrimaryName,
+                   c.name as CompanyName,
+                   s.name as SaltName,
+                   (SELECT image_path FROM product_images WHERE product_id = p.product_id ORDER BY is_primary DESC, display_order LIMIT 1) as PrimaryImagePath
             FROM products p
-            LEFT JOIN product_images pi ON pi.product_id = p.product_id AND pi.is_primary = true";
+            LEFT JOIN product_images pi ON pi.product_id = p.product_id AND pi.is_primary = true
+            LEFT JOIN units u ON p.unit_primary_id = u.unit_id
+            LEFT JOIN companies c ON p.company_id = c.company_id
+            LEFT JOIN salts s ON p.salt_id = s.salt_id";
 
         var sql = sectionType?.ToLower() switch
         {
             "newly_added" => $"{baseSelect} ORDER BY p.created_at DESC LIMIT @Limit",
-            "best_selling" => $"{baseSelect} ORDER BY p.current_stock ASC LIMIT @Limit",  // Proxy: low stock = high demand
+            "best_selling" => $"{baseSelect} ORDER BY p.current_stock ASC LIMIT @Limit",
             "discounted" => $"{baseSelect} WHERE p.sale_price < p.mrp AND p.sale_price > 0 ORDER BY (p.mrp - p.sale_price) DESC LIMIT @Limit",
-            "top_rated" => $"{baseSelect} ORDER BY p.mrp DESC LIMIT @Limit",  // Placeholder until reviews
+            "top_rated" => $"{baseSelect} ORDER BY p.mrp DESC LIMIT @Limit",
             "in_stock" => $"{baseSelect} WHERE p.current_stock > 0 ORDER BY p.name LIMIT @Limit",
-            _ => $"{baseSelect} ORDER BY p.created_at DESC LIMIT @Limit"  // Default: newest
+            _ => $"{baseSelect} ORDER BY p.created_at DESC LIMIT @Limit"
         };
 
         return await conn.QueryAsync(sql, new { Limit = limit });
