@@ -25,8 +25,7 @@ services:
     build:
       context: ./medtrue_admin
       dockerfile: Dockerfile
-    ports:
-      - "80:80"
+    # Port 80 is handled by Coolify Proxy, so we don't map it to Host to avoid "Port already allocated" error.
     depends_on:
       backend:
         condition: service_healthy
