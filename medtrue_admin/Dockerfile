@@ -8,12 +8,19 @@ RUN npm run build
 
 # Stage 2: Serve
 FROM mirror.gcr.io/library/nginx:1.27-alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+
+# Set working directory
+WORKDIR /usr/share/nginx/html
+
+# Copy build output and config
+COPY --from=build /app/dist .
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Install curl for health check
+RUN apk add --no-cache curl
+
 EXPOSE 80
 
-# Health Check (Install curl first)
-RUN apk add --no-cache curl
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost/ || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -f http://localhost/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
