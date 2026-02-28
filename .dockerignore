@@ -1,0 +1,12 @@
+bin/
+obj/
+.git/
+.vs/
+.vscode/
+*.user
+*.lock.json
+medtrue_app/
+medtrue_admin/
+medtrue_app_hyperlocal/
+truemed_user/
+error_log.txt

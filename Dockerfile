@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
@@ -10,12 +10,15 @@ COPY . ./
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy
 WORKDIR /app
 COPY --from=build /app/out .
 
 # Install curl for health check
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apt install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Fix Globalization Segfault (139)
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 # Health Check
 HEALTHCHECK --interval=30s --timeout=15s --retries=5 CMD curl -f http://localhost:8080/health || exit 1
