@@ -48,6 +48,14 @@ public class MasterRepository
                 created_at TIMESTAMP DEFAULT NOW(),
                 updated_at TIMESTAMP DEFAULT NOW()
             );");
+
+        // Migrate existing table
+        await conn.ExecuteAsync("ALTER TABLE brands ADD COLUMN IF NOT EXISTS uuid VARCHAR(36);");
+        await conn.ExecuteAsync("ALTER TABLE brands ADD COLUMN IF NOT EXISTS description VARCHAR(255);");
+        await conn.ExecuteAsync("ALTER TABLE brands ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active';");
+        await conn.ExecuteAsync("ALTER TABLE brands ADD COLUMN IF NOT EXISTS scope_type VARCHAR(50) DEFAULT 'global';");
+        await conn.ExecuteAsync("ALTER TABLE brands ADD COLUMN IF NOT EXISTS scope_id BIGINT;");
+        await conn.ExecuteAsync("ALTER TABLE brands ADD COLUMN IF NOT EXISTS metadata TEXT;");
     }
 
     public async Task EnsureCategorySchemaAsync()
@@ -77,9 +85,13 @@ public class MasterRepository
                 UNIQUE (""name"")
             );");
             
-        // We assume the schema is correct now or handled by the CREATE TABLE IF NOT EXISTS.
-        // If we needed to migrate existing tables to this exact structure, we would need explicit ALTER statements here.
-        // For now, adhering to the requested schema creation.
+        // Migrate existing table if columns are missing
+        await conn.ExecuteAsync("ALTER TABLE categories ADD COLUMN IF NOT EXISTS description TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE categories ADD COLUMN IF NOT EXISTS image_path TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE categories ADD COLUMN IF NOT EXISTS uuid VARCHAR(36);");
+        await conn.ExecuteAsync("ALTER TABLE categories ADD COLUMN IF NOT EXISTS slug VARCHAR(255);");
+        await conn.ExecuteAsync("ALTER TABLE categories ADD COLUMN IF NOT EXISTS title VARCHAR(255);");
+        await conn.ExecuteAsync("ALTER TABLE categories ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active';");
     }
 
     public async Task EnsureUnitSchemaAsync()
@@ -91,6 +103,9 @@ public class MasterRepository
                 name TEXT NOT NULL,
                 description TEXT
             );");
+
+        // Migrate existing table
+        await conn.ExecuteAsync("ALTER TABLE units ADD COLUMN IF NOT EXISTS description TEXT;");
     }
 
     public async Task EnsureHsnSchemaAsync()
@@ -130,6 +145,12 @@ public class MasterRepository
                 purchase_tax DECIMAL(5, 2),
                 purchase_cess DECIMAL(5, 2)
             );");
+
+        // Migrate existing table
+        await conn.ExecuteAsync("ALTER TABLE companies ADD COLUMN IF NOT EXISTS code TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE companies ADD COLUMN IF NOT EXISTS address TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE companies ADD COLUMN IF NOT EXISTS contact_number TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE companies ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;");
     }
 
     public async Task EnsureSaltSchemaAsync()
@@ -154,6 +175,14 @@ public class MasterRepository
                 is_continued BOOLEAN DEFAULT TRUE,
                 is_prohibited BOOLEAN DEFAULT FALSE
             );");
+
+        // Migrate existing table
+        await conn.ExecuteAsync("ALTER TABLE salts ADD COLUMN IF NOT EXISTS indications TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE salts ADD COLUMN IF NOT EXISTS dosage TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE salts ADD COLUMN IF NOT EXISTS side_effects TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE salts ADD COLUMN IF NOT EXISTS special_precautions TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE salts ADD COLUMN IF NOT EXISTS drug_interactions TEXT;");
+        await conn.ExecuteAsync("ALTER TABLE salts ADD COLUMN IF NOT EXISTS type TEXT;");
     }
 
     public async Task EnsurePackingSizeSchemaAsync()
