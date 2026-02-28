@@ -2371,3 +2371,203 @@ D:\medtrue.in\bin\Debug\net8.0\broadcast_app\build\url_launcher_android\intermed
 D:\medtrue.in\bin\Debug\net8.0\broadcast_app\build\url_launcher_android\intermediates\merged_res_blame_folder\release\mergeReleaseResources\out\single\layout.json
 D:\medtrue.in\bin\Debug\net8.0\broadcast_app\build\url_launcher_android\intermediates\merged_res_blame_folder\release\mergeReleaseResources\out\single\xml.json
 D:\medtrue.in\bin\Debug\net8.0\broadcast_app\build\url_launcher_android\intermediates\navigation_json\release\extractDeepLinksRelease\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\assets\animations\speech_to_text_animation.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\build\c134254776a5ccd144c8a5e627d78c10\gen_l10n_inputs_and_outputs.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\build\c134254776a5ccd144c8a5e627d78c10\outputs.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\ios\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\ios\Runner\Assets.xcassets\LaunchImage.imageset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\connectivity_plus.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\dynamic_color.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\file_saver.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\file_selector_macos.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\firebase_auth.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\firebase_core.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\firebase_messaging.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\FlutterMacOS.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\flutter_inappwebview_macos.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\flutter_local_notifications.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\geolocator_apple.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\google_sign_in_ios.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\package_info_plus.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\path_provider_foundation.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\shared_preferences_foundation.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\sign_in_with_apple.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\speech_to_text.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\sqflite_darwin.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\url_launcher_macos.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\video_player_avfoundation.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Pods\Local Podspecs\webview_flutter_wkwebview.podspec.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\macos\Runner\Assets.xcassets\AppIcon.appiconset\Contents.json
+D:\medtrue.in\bin\Debug\net8.0\HYPERL~1.1\web\manifest.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\deeplink.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\assets\debug\mergeDebugAssets\flutter_assets\FontManifest.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\assets\debug\mergeDebugAssets\flutter_assets\NativeAssetsManifest.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\compatible_screen_manifest\debug\createDebugCompatibleScreenManifests\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\cxx\debug\674f6v5i\logs\arm64-v8a\build_model.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\cxx\debug\674f6v5i\logs\arm64-v8a\metadata_generation_record.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\cxx\debug\674f6v5i\logs\armeabi-v7a\build_model.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\cxx\debug\674f6v5i\logs\armeabi-v7a\metadata_generation_record.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\cxx\debug\674f6v5i\logs\x86_64\build_model.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\cxx\debug\674f6v5i\logs\x86_64\metadata_generation_record.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\flutter\debug\flutter_assets\FontManifest.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\flutter\debug\flutter_assets\NativeAssetsManifest.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\linked_resources_binary_format\debug\processDebugResources\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_manifests\debug\processDebugManifest\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\mergeDebugResources.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-af.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-am.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ar.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-as.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-az.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-b+es+419.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-b+sr+Latn.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-be.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-bg.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-bn.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-bs.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ca.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-cs.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-da.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-de.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-el.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-en-rAU.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-en-rCA.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-en-rGB.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-en-rIN.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-en-rSG.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-en-rXC.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-es-rUS.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-es.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-et.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-eu.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-fa.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-fi.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-fil.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-fr-rCA.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-fr.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-gl.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-gu.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-h720dp-v13.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-hdpi-v4.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-hi.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-hr.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-hu.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-hy.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-id.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-in.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-is.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-it.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-iw.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ja.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ka.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-kk.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-km.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-kn.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ko.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ky.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-land.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-large-v4.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ldltr-v21.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-lo.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-lt.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-lv.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-mk.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ml.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-mn.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-mr.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ms.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-my.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-nb.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ne.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-night-v8.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-nl.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-or.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-pa.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-pl.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-port.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-pt-rBR.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-pt-rPT.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-pt.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ro.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ru.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-si.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-sk.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-sl.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-sq.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-sr.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-sv.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-sw.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-sw360dp-v13.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-sw600dp-v13.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ta.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-te.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-th.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-tl.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-tr.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-uk.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-ur.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-uz.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v16.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v17.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v18.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v21.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v22.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v23.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v24.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v25.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v26.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-v28.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-vi.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-watch-v20.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-watch-v21.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-xlarge-v4.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-zh-rCN.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-zh-rHK.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-zh-rTW.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values-zu.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\multi-v2\values.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\merged_res_blame_folder\debug\mergeDebugResources\out\single\mergeDebugResources.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\packaged_manifests\debug\processDebugManifestForPackage\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\intermediates\signing_config_versions\debug\writeDebugSigningConfigVersions\signing-config-versions.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\app\outputs\apk\debug\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\connectivity_plus\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\connectivity_plus\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\connectivity_plus\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\fluttertoast\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\fluttertoast\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\fluttertoast\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\flutter_plugin_android_lifecycle\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\flutter_plugin_android_lifecycle\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\flutter_plugin_android_lifecycle\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\geocoding_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\geocoding_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\geocoding_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\geolocator_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\geolocator_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\geolocator_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\google_maps_flutter_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\google_maps_flutter_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\google_maps_flutter_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\image_picker_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\image_picker_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\image_picker_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\package_info_plus\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\package_info_plus\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\package_info_plus\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\path_provider_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\path_provider_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\path_provider_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\permission_handler_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\permission_handler_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\permission_handler_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\razorpay_flutter\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\razorpay_flutter\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\razorpay_flutter\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\shared_preferences_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\shared_preferences_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\shared_preferences_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\sqflite_android\intermediates\aapt_friendly_merged_manifests\debug\processDebugManifest\aapt\output-metadata.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\sqflite_android\intermediates\annotation_processor_list\debug\javaPreCompileDebug\annotationProcessors.json
+D:\medtrue.in\bin\Debug\net8.0\medtrue_app\build\sqflite_android\intermediates\navigation_json\debug\extractDeepLinksDebug\navigation.json

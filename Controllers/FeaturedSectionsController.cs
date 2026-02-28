@@ -52,12 +52,12 @@ public class FeaturedSectionsController : ControllerBase
     public async Task<IActionResult> GetHomeSections([FromQuery] int productLimit = 10)
     {
         var sections = await _repository.GetActiveFeaturedSectionsAsync();
-        var result = new List<object>();
-
-        foreach (var section in sections)
+        
+        // Parallelize product fetching for each section
+        var tasks = sections.Select(async section =>
         {
             var products = await _repository.GetProductsBySectionTypeAsync(section.SectionType, productLimit);
-            result.Add(new
+            return new
             {
                 section.Id,
                 section.Title,
@@ -69,9 +69,10 @@ public class FeaturedSectionsController : ControllerBase
                 section.TextColor,
                 section.SortOrder,
                 Products = products
-            });
-        }
+            };
+        });
 
-        return Ok(result);
+        var result = await Task.WhenAll(tasks);
+        return Ok(result.OrderBy(r => r.SortOrder).ToList());
     }
 }
