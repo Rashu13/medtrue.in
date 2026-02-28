@@ -9,7 +9,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__DefaultConnection=Host=62.72.13.162;Port=5432;Database=postgres;Username=postgres;Password=UErqNKVZ53XMDsiUMibk482Mz7TvXXPqxwtZWiF0Vgd3UK2j2jYIrKy9xGegwkZy
+      - ConnectionStrings__DefaultConnection=Host=172.17.0.1;Port=5432;Database=postgres;Username=postgres;Password=UErqNKVZ53XMDsiUMibk482Mz7TvXXPqxwtZWiF0Vgd3UK2j2jYIrKy9xGegwkZy
     volumes:
       - medtrue-uploads:/app/wwwroot/uploads
     healthcheck:
