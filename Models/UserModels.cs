@@ -36,10 +36,13 @@ public class Address
     public string Zipcode { get; set; } = string.Empty;
     public string Mobile { get; set; } = string.Empty;
     public string AddressType { get; set; } = "home"; // home, office, other
-    public string Country { get; set; } = string.Empty;
-    public string CountryCode { get; set; } = string.Empty;
-    public decimal Latitude { get; set; }
-    public decimal Longitude { get; set; }
+    public string Country { get; set; } = "India";
+    public string CountryCode { get; set; } = "IN";
+    public decimal Latitude { get; set; } = 0;
+    public decimal Longitude { get; set; } = 0;
+    public string? Name { get; set; }
+    public string? Phone { get; set; }
+    public string? Pincode { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

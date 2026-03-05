@@ -46,18 +46,21 @@ public class UserRepository
             CREATE TABLE IF NOT EXISTS addresses (
                 id SERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                name VARCHAR(255),
+                phone VARCHAR(20),
                 address_line1 VARCHAR(255) NOT NULL,
                 address_line2 VARCHAR(255),
                 city VARCHAR(100) NOT NULL,
                 landmark VARCHAR(100),
                 state VARCHAR(100) NOT NULL,
-                zipcode VARCHAR(20) NOT NULL,
-                mobile VARCHAR(20) NOT NULL,
-                address_type VARCHAR(20) NOT NULL, -- home, office, other
-                country VARCHAR(100) NOT NULL,
-                country_code VARCHAR(10) NOT NULL,
-                latitude DECIMAL(10,8) NOT NULL,
-                longitude DECIMAL(11,8) NOT NULL,
+                zipcode VARCHAR(20),
+                pincode VARCHAR(20),
+                mobile VARCHAR(20),
+                address_type VARCHAR(20) NOT NULL DEFAULT 'home',
+                country VARCHAR(100) DEFAULT 'India',
+                country_code VARCHAR(10) DEFAULT 'IN',
+                latitude DECIMAL(10,8) DEFAULT 0,
+                longitude DECIMAL(11,8) DEFAULT 0,
                 created_at TIMESTAMP DEFAULT NOW(),
                 updated_at TIMESTAMP DEFAULT NOW()
             );");
@@ -113,10 +116,10 @@ public class UserRepository
         using var conn = Connection;
         var sql = @"
             INSERT INTO addresses (
-                user_id, address_line1, address_line2, city, landmark, state, zipcode, mobile,
+                user_id, name, phone, address_line1, address_line2, city, landmark, state, zipcode, pincode, mobile,
                 address_type, country, country_code, latitude, longitude, created_at, updated_at
             ) VALUES (
-                @UserId, @AddressLine1, @AddressLine2, @City, @Landmark, @State, @Zipcode, @Mobile,
+                @UserId, @Name, @Phone, @AddressLine1, @AddressLine2, @City, @Landmark, @State, @Zipcode, @Pincode, @Mobile,
                 @AddressType, @Country, @CountryCode, @Latitude, @Longitude, NOW(), NOW()
             ) RETURNING id";
         return await conn.ExecuteScalarAsync<long>(sql, address);
