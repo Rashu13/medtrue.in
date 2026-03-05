@@ -132,6 +132,9 @@ CREATE TABLE IF NOT EXISTS product_batches (
 CREATE INDEX IF NOT EXISTS idx_products_company ON products(company_id);
 CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
 CREATE INDEX IF NOT EXISTS idx_products_barcode ON products(barcode);
+CREATE INDEX IF NOT EXISTS idx_products_created_at ON products(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_products_stock ON products(current_stock ASC);
+CREATE INDEX IF NOT EXISTS idx_products_price ON products(sale_price DESC, mrp DESC);
 -- ==========================================
 -- 4. IMAGE TABLE
 -- ==========================================
@@ -145,159 +148,37 @@ CREATE TABLE IF NOT EXISTS product_images (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- Update categories table to match MasterRepository expectations
-DO $$ BEGIN -- Add UUID
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'uuid'
-) THEN
+-- Update categories table
 ALTER TABLE categories
-ADD COLUMN uuid VARCHAR(36);
-END IF;
--- Add Slug
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'slug'
-) THEN
+ADD COLUMN IF NOT EXISTS uuid VARCHAR(36);
 ALTER TABLE categories
-ADD COLUMN slug VARCHAR(255);
-END IF;
--- Add Title (if missing, though schema has 'name', MasterRepo uses 'title')
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'title'
-) THEN
+ADD COLUMN IF NOT EXISTS slug VARCHAR(255);
 ALTER TABLE categories
-ADD COLUMN title VARCHAR(255);
--- Backfill title from name
+ADD COLUMN IF NOT EXISTS title VARCHAR(255);
 UPDATE categories
 SET title = name
 WHERE title IS NULL;
-END IF;
--- Add Description
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'description'
-) THEN
 ALTER TABLE categories
-ADD COLUMN description TEXT;
-END IF;
--- Add Status
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'status'
-) THEN
+ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE categories
-ADD COLUMN status VARCHAR(20) DEFAULT 'active';
-END IF;
--- Add ImagePath
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'image_path'
-) THEN
+ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active';
 ALTER TABLE categories
-ADD COLUMN image_path TEXT;
-END IF;
--- Add other columns (parent_id is already there usually, but check)
--- requires_approval
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'requires_approval'
-) THEN
+ADD COLUMN IF NOT EXISTS image_path TEXT;
 ALTER TABLE categories
-ADD COLUMN requires_approval BOOLEAN DEFAULT FALSE;
-END IF;
--- sort_order
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'sort_order'
-) THEN
+ADD COLUMN IF NOT EXISTS requires_approval BOOLEAN DEFAULT FALSE;
 ALTER TABLE categories
-ADD COLUMN sort_order INT DEFAULT 0;
-END IF;
--- commission
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'commission'
-) THEN
+ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
 ALTER TABLE categories
-ADD COLUMN commission DECIMAL(5, 2) DEFAULT 0;
-END IF;
--- background_type
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'background_type'
-) THEN
+ADD COLUMN IF NOT EXISTS commission DECIMAL(5, 2) DEFAULT 0;
 ALTER TABLE categories
-ADD COLUMN background_type VARCHAR(20);
-END IF;
--- background_color
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'background_color'
-) THEN
+ADD COLUMN IF NOT EXISTS background_type VARCHAR(20);
 ALTER TABLE categories
-ADD COLUMN background_color VARCHAR(10);
-END IF;
--- font_color
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'font_color'
-) THEN
+ADD COLUMN IF NOT EXISTS background_color VARCHAR(10);
 ALTER TABLE categories
-ADD COLUMN font_color VARCHAR(255);
-END IF;
--- metadata
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'metadata'
-) THEN
+ADD COLUMN IF NOT EXISTS font_color VARCHAR(255);
 ALTER TABLE categories
-ADD COLUMN metadata TEXT;
-END IF;
--- created_at
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'created_at'
-) THEN
+ADD COLUMN IF NOT EXISTS metadata TEXT;
 ALTER TABLE categories
-ADD COLUMN created_at TIMESTAMP DEFAULT NOW();
-END IF;
--- updated_at
-IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.columns
-    WHERE table_name = 'categories'
-        AND column_name = 'updated_at'
-) THEN
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
 ALTER TABLE categories
-ADD COLUMN updated_at TIMESTAMP DEFAULT NOW();
-END IF;
-END $$;
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
